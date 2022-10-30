@@ -1,0 +1,7 @@
+# dotnet output files
+[Bb]in/
+[Oo]bj/
+
+# Python
+__pycache__/
+*.pyc
