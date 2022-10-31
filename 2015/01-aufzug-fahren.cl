@@ -19,15 +19,22 @@
 
 ;; Folge von Anweisungen ausführen (iterativ)
 (defun fahrten-iterativ (anweisungen)
-  (do ((stockwerk 0 (+ stockwerk (1-fahrt (char rest 0))))
-       (rest anweisungen (subseq rest 1)))
-    ((<= (length rest) 0) stockwerk)))
-  
+  (do ((stockwerk 0 (+ stockwerk (1-fahrt (char restliche-anweisungen 0))))
+       (restliche-anweisungen anweisungen (subseq restliche-anweisungen 1)))
+    ((<= (length restliche-anweisungen) 0) stockwerk)))
+
+;; Wann wird zum ersten Mal ein bestimmtes Stockwerk erreicht
+(defun fahre-bis (wohin anweisungen)
+  (do ((wie-viele 0 (1+ wie-viele))
+       (stockwerk 0 (+ stockwerk (1-fahrt (char verbleibende-anweisungen 0))))
+       (verbleibende-anweisungen anweisungen (subseq verbleibende-anweisungen 1)))
+    ((eq stockwerk wohin) wie-viele)))
+
 
 ;; Einzelnen Testfall ausführen
-(defun test-runner (anweisung erwartetes-ergebnis)
-  (let ((tatsächliches-ergebnis (fahrten-iterativ anweisung)))
-    (princ "Anweisung: ") (princ anweisung)
+(defun test-runner (aktion argumente erwartetes-ergebnis)
+  (let ((tatsächliches-ergebnis (apply aktion argumente)))
+    (princ "Argumente: ") (dolist (s argumente) (princ s) (princ " "))
     (princ " -> Ergebnis: ") (princ tatsächliches-ergebnis)
     (princ ", erwartet: ") (princ erwartetes-ergebnis)
     (terpri)
@@ -60,9 +67,21 @@
 
 ; Beispiele ausführen
 (dolist (bsp beispiele t)
-  (if (test-runner (car bsp) (cdr bsp))
+  (if (test-runner 'fahrten-iterativ (list (car bsp)) (cdr bsp))
     (write-line "PASSED")
     (write-line "FAILED")))
+
+; Teil 2: Wann ist zum ersten Mal das erste Untergeschoss erreicht?
+(write-line "--- Keller-Beispiele ---")
+(setf keller-beispiele '(
+  (")" . 1)
+  ("()())" . 5)
+))
+(dolist (bsp keller-beispiele t)
+  (if (test-runner 'fahre-bis (list -1 (car bsp)) (cdr bsp))
+    (write-line "PASSED")
+    (write-line "FAILED")))
+
 
 ; Aufgabe von https://adventofcode.com/2015/day/1/input
 (write-line "")
@@ -71,3 +90,4 @@
 (princ "Aufgabe: ") (princ aufgabe) (terpri)
 (princ "Lösung: ") (write (fahrten-iterativ aufgabe)) (terpri)
 
+(princ "Nötige Fahrten bis erstes Untergeschoss: ") (write (fahre-bis -1 aufgabe)) (terpri)
