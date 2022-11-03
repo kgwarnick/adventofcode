@@ -1,0 +1,11 @@
+Beispiel: [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
+- Anzahl Zunahmen:      7
+- Anzahl Abnahmen:      2
+- Anzahl ohne Änderung: 2
+
+--- Aufgabe 1: Wie viele Zunahmen der Tiefen ---
+Tiefenmessungen: 2000
+Änderungen:      1999
+Anzahl tiefer:       1121
+Anzahl höher:         878
+Anzahl unverändert:     0
