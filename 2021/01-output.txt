@@ -2,6 +2,10 @@ Beispiel: [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 - Anzahl Zunahmen:      7
 - Anzahl Abnahmen:      2
 - Anzahl ohne Änderung: 2
+Beispiel geglättet: [607, 618, 618, 617, 647, 716, 769, 792]
+- Anzahl Zunahmen:      5
+- Anzahl Abnahmen:      1
+- Anzahl ohne Änderung: 1
 
 --- Aufgabe 1: Wie viele Zunahmen der Tiefen ---
 Tiefenmessungen: 2000
@@ -9,3 +13,10 @@ Tiefenmessungen: 2000
 Anzahl tiefer:       1121
 Anzahl höher:         878
 Anzahl unverändert:     0
+
+--- Aufgabe 2: Summe aus jeweils 3 Tiefenmessungen ---
+Geglättete Tiefenmessungen: 1998
+Geglättete Änderungen:      1997
+Anzahl tiefer:       1065
+Anzahl höher:         876
+Anzahl unverändert:    56
