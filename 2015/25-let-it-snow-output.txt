@@ -1,0 +1,36 @@
+Beispiel-Codes: 
+       20151125       18749137       17289845       30943339       10071777       33511524
+       31916031       21629792       16929656        7726640       15514188        4041754
+       16080970        8057251        1601130        7981243       11661866       16474243
+       24592653       32451966       21345942        9380097       10600672       31527494
+          77061       17552253       28094349        6899651        9250759       31663883
+       33071741        6796745       25397450       24659492        1534922       27995004
+
+
+--- Testfälle ---
+Start-Code:   20151125
+Folgende:
+ - Code:             31916031
+ - Code:             18749137
+ - Code:             16080970
+ - Code:             21629792
+ - Code:             17289845
+ - Code:             24592653
+ - Code:              8057251
+ - Code:             16929656
+
+Code-Nummern:
+Code-Nummer für Koordinate (1,1):  1
+Code-Nummer für Koordinate (2,1):  2
+Code-Nummer für Koordinate (1,2):  3
+Code-Nummer für Koordinate (4,2):  12
+Code-Nummer für Koordinate (1,5):  12
+
+Berechnung bestimmter Codes:
+Übernächster Code nach Nummer 1:  18749137
+Code an Position (6, 6):  27995004
+
+--- Aufgabe 1: Code an Position (3010, 3019) ---
+ Diagonale:          6027
+ Code-Nummer:    18168397
+ Code:                     8997277
