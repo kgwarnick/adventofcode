@@ -241,7 +241,7 @@
 
 ;; Aufgabe 1: Opimale Sitzordnung für alle acht Personen
 
-(display "--- Aufgabe 1 ---") (newline)
+(display "--- Aufgabe 1: 8 Gäste um den runden Tisch ---") (newline) (newline)
 
 (define happy-relations '(
   "Alice would gain 2 happiness units by sitting next to Bob."
@@ -308,8 +308,11 @@
 (display "Personen: ") (display gästeliste) (newline)
 (newline)
 (display "Happiness table: ") (newline) (display-list happy-table)
+(force-output)
 (define arrangements (permutationen gästeliste))
-(display "Mögliche Sitzordnungen: ") (display (length arrangements)) (newline) ; (display-list arrangements)
+(display "Possible arrangements: ") (display (length arrangements)) (newline)
+; (display-list arrangements)
+(force-output)
 
 (define happiness-arrangements
   (map
@@ -318,5 +321,84 @@
     arrangements))
 (display "Achievable happiness for different arrangements: ") (newline)
 ; (display-list happiness-arrangements)
+(force-output)
 (define sorted-happiness (sort happiness-arrangements (lambda (a b) (< (cdr a) (cdr b)))))
-(display-list sorted-happiness)
+(display "  ...") (newline)
+(display-list (list-tail sorted-happiness (- (length sorted-happiness) 20)))
+(newline)
+(display "*** Lösung Aufgabe 1: Happiness für beste Sitzordnung: ")
+(display (cdar (last-pair sorted-happiness))) (newline)
+(newline)
+
+
+;; Aufgabe 2: Der Gastgeber muss noch dazu
+
+; Die bisherigen Anordnungen enthalten viele gleichwertige Sitzordnungen,
+; deren Unterschied nur in einer Drehung um den runden Tisch besteht.
+; Es hätte ausgereicht, eine Person fest auf eine Position zu setzen,
+; z.B. Alice auf Position 1, und nur die Permutationen der anderen anzuhängen.
+; Durch diese mehrfachen Lösungen kann jetzt aber der Gastgeber auf Position 1
+; dazugenommen werden und mit allen bisherigen Permutationen kombiniert werden,
+; um alle möglichen Anordnungen zu berechnen (jetzt ohne durch Drehung entstandene
+; Doppelungen, nur jeweils ein Duplikat durch Vorwärts/Rückwärts-Lesen derselben
+; Reihenfolge tritt noch auf)
+
+(display "--- Aufgabe 2: Jetzt mit Gastgeber ---") (newline) (newline)
+
+; Neue Regeln für den Gastgeber erzeugen
+; mit allen bisherign Personen als Nachbar und Happiness-Wert 0
+(define host-active-happiness-rules
+  (map
+    (lambda (neighbour) (cons "You" (cons neighbour 0)))
+    gästeliste))
+
+; Neue Regeln für alle bisherigen Personen und den Gastgeber als Nachbar
+; erzeugen mit Happiness-Wert 0
+(define host-passive-happiness-rules
+  (map
+    (lambda (person) (cons person (cons "You" 0)))
+    gästeliste))
+
+; Neue Regeln mit bisherigen zusammenführen und Tabelle erzeugen
+(define happiness-table-with-host
+  (erzeuge-tabelle
+    (append
+      happy-rules
+      host-active-happiness-rules
+      host-passive-happiness-rules)))
+
+(display "To be seated: ")
+(display (personen-ermitteln (map car happiness-table-with-host))) (newline)
+(newline)
+(display "New rules including the host (\"You\")") (newline)
+(display-list happiness-table-with-host)
+(newline)
+(force-output)
+
+; Gastgeber auf Position 1 (Index 0, Listenanfang) dazusetzen
+(define arrangements-with-host
+  (map
+    (lambda (arrangement-without-host) (cons "You" arrangement-without-host))
+    arrangements))
+(display "The first 10 new arrangements including the host (\"You\")") (newline)
+(display-list (list-head arrangements-with-host 10))
+(display "  ...") (newline)
+(newline)
+(force-output)
+
+; Happiness-Werte berechnen
+(define happiness-with-host
+  (map
+    (lambda (arr)
+      (cons arr (sitzordnung-happiness arr happiness-table-with-host)))
+    arrangements-with-host))
+(define sorted-happiness-with-host
+  (sort happiness-with-host (lambda (a b) (> (cdr a) (cdr b)))))
+(display "Resulting happiness (top twenty):") (newline)
+(display-list (list-head sorted-happiness-with-host 20))
+(display "  ...") (newline)
+(newline)
+
+(display "*** Lösung Aufgabe 2: Bestmögliche Happiness mit Gastgeber: ")
+(display (cdar sorted-happiness-with-host)) (newline)
+(newline)
