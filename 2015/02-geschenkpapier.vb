@@ -31,18 +31,43 @@ Function PapierBedarf (l As Integer, b As Integer, h As Integer) As Integer
 End Function
 
 
-Function BerechnePapierBedarf (Geschenke() As String) As Integer
+Function KleinsterFlächenUmfang (l As Integer, b As Integer, h As Integer) As Integer
+  If l >= b And l >= h Then
+    KleinsterFlächenUmfang = 2 * (b + h)
+  Else If b >= l And b >= h Then
+    KleinsterFlächenUmfang = 2 * (l + h)
+  Else
+    KleinsterFlächenUmfang = 2 * (l + b)
+  End If
+End Function
+
+
+Function QuaderVolumen (l As Integer, b As Integer, h As Integer) As Integer
+  QuaderVolumen = l * b * h
+End Function
+
+
+Function BandBedarf  (l As Integer, b As Integer, h As Integer) As Integer
+  BandBedarf = KleinsterFlächenUmfang (l, b, h) + QuaderVolumen (l, b, h)
+End Function
+
+
+Function BerechnePapierBedarf (Maße(,) As Integer) As Integer
   Dim SummePapier As Integer = 0
-  For i As Integer = 1 To Geschenke.Length
-    if Geschenke (i-1) <> "" Then
-      Dim Maße() As String = Split (Geschenke(i-1), "x")
-      ' Console.WriteLine ("{0}  {1,3} x {2,3} x {3,3:d}  -> Papier-Bedarf: {4,5}",
-      '   i, Maße(0), Maße(1), Maße(2),
-      '   PapierBedarf (Int (Maße(0)), Int (Maße(1)), Int (Maße(2))) )
-      SummePapier = SummePapier + PapierBedarf (Int (Maße(0)), Int (Maße(1)), Int (Maße(2)))
-    End If
+  For i As Integer = LBound (Maße, 1) To UBound (Maße, 1)
+    ' Console.WriteLine ("{0,4:d}  {1,3:d} x {2,3:d} x {3,3:d}  -> Papier-Bedarf: {4,5}",
+    '   i + 1, Maße(i,0), Maße(i,1), Maße(i,2), PapierBedarf (Maße(i,0), Maße(i,1), Maße(i,2)) )
+    SummePapier = SummePapier + PapierBedarf (Maße(i,0), Maße(i,1), Maße(i,2))
   Next
   BerechnePapierBedarf = SummePapier
+End Function
+
+Function BerechneBandBedarf (Maße(,) As Integer) As Integer
+  Dim SummeBand As Integer = 0
+  For i As Integer = LBound (Maße, 1) To UBound (Maße, 1)
+    SummeBand = SummeBand + BandBedarf (Maße(i,0), Maße(i,1), Maße(i,2))
+  Next
+  BerechneBandBedarf = SummeBand
 End Function
 
 
@@ -52,20 +77,38 @@ Sub Main()
     PapierBedarf (2, 3, 4))
   Console.WriteLine ("Papier-Bedarf für Geschenk mit Maßen 1x1x10: {0}",
     PapierBedarf (1, 1, 10))
-  Dim fileContent As String
-  fileContent = My.Computer.FileSystem.ReadAllText ("02-geschenkpapier-input.txt")
-  Dim lines() As String = Split (fileContent, Chr$(10))   ' Aufteilen an Zeilenenden
+  Console.WriteLine ("Band-Bedarf für Geschenk mit Maßen 2x3x4: {0}",
+    BandBedarf (2, 3, 4))
+  Console.WriteLine ("Band-Bedarf für Geschenk mit Maßen 1x1x10: {0}",
+    BandBedarf (1, 1, 10))
+
+  ' Dateiinhalt lesen und Liste von Geschenk-Maßen vorbereiten
+  Dim fileContent As String = My.Computer.FileSystem.ReadAllText ("02-geschenkpapier-input.txt")
+  Dim zeilen() As String = Split (fileContent, Chr$(10))   ' Aufteilen an Zeilenenden
+  Dim AnzahlGeschenke As Integer
+  If (zeilen (zeilen.Length - 1) <> "") Then
+    AnzahlGeschenke = zeilen.Length
+  Else
+    AnzahlGeschenke = zeilen.Length - 1   ' Leerzeile am Ende nicht zählen
+  End If
+  Dim Maße(0 To AnzahlGeschenke - 1, 0 To 2) As Integer
+  For i As Integer = 0 To AnzahlGeschenke - 1
+    If zeilen (i) <> "" Then
+      Dim maß() As String = Split (zeilen(i), "x")
+      Maße (i, 0) = Int (maß (0)) : Maße (i, 1) = Int (maß (1)) : Maße (i, 2) = Int (maß (2))
+    End If
+  Next
   Console.WriteLine ()
 
-  Console.WriteLine ("--- Aufgabe 1:  Gesamter Papierbedarf ---")
-  Dim AnzahlGeschenke As Integer
-  If (lines (lines.Length - 1) <> "") Then
-    AnzahlGeschenke = lines.Length
-  Else
-    AnzahlGeschenke = lines.Length - 1   ' Leerzeile am Ende nicht zählen
-  End If
+  Console.WriteLine ("--- Aufgabe 1:  Gesamter Geschenkpapierbedarf ---")
   Console.WriteLine ("Papierbedarf für {0} Geschenke:  {1}",
-    AnzahlGeschenke, BerechnePapierBedarf (lines))
+    AnzahlGeschenke, BerechnePapierBedarf (Maße))
+  Console.WriteLine ()
+
+  Console.WriteLine ("--- Aufgabe 2:  Gesamter Geschenkbandbedarf ---")
+  Console.WriteLine ("Bandbedarf für {0} Geschenke:  {1}",
+    AnzahlGeschenke, BerechneBandBedarf (Maße))
+  Console.WriteLine ()
 End Sub
 
 End Module

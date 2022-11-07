@@ -1,6 +1,12 @@
 --- Beispiele ---
 Papier-Bedarf für Geschenk mit Maßen 2x3x4: 58
 Papier-Bedarf für Geschenk mit Maßen 1x1x10: 43
+Band-Bedarf für Geschenk mit Maßen 2x3x4: 34
+Band-Bedarf für Geschenk mit Maßen 1x1x10: 14
 
---- Aufgabe 1:  Gesamter Papierbedarf ---
+--- Aufgabe 1:  Gesamter Geschenkpapierbedarf ---
 Papierbedarf für 1000 Geschenke:  1606483
+
+--- Aufgabe 2:  Gesamter Geschenkbandbedarf ---
+Bandbedarf für 1000 Geschenke:  3842356
+
