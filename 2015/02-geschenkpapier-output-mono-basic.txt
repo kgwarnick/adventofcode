@@ -1,0 +1,6 @@
+--- Beispiele ---
+Papier-Bedarf für Geschenk mit Maßen 2x3x4: 58
+Papier-Bedarf für Geschenk mit Maßen 1x1x10: 43
+
+--- Aufgabe 1:  Gesamter Papierbedarf ---
+Papierbedarf für 1000 Geschenke:  1606483
