@@ -33,21 +33,28 @@ Begin
 End;
 
 
+(* Einzelnes Kommando befolgen *)
+Procedure KommandoAuswerten (kommando: Char; var x, y: LongInt;
+  PosListe: PPositionArray; Var PosAnzahl: Integer);
+Begin
+  If (kommando = '^') Then y := y + 1;
+  If (kommando = 'v') Then y := y - 1;
+  If (kommando = '<') Then x := x - 1;
+  If (kommando = '>') Then x := x + 1;
+  If (kommando In [ '^', 'v', '<', '>']) Then
+    ZaehlePosition (x, y, PosListe, PosAnzahl)
+  Else WriteLn ('- Ignored character: ', Ord(kommando), ' -');
+End;
+
+
+(* Mehrere Kommandos befolgen *)
 Procedure KommandosAuswerten (kommandos: String; var x, y: LongInt;
   PosListe: PPositionArray; Var PosAnzahl: Integer);
 Var i: Integer;
 Begin
-  (* WriteLn ('  - Anweisungen: ', Length (kommandos)); *)
   For i := 1 To Length (kommandos) Do Begin
-    If (kommandos[i] = '^') Then y := y + 1;
-    If (kommandos[i] = 'v') Then y := y - 1;
-    If (kommandos[i] = '<') Then x := x - 1;
-    If (kommandos[i] = '>') Then x := x + 1;
-    If (kommandos[i] In [ '^', 'v', '<', '>']) Then ZaehlePosition (x, y, PosListe, PosAnzahl);
-    (* If (kommandos[i] = chr(10)) Then Write ('Ignored: "', kommandos[i], '"'); *)
+    KommandoAuswerten (kommandos[i], x, y, PosListe, PosAnzahl);
   End;
-  (* ZaehlePosition (x, y, PosListe, PosAnzahl); *)
-  (* WriteLn ('Schritte: ', PosAnzahl); *)
 End;
 
 
@@ -72,13 +79,42 @@ Begin
 End;
 
 
+(* Anweisungen abwechselnd von zwei Akteuren ausführen,
+   mit gemeinsamer Liste von besuchten Orten *)
+Procedure AnweisungenFolgenZuZweit (Anweisungen: String);
+Var AnzahlOrte: Integer;
+    BesuchteOrte: PPositionArray;
+    i: Integer;
+    x1, x2: LongInt;
+    y1, y2: LongInt;
+Begin
+  GetMem (BesuchteOrte, 4096 * SizeOf(Position));
+  AnzahlOrte := 0;
+  x1 := 0;  y1 := 0;   (* Start-Spalte und Zeile, 1. Akteur *)
+  x2 := 0;  y2 := 0;   (* Start-Spalte und Zeile, 2. Akteur *)
+  ZaehlePosition (x1, y1, BesuchteOrte, AnzahlOrte);   (* Start-Position mitzählen *)
+  ZaehlePosition (x2, y2, BesuchteOrte, AnzahlOrte);   (* Start-Position mitzählen *)
+  For i := 1 To Length (Anweisungen) Do Begin
+    If (i Mod 2 = 1)
+      Then KommandoAuswerten (Anweisungen[i], x1, y1, BesuchteOrte, AnzahlOrte)
+      Else KommandoAuswerten (Anweisungen[i], x2, y2, BesuchteOrte, AnzahlOrte);
+  End;
+  WriteLn ('End-Position Akteur 1:  (', x1, ', ', y1, '),  ',
+           'End-Position Akteur 2:  (', x2, ', ', y2, '),  ',
+           'Häuser erreicht:  ', AnzahlOrte);
+  For i := 0 To AnzahlOrte - 1 Do
+    WriteLn (i, '  (', BesuchteOrte^[i].x, ', ', BesuchteOrte^[i].y, ') -> ',
+      BesuchteOrte^[i].n, 'x');
+  FreeMem (BesuchteOrte, 4096 * SizeOf(Position));
+End;
+
+
 Procedure DateiLesenUndFolgen (DateiName: String);
 Var Datei: File Of Char;
     i: Integer;
     x: LongInt;
     y: LongInt;
     c: Char;
-    (* SchonGewesen: Array[0..255] Of Position; *)
     BesuchtePositionen: Integer;
     SchonBesucht: PPositionArray;
 Begin
@@ -113,6 +149,43 @@ Begin
   *)
 End;
 
+
+(* Anweisungen aus Datei abwechselnd von zwei Akteuren ausführen,
+   mit gemeinsamer Liste von besuchten Orten *)
+Procedure DateiLesenUndFolgenZuZweit (DateiName: String);
+Var Datei: File Of Char;
+    i: Integer;
+    x1, x2: LongInt;
+    y1, y2: LongInt;
+    c: Char;
+    AnzahlOrte: Integer;
+    BesuchteOrte: PPositionArray;
+Begin
+  Assign (Datei, DateiName);
+  FileMode := 0;
+  Reset (Datei);
+  GetMem (BesuchteOrte, 4096 * SizeOf(Position));
+  AnzahlOrte := 0;
+  x1 := 0;  y1 := 0;   (* Start-Spalte und Zeile, 1. Akteur *)
+  x2 := 0;  y2 := 0;   (* Start-Spalte und Zeile, 2. Akteur *)
+  ZaehlePosition (x1, y1, BesuchteOrte, AnzahlOrte);   (* Start-Position mitzählen *)
+  ZaehlePosition (x2, y2, BesuchteOrte, AnzahlOrte);   (* Start-Position mitzählen *)
+  i := 0;
+  While Not EoF (Datei) Do Begin
+    Read (Datei, c);
+    If (i Mod 2 = 0)
+      Then KommandoAuswerten (c, x1, y1, BesuchteOrte, AnzahlOrte)
+      Else KommandoAuswerten (c, x2, y2, BesuchteOrte, AnzahlOrte);
+    i := i + 1;
+  End;
+  Close (Datei);
+  WriteLn ('End-Position Santa: (', x1, ', ', y1, '),  ',
+    'End-Position Robo-Santa: (', x2, ', ', y2, ')');
+  WriteLn ('Zusammen ', i, ' Schritte gemacht,  Häuser erreicht: ', AnzahlOrte);
+  FreeMem (BesuchteOrte, 4096 * SizeOf(Position));
+End;
+
+
 Procedure Beispiele;
 Begin
   WriteLn ('* Anweisungen:  >');  AnweisungenFolgen ('>');
@@ -120,6 +193,12 @@ Begin
   WriteLn ('* Anweisungen:  ^v^v^v^v^v');  AnweisungenFolgen ('^v^v^v^v^v');
 End;
 
+Procedure BeispieleZuZweit;
+Begin
+  WriteLn ('* Anweisungen:  ^v');  AnweisungenFolgenZuZweit ('^v');
+  WriteLn ('* Anweisungen:  ^>v<');  AnweisungenFolgenZuZweit ('^>v<');
+  WriteLn ('* Anweisungen:  ^v^v^v^v^v');  AnweisungenFolgenZuZweit ('^v^v^v^v^v');
+End;
 
 Begin
   WriteLn ('--- Beispiele ---');
@@ -128,4 +207,12 @@ Begin
 
   WriteLn ('--- Aufgabe 1: Wie viele Häuser wurden mindestens einmal erreicht ---');
   DateiLesenUndFolgen ('housesin.txt');
+  WriteLn;
+
+  WriteLn ('--- Beispiele Teil 2 ---');
+  BeispieleZuZweit;
+  WriteLn;
+
+  WriteLn ('--- Aufgabe 2: Santa wird von Robo-Santa unterstützt ---');
+  DateiLesenUndFolgenZuZweit ('housesin.txt');
 End.

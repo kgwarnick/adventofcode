@@ -15,4 +15,35 @@ End-Position:  (0, 0);  Häuser erreicht:  2
 1  (0, 1) -> 5x
 
 --- Aufgabe 1: Wie viele Häuser wurden mindestens einmal erreicht ---
+- Ignored character: 10 -
 End-Position:  (-61, 33),  Häuser erreicht: 2572
+
+--- Beispiele Teil 2 ---
+* Anweisungen:  ^v
+End-Position Akteur 1:  (0, 1),  End-Position Akteur 2:  (0, -1),  Häuser erreicht:  3
+0  (0, 0) -> 2x
+1  (0, 1) -> 1x
+2  (0, -1) -> 1x
+* Anweisungen:  ^>v<
+End-Position Akteur 1:  (0, 0),  End-Position Akteur 2:  (0, 0),  Häuser erreicht:  3
+0  (0, 0) -> 4x
+1  (0, 1) -> 1x
+2  (1, 0) -> 1x
+* Anweisungen:  ^v^v^v^v^v
+End-Position Akteur 1:  (0, 5),  End-Position Akteur 2:  (0, -5),  Häuser erreicht:  11
+0  (0, 0) -> 2x
+1  (0, 1) -> 1x
+2  (0, -1) -> 1x
+3  (0, 2) -> 1x
+4  (0, -2) -> 1x
+5  (0, 3) -> 1x
+6  (0, -3) -> 1x
+7  (0, 4) -> 1x
+8  (0, -4) -> 1x
+9  (0, 5) -> 1x
+10  (0, -5) -> 1x
+
+--- Aufgabe 2: Santa wird von Robo-Santa unterstützt ---
+- Ignored character: 10 -
+End-Position Santa: (-30, -34),  End-Position Robo-Santa: (-31, 67)
+Zusammen 8193 Schritte gemacht,  Häuser erreicht: 2631
