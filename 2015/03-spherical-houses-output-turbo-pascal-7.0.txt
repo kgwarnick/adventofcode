@@ -1,0 +1,18 @@
+--- Beispiele ---
+* Anweisungen:  >
+End-Position:  (1, 0);  Häuser erreicht:  2
+0  (0, 0) -> 1x
+1  (1, 0) -> 1x
+* Anweisungen:  ^>v<
+End-Position:  (0, 0);  Häuser erreicht:  4
+0  (0, 0) -> 2x
+1  (0, 1) -> 1x
+2  (1, 1) -> 1x
+3  (1, 0) -> 1x
+* Anweisungen:  ^v^v^v^v^v
+End-Position:  (0, 0);  Häuser erreicht:  2
+0  (0, 0) -> 6x
+1  (0, 1) -> 5x
+
+--- Aufgabe 1: Wie viele Häuser wurden mindestens einmal erreicht ---
+End-Position:  (-61, 33),  Häuser erreicht: 2572
