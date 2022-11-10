@@ -30,6 +30,27 @@ public class TauchBoot {
         return position;
     }
 
+    // Calculate the new position for a single command given as a moved distance or change in direction
+    public static Tuple<int, int> CalculatePositionFromXAim(Tuple<int, int> currentPos, ref int Aim, string command, int distance) {
+        int dx = 0, dy = 0;
+        switch (command) {
+            case "forward": dx = distance;  dy = dx * Aim;  break;
+            case "down": Aim += distance;  break;
+            case "up": Aim -= distance;  break;
+            default: throw new ArgumentException($"Unsupported command: {command}");
+        }
+        return new Tuple<int, int> (currentPos.Item1 + dx, currentPos.Item2 + dy);
+    }
+
+    // Calculate the new position for a list of commands given moved distance or change in direction
+    public static Tuple<int, int> CalculatePositionFromXAim(Tuple<string, int>[] Anweisungen, ref int Aim, Tuple<int, int>? StartPos) {
+        Tuple<int, int> position = StartPos ?? new Tuple<int, int> (0, 0);
+        foreach (Tuple<string, int> anweisung in Anweisungen) {
+            position = CalculatePositionFromXAim(position, ref Aim, anweisung.Item1, anweisung.Item2);
+        }
+        return position;
+    }
+
 
     public static readonly string[] BeispielAnweisungen = new string[] { "forward 5", "down 5", "forward 8", "up 3", "down 8", "forward 2" };
 
@@ -41,6 +62,9 @@ public class TauchBoot {
         Console.WriteLine($"Anweisungen: {kommandos.Count()} ... {string.Join<Tuple<string,int>>(", ", kommandos)}");
         Tuple<int, int> endPosition = CalculatePositionFromXY(kommandos, new Tuple<int, int> (0, 0));
         System.Console.WriteLine($"Endposition: {endPosition} -> Produkt: {endPosition.Item1 * endPosition.Item2}");
+        int Richtung = 0;
+        endPosition = CalculatePositionFromXAim(kommandos, ref Richtung, new Tuple<int, int> (0, 0));
+        System.Console.WriteLine($"Mit Aim-Steuerung:  Endwinkel: {Richtung}, Endposition: {endPosition} -> Produkt: {endPosition.Item1 * endPosition.Item2}");
         Console.WriteLine();
 
         Console.WriteLine("--- Aufgabe 1: Wo steht das Tauchboot am Ende? ---");
@@ -48,5 +72,11 @@ public class TauchBoot {
         Console.WriteLine($"Anweisungen: {anweisungen.Length}");
         endPosition = CalculatePositionFromXY(anweisungen, new Tuple<int, int> (0, 0));
         System.Console.WriteLine($"Endposition: {endPosition} -> Produkt: {endPosition.Item1 * endPosition.Item2}");
+        Console.WriteLine();
+
+        Console.WriteLine("--- Aufgabe 2: Steuerung über Tauchrichtung ---");
+        Richtung = 0;
+        endPosition = CalculatePositionFromXAim(anweisungen, ref Richtung, new Tuple<int, int> (0, 0));
+        System.Console.WriteLine($"Endwinkel: {Richtung}, Endposition: {endPosition} -> Produkt: {endPosition.Item1 * endPosition.Item2}");
     }
 }
