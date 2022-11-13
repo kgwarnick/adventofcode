@@ -1,0 +1,6 @@
+--- Beispiele ---
+key = abcdef     -> find number and hash:   609043  000001dbbfa3a5c83a2d506429c7b00e
+key = pqrstuv    -> find number and hash:  1048970  000006136ef2ff3b291c85725f17325c
+
+--- Aufgabe 1: Finde Hash mit mindestens 5 Nullen ---
+key = yzbqklnj -> find number and hash: 282749  000002c655df7738246e88f6c1c43eb7
