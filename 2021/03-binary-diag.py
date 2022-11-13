@@ -40,6 +40,38 @@ def epsilon_rate (l: list) -> int:
     for b in epsilon_bits: epsilon = epsilon * 2 + b
     return epsilon
 
+def filter_list (l: list, pred: callable):
+    return [ e for e in l if pred (l) ]
+
+def filter_most_common_bit (l: list[str], n: int):
+    numbits = sum (bitliste (l, n))
+    mostcommonbit = (1 if (numbits >= len (l) / 2) else 0)
+    return [ e for e in l if int (e[n]) == mostcommonbit ]
+
+def filter_least_common_bit (l: list[str], n: int):
+    numbits = sum (bitliste (l, n))
+    leastcommonbit = (1 if (numbits < len (l) / 2) else 0)
+    return [ e for e in l if int (e[n]) == leastcommonbit ]
+
+def oxygengenrate (l: list[str]):
+    candidates = l
+    i = 0
+    while (len (candidates) > 1 and len (candidates[0]) > i):
+        candidates = filter_most_common_bit (candidates, i)
+        i += 1
+    if (len (candidates) == 1):  return int (candidates[0], 2)
+    return -1
+
+def co2scrubberrate (l: list[str]) -> int:
+    candidates = l
+    i = 0
+    while (len (candidates) > 1 and len (candidates[0]) > i):
+        candidates = filter_least_common_bit (candidates, i)
+        i += 1
+    if (len (candidates) == 1):  return int (candidates[0], 2)
+    return -1
+
+
 print ("--- Beispiel ---")
 zeilen = beispieldiag.split()
 print ("example input: ", zeilen)
@@ -49,6 +81,10 @@ gam = gamma_rate (beispieldiag.split ())
 eps = epsilon_rate (beispieldiag.split ())
 print ("gamma =", gam, ",  epsilon =", eps,
     ",  gamma * epsilon = fuel consumption = ", gam * eps)
+oxggen = oxygengenrate (zeilen)
+co2scr = co2scrubberrate (zeilen)
+print ("oxygen generator rating =", oxggen, ",  CO2 scrubber rating =", co2scr,
+    ",  life support rating =", oxggen * co2scr)
 print ()
 
 print ("--- Aufgabe 1: Fuel consumption ---")
@@ -62,3 +98,10 @@ gam = gamma_rate (lines)
 eps = epsilon_rate (lines)
 print ("gamma rate = {}, epsilon rate = {}, fuel consumption = {}"
     .format (gam, eps, gam * eps))
+print ()
+
+print ("--- Aufgabe 2: Life support rating ---")
+oxggen = oxygengenrate (lines)
+co2scr = co2scrubberrate (lines)
+print ("oxygen generator rating =", oxggen, ",  CO2 scrubber rating =", co2scr,
+    ",  life support rating =", oxggen * co2scr)

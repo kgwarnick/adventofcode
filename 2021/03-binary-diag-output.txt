@@ -2,9 +2,13 @@
 example input:  ['00100', '11110', '10110', '10111', '10101', '01111', '00111', '11100', '10000', '11001', '00010', '01010']
 bit counts per digit:  [7, 5, 8, 7, 5]
 gamma = 22 ,  epsilon = 9 ,  gamma * epsilon = fuel consumption =  198
+oxygen generator rating = 23 ,  CO2 scrubber rating = 10 ,  life support rating = 230
 
 --- Aufgabe 1: Fuel consumption ---
 input from: 03-binary-diag-input.txt
 1000 lines of diagnosis data
 bit counts: [498, 494, 483, 492, 531, 511, 487, 515, 524, 478, 501, 464]
 gamma rate = 218, epsilon rate = 3877, fuel consumption = 845186
+
+--- Aufgabe 2: Life support rating ---
+oxygen generator rating = 1459 ,  CO2 scrubber rating = 3178 ,  life support rating = 4636702
