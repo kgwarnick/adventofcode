@@ -4,3 +4,5 @@ key = pqrstuv    -> find number and hash:  1048970  000006136ef2ff3b291c85725f17
 
 --- Aufgabe 1: Finde Hash mit mindestens 5 Nullen ---
 key = yzbqklnj -> find number and hash: 282749  000002c655df7738246e88f6c1c43eb7
+--- Aufgabe 2: Finde Hash mit mindestens 6 Nullen ---
+key = yzbqklnj -> find number and hash: 9962624  0000004b347bf4b398b3f62ace7cd301

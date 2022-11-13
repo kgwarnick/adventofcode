@@ -84,5 +84,26 @@ int main (int argc, char *argv[]) {
     printf ("key = %s -> find number and hash: %d  %s\n",
       c, findnumber (buf, c, 5), buf);
   }
+
+  printf ("--- Aufgabe 2: Finde Hash mit mindestens 6 Nullen ---\n");
+  inputfile = fopen  ("04-adventcoins-input.txt", "rt");
+  if (inputfile == NULL) {
+    fprintf (stderr, "Fehler beim Lesen der Eingabedatei\n");
+    return 1;
+  }
+  keybuf[256];
+  while (feof (inputfile) == 0) {
+    char *c = fgets (keybuf, 256, inputfile);
+    if (c == NULL) break;   // Nichts mehr gelesen, Dateiende?
+    // Zeilenende-Zeichen entfernen
+    for (char *ende = c + strlen (c) - 1;
+         (ende > c) && (*ende == '\n' || *ende == '\r');
+	  ende--) {
+      *ende = '\0';
+    }
+    printf ("key = %s -> find number and hash: %d  %s\n",
+      c, findnumber (buf, c, 6), buf);
+  }
+
   return 0;
 }
