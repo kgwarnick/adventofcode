@@ -1,0 +1,51 @@
+--- Beispiel ---
+End of input or error occurred (exception: Unexpected end of file), stop reading bingo boards
+Drawing at most 27 numbers for 3 boards
+Next number: 7
+Next number: 4
+Next number: 9
+Next number: 5
+Next number: 11
+Next number: 17
+Next number: 23
+Next number: 2
+Next number: 0
+Next number: 14
+Next number: 21
+Next number: 24
+We have one or more winners!
+Last drawn number: 24, winners: 1
+Winner:  Sum of unmarked numbers: 188 -> final score = 4512
+--- Aufgabe 1: Find the winning board ---
+End of input or error occurred (exception: Unexpected end of file), stop reading bingo boards
+Drawing at most 100 numbers for 100 boards
+Next number: 46
+Next number: 79
+Next number: 77
+Next number: 45
+Next number: 57
+Next number: 34
+Next number: 44
+Next number: 13
+Next number: 32
+Next number: 88
+Next number: 86
+Next number: 82
+Next number: 91
+Next number: 97
+Next number: 89
+Next number: 1
+Next number: 48
+Next number: 31
+Next number: 18
+Next number: 10
+Next number: 55
+Next number: 74
+Next number: 24
+Next number: 11
+Next number: 80
+Next number: 78
+Next number: 28
+We have one or more winners!
+Last drawn number: 28, winners: 1
+Winner:  Sum of unmarked numbers: 810 -> final score = 22680
