@@ -14,9 +14,15 @@ Next number: 14
 Next number: 21
 Next number: 24
 We have one or more winners!
+Next number: 10
+Next number: 16
+Next number: 13
+Everyone has finished their board now!
 Last drawn number: 24, winners: 1
 Winner:  Sum of unmarked numbers: 188 -> final score = 4512
---- Aufgabe 1: Find the winning board ---
+Last winner:  Sum of unmarked numbers: 148 -> final score = 1924
+
+--- Aufgabe 1/2: Find the winning/losing board ---
 End of input or error occurred (exception: Unexpected end of file), stop reading bingo boards
 Drawing at most 100 numbers for 100 boards
 Next number: 46
@@ -47,5 +53,68 @@ Next number: 80
 Next number: 78
 Next number: 28
 We have one or more winners!
+Next number: 37
+Next number: 47
+Next number: 17
+Next number: 21
+Next number: 61
+Next number: 26
+Next number: 85
+Next number: 99
+Next number: 96
+Next number: 23
+Next number: 70
+Next number: 3
+Next number: 54
+Next number: 5
+Next number: 41
+Next number: 50
+Next number: 63
+Next number: 14
+Next number: 64
+Next number: 42
+Next number: 36
+Next number: 95
+Next number: 52
+Next number: 76
+Next number: 68
+Next number: 29
+Next number: 9
+Next number: 98
+Next number: 35
+Next number: 84
+Next number: 83
+Next number: 71
+Next number: 49
+Next number: 73
+Next number: 58
+Next number: 56
+Next number: 66
+Next number: 92
+Next number: 30
+Next number: 51
+Next number: 20
+Next number: 81
+Next number: 69
+Next number: 65
+Next number: 15
+Next number: 6
+Next number: 16
+Next number: 39
+Next number: 43
+Next number: 67
+Next number: 7
+Next number: 59
+Next number: 40
+Next number: 60
+Next number: 4
+Next number: 90
+Next number: 72
+Next number: 22
+Next number: 0
+Next number: 93
+Next number: 94
+Everyone has finished their board now!
 Last drawn number: 28, winners: 1
 Winner:  Sum of unmarked numbers: 810 -> final score = 22680
+Last winner:  Sum of unmarked numbers: 172 -> final score = 16168
