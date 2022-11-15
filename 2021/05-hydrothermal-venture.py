@@ -34,7 +34,7 @@ def pointsx (lineseg: tuple[tuple[int,int], tuple[int,int]]) -> list[tuple[int,i
         startpt = 0; endpt = 1
     else:
         startpt = 1; endpt = 0
-    return [ ( x, (lineseg[endpt][1] - lineseg[startpt][1]) * x // (lineseg[endpt][0] - lineseg[startpt][0]) + lineseg[startpt][1])
+    return [ ( x, (lineseg[endpt][1] - lineseg[startpt][1]) * (x - lineseg[startpt][0]) // (lineseg[endpt][0] - lineseg[startpt][0]) + lineseg[startpt][1])
         for x in range (lineseg[startpt][0], lineseg[endpt][0] + 1) ]
 
 def pointsy (lineseg: tuple[tuple[int,int], tuple[int,int]]) -> list[tuple[int,int]]:
@@ -43,11 +43,11 @@ def pointsy (lineseg: tuple[tuple[int,int], tuple[int,int]]) -> list[tuple[int,i
         startpt = 0; endpt = 1
     else:
         startpt = 1; endpt = 0
-    return [ ( (lineseg[endpt][0] - lineseg[startpt][0]) * y // (lineseg[endpt][1] - lineseg[startpt][1]) + lineseg[startpt][0], y )
+    return [ ( (lineseg[endpt][0] - lineseg[startpt][0]) * (y - lineseg[startpt][1]) // (lineseg[endpt][1] - lineseg[startpt][1]) + lineseg[startpt][0], y )
         for y in range (lineseg[startpt][1], lineseg[endpt][1] + 1) ]
 
 
-def ventpointshv (linesegments: list[tuple[tuple[int, int], tuple[int,int]]]) -> dict[tuple[int,int], int]:
+def ventpointshvd (linesegments: list[tuple[tuple[int, int], tuple[int,int]]], withdiag: bool = False) -> dict[tuple[int,int], int]:
     d = dict()
     for lseg in linesegments:
         if ishoriz (lseg):
@@ -60,6 +60,12 @@ def ventpointshv (linesegments: list[tuple[tuple[int, int], tuple[int,int]]]) ->
             for p in pointsy (lseg):
                 if (loglevel >= 3):  print (f"- Adding point {p}")
                 d[p] = d.get (p, 0) + 1
+        if withdiag and isdiag (lseg):
+            if (loglevel >= 2):  print (f"- Adding segment {lseg} as diagonal segment")
+            # Nur 45-Grad-Diagonalen => Keine steilere Richtung, also kann entlang x oder y gegangen werden
+            for p in pointsy (lseg):
+                if (loglevel >= 3):  print (f"- Adding point {p}")
+                d[p] = d.get (p, 0) + 1
     return d
 
 
@@ -68,8 +74,13 @@ if __name__ == "__main__":
     loglevel = 3
     parsedlines = parselines (exampleinput)
     print (parsedlines)
-    points = ventpointshv (parsedlines)
-    print ("Points: {}".format (points))
+    points = ventpointshvd (parsedlines)
+    print ("Points: {}, number: {}".format (points, len (points)))
+    atleast2 = [ v for v in points if points[v] > 1 ]
+    print (f"Dangerous points (at least 2 vents): {atleast2}, number: {len (atleast2)}")
+    print ()
+    pointswithdiag = ventpointshvd (parsedlines, True)
+    print (f"Points including diagonal vents: {pointswithdiag}, number: {len (pointswithdiag)}")
     atleast2 = [ v for v in points if points[v] > 1 ]
     print (f"Dangerous points (at least 2 vents): {atleast2}, number: {len (atleast2)}")
     print ()
@@ -78,7 +89,13 @@ if __name__ == "__main__":
     loglevel = 1
     parsedlines = parselines (open ("05-hydrothermal-venture-input.txt", "rt").read())
     print ("Vents: {}".format (len (parsedlines)));
-    points = ventpointshv (parsedlines)
+    points = ventpointshvd (parsedlines)
     print ("Points: {}".format (len (points)))
     atleast2 = [ v for v in points if points[v] > 1 ]
+    print (f"Dangerous points (at least 2 vents): {len (atleast2)}")
+    print ()
+    print ("--- Aufgabe 2: Find dangerous points also from diagonal vents ---")
+    pointswithdiag = ventpointshvd (parsedlines, True)
+    print (f"With diagonal vents: {len (pointswithdiag)}")
+    atleast2 = [ v for v in pointswithdiag if pointswithdiag[v] > 1 ]
     print (f"Dangerous points (at least 2 vents): {len (atleast2)}")
