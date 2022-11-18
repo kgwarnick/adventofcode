@@ -5,7 +5,8 @@
 
 00110 Implicit None
 00120 Logical grid (0:999, 0:999)
-00130 Integer anzahlan
+00125 Integer brightnessgrid (0:999, 0:999)
+00130 Integer anzahlan, totbright
 00140 Integer i, x1, y1, x2, y2
 00150 Character (len=256) dateiname
 00160 Integer numanw
@@ -13,7 +14,7 @@
 00170 Logical parsedok
 00180 Character (len=32) operation
 C     Funktionen
-00190 Integer CountLightsOn
+00190 Integer CountLightsOn, GetTotalBrightness
 00195 Logical TryParseCommand
 
 00200 Write(*,*) "--- Beispiel ---"
@@ -25,9 +26,8 @@ C     Funktionen
 00230 Do i = 0, numanw - 1
 00240 parsedok = TryParseCommand (anweisungen (i), operation,           &
      & x1, y1, x2, y2)
-00245 Write (*,'(A,L3,A,A,A,4I4)') " Command parsed successfully? ",    &
-     &  parsedok, ", Action: ", Trim(operation),                        &
-     &  ", Corners:", x1, y1, x2, y2
+00245 Write (*,'(A,L3,A,A8,A,4I4)') " Command parsed successfully? ",   &
+     &  parsedok, ", Action: ", operation, ", Corners:", x1, y1, x2, y2
 00250 If (parsedok)                                                     &
      &  Call Schalten (x1, y1, x2, y2, 1000, 1000, grid, operation)
 00255 anzahlan = CountLightsOn (1000, 1000, grid)
@@ -35,32 +35,61 @@ C     Funktionen
 00270 EndDo
 00280 Write(*,*) ""
 
-00300 Write(*,*) "--- Aufgabe 1 ---"
-00310 dateiname = "06-fire-hazard-input.txt"
-00315 Call ReadInputFile (dateiname, numanw, anweisungen)
-00320 grid(:,:) = .False.   ! Turn off all lights
+00300 Write(*,*) "--- With brightness levels ---"
+00310 anweisungen (0) = "turn on 0,0 through 0,0"
+00311 anweisungen (1) = "toggle 0,0 through 999,999"
+00315 numanw = 2
+00320 brightnessgrid(:,:) = 0   ! Turn off all lights
 00330 Do i = 0, numanw - 1
 00340 parsedok = TryParseCommand (anweisungen (i), operation,           &
      & x1, y1, x2, y2)
-C0345 Write (*,'(A,L3,A,A,A,4I4)') " Command parsed successfully? ",    &
-C    &  parsedok, ", Action: ", Trim(operation),                        &
-C    &  ", Corners:", x1, y1, x2, y2
-00350 If (parsedok)                                                     &
-     &  Call Schalten (x1, y1, x2, y2, 1000, 1000, grid, operation)
-00355 anzahlan = CountLightsOn (1000, 1000, grid)
-C0360 Write(*,*) "-> Lights on:", anzahlan
+00345 Write (*,'(A,L3,A,A8,A,4I4)') " Command parsed successfully? ",   &
+     &  parsedok, ", Action: ", operation, ", Corners:", x1, y1, x2, y2
+00350 If (parsedok) Call TuneBrightness (                               &
+     & x1, y1, x2, y2, 1000, 1000, brightnessgrid, operation)
+00355 totbright = GetTotalBrightness (1000, 1000, brightnessgrid)
+00360 Write(*,*) "-> Total brightness:", totbright
 00370 EndDo
-00375 Write(*,*) "*** Ergebnis: Lights on:", anzahlan, "***"
 00380 Write(*,*) ""
 
-00500 EndProgram ProbablyAFireHazard
+
+00400 Write(*,*) "--- Aufgabe 1 On or Off ---"
+00410 dateiname = "06-fire-hazard-input.txt"
+00415 Call ReadInputFile (dateiname, numanw, anweisungen)
+00420 grid(:,:) = .False.   ! Turn off all lights
+00430 Do i = 0, numanw - 1
+00440 parsedok = TryParseCommand (anweisungen (i), operation,           &
+     & x1, y1, x2, y2)
+C0445 Write (*,'(A,L3,A,A,A,4I4)') " Command parsed successfully? ",    &
+C    &  parsedok, ", Action: ", Trim(operation),                        &
+C    &  ", Corners:", x1, y1, x2, y2
+00450 If (parsedok)                                                     &
+     &  Call Schalten (x1, y1, x2, y2, 1000, 1000, grid, operation)
+00460 EndDo
+00470 anzahlan = CountLightsOn (1000, 1000, grid)
+00475 Write(*,*) "*** Ergebnis: Lights on:", anzahlan, "***"
+00480 Write(*,*) ""
+
+00500 Write(*,*) "--- Aufgabe 2 Brightness Levels ---"
+00520 brightnessgrid(:,:) = 0   ! Turn off all lights
+00530 Do i = 0, numanw - 1
+00540 parsedok = TryParseCommand (anweisungen (i), operation,           &
+     & x1, y1, x2, y2)
+00550 If (parsedok) Call TuneBrightness (                               &
+     & x1, y1, x2, y2, 1000, 1000, brightnessgrid, operation)
+00560 EndDo
+00570 totbright = GetTotalBrightness (1000, 1000, brightnessgrid)
+00575 Write(*,*) "*** Ergebnis: Total Brightness:", totbright, "***"
+00580 Write(*,*) ""
+
+00800 EndProgram ProbablyAFireHazard
 
 
 01000 Subroutine Schalten (x1, y1, x2, y2, nx, ny, feld, operation)
 01010 Implicit None
 01020 Integer x1, y1, x2, y2, nx, ny
-C1030 Logical feld (nx, ny)
-01030 Logical feld (0:999, 0:999)
+01030 Logical feld (0:nx-1, 0:ny-1)
+C1030 Logical feld (0:999, 0:999)
 01040 Integer i, j
 01050 Character (len=32) operation
 01110 Do i = x1, x2
@@ -74,7 +103,32 @@ C1030 Logical feld (nx, ny)
 01160 EndIf
 01180 EndDo
 01190 EndDo
-01500 EndSubroutine
+01200 EndSubroutine
+
+01000 Subroutine TuneBrightness (x1, y1, x2, y2, nx, ny, feld,          &
+     & operation)
+01010 Implicit None
+01020 Integer x1, y1, x2, y2, nx, ny
+01030 Integer feld (0:nx-1, 0:ny-1)
+C1030 Logical feld (0:999, 0:999)
+01040 Integer i, j
+01050 Character (len=32) operation
+01110 Do i = x1, x2
+01120 Do j = y1, y2
+01130 If (operation == "turn on") Then
+01135   feld (i, j) = feld (i, j) + 1
+01140 Else If (operation == "turn off") Then
+01150   If (feld (i, j) > 1) Then
+01155     feld (i, j) = feld (i, j) - 1
+01160   Else
+01165     feld (i, j) = 0
+01170   EndIf
+01180 Else If (operation == "toggle") Then
+01185   feld (i, j) = feld (i, j) + 2
+01190 EndIf
+01200 EndDo
+01210 EndDo
+01250 EndSubroutine TuneBrightness
 
 02000 Integer Function CountLightsOn (nx, ny, feld)
 02010 Implicit None
@@ -89,6 +143,20 @@ C1030 Logical feld (nx, ny)
 02085 EndDo
 02088 CountLightsOn = n
 02090 EndFunction
+
+02100 Integer Function GetTotalBrightness (nx, ny, feld)
+02110 Implicit None
+02120 Integer nx, ny
+02130 Integer feld (0:nx-1, 0:ny-1)
+02140 Integer i, j, n
+02145 n = 0
+02150 Do i = 0, nx - 1
+02160 Do j = 0, ny - 1
+02170 n = n + feld (i, j)
+02180 EndDo
+02185 EndDo
+02188 GetTotalBrightness = n
+02190 EndFunction
 
 03000 Subroutine ReadInputFile (filename, numzeilen, zeilen)
 03010 Character (len=*)   filename

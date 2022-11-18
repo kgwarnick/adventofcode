@@ -1,12 +1,21 @@
  --- Beispiel ---
- Command parsed successfully?   T, Action: turn on, Corners:   0   0 999 999
+ Command parsed successfully?   T, Action: turn on , Corners:   0   0 999 999
  -> Lights on:     1000000
- Command parsed successfully?   T, Action: toggle, Corners:   0   0 999   0
+ Command parsed successfully?   T, Action: toggle  , Corners:   0   0 999   0
  -> Lights on:      999000
  Command parsed successfully?   T, Action: turn off, Corners: 499 499 500 500
  -> Lights on:      998996
  
- --- Aufgabe 1 ---
+ --- With brightness levels ---
+ Command parsed successfully?   T, Action: turn on , Corners:   0   0   0   0
+ -> Total brightness:           1
+ Command parsed successfully?   T, Action: toggle  , Corners:   0   0 999 999
+ -> Total brightness:     2000001
+ 
+ --- Aufgabe 1 On or Off ---
  Datei 06-fire-hazard-input.txt gelesen, Anweisungen:  300
  *** Ergebnis: Lights on:      543903 ***
+ 
+ --- Aufgabe 2 Brightness Levels ---
+ *** Ergebnis: Total Brightness:    14687245 ***
  
