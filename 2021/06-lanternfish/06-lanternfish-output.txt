@@ -9,13 +9,327 @@ End population in generation 5: 2, [5,7]
 
 --- Beispiel ---
 Initial state: 5, [3, 4, 3, 1, 2]
+After    0 days: 5
+After    1 day:  5
+After    2 days: 6
+After    3 days: 7
+After    4 days: 9
+After    5 days: 10
+After    6 days: 10
+After    7 days: 10
+After    8 days: 10
+After    9 days: 11
+After   10 days: 12
+After   11 days: 15
+After   12 days: 17
+After   13 days: 19
+After   14 days: 20
+After   15 days: 20
+After   16 days: 21
+After   17 days: 22
 End population in generation 18: 26, [6,8,1,1,3,0,2,2,4,6,8,1,1,3,4,6,6,8,6,8,1,5,7,0,0,2]
-Start population: 5
+Initial state: 5
 End population in generation 80: 5934
 
 --- Aufgabe 1: In 80 Tagen durch das Meer ---
 Start population from file 06-lanternfish-input.txt: 4,1,1,1,5,1,3,1,5,3,4,3,3,1,3,3,1,5,3,2,4,4,3,4,1,4,2,2,1,3,5,1,1,3,2,5,1,1,4,2,5,4,3,2,5,3,3,4,5,4,3,5,4,2,5,5,2,2,2,3,5,5,4,2,1,1,5,1,4,3,2,2,1,2,1,5,3,3,3,5,1,5,4,2,2,2,1,4,2,5,2,3,3,2,3,4,4,1,4,4,3,1,1,1,1,1,4,4,5,4,2,5,1,5,4,4,5,2,3,5,4,1,4,5,2,1,1,2,5,4,5,5,1,1,1,1,1,4,5,3,1,3,4,3,3,1,5,4,2,1,4,4,4,1,1,3,1,3,5,3,1,4,5,3,5,1,1,2,2,4,4,1,4,1,3,1,1,3,1,3,3,5,4,2,1,1,2,1,2,3,3,5,4,1,1,2,1,2,5,3,1,5,4,3,1,5,2,3,4,4,3,1,1,1,2,1,1,2,1,5,4,2,2,1,4,3,1,1,1,1,3,1,5,2,4,1,3,2,3,4,3,4,2,1,2,1,2,4,2,1,5,2,2,5,5,1,1,2,3,1,1,1,3,5,1,3,5,1,3,3,2,4,5,5,3,1,4,1,5,2,4,5,5,5,2,4,2,2,5,2,4,1,3,2,1,1,4,4,1,5
-Start population: 300
+Initial state: 300
 End population in generation 80: 352195
 End population:  352195
 
+--- Minimal-Beispiel in Altersgruppen-Implementierung ---
+Start population:  1,  Members per age group 0...8: [ 0, 0, 0, 1, 0, 0, 0, 0, 0 ]
+After    0 days:  1,  Members per age group 0...8: [ 0, 0, 0, 1, 0, 0, 0, 0, 0 ]
+After    1 day:   1,  Members per age group 0...8: [ 0, 0, 1, 0, 0, 0, 0, 0, 0 ]
+After    2 days:  1,  Members per age group 0...8: [ 0, 1, 0, 0, 0, 0, 0, 0, 0 ]
+After    3 days:  1,  Members per age group 0...8: [ 1, 0, 0, 0, 0, 0, 0, 0, 0 ]
+After    4 days:  2,  Members per age group 0...8: [ 0, 0, 0, 0, 0, 0, 1, 0, 1 ]
+End population in generation 5:  2,  Members per age group 0...8: [ 0, 0, 0, 0, 0, 1, 0, 1, 0 ]
+
+--- Beispiel in Altersgruppen-Implementierung ---
+Start population:  3,4,3,1,2
+Start population:  5,  Members per age group 0...8: [ 0, 1, 1, 2, 1, 0, 0, 0, 0 ]
+After    0 days:  5,  Members per age group 0...8: [ 0, 1, 1, 2, 1, 0, 0, 0, 0 ]
+After    1 day:   5,  Members per age group 0...8: [ 1, 1, 2, 1, 0, 0, 0, 0, 0 ]
+After    2 days:  6,  Members per age group 0...8: [ 1, 2, 1, 0, 0, 0, 1, 0, 1 ]
+After    3 days:  7,  Members per age group 0...8: [ 2, 1, 0, 0, 0, 1, 1, 1, 1 ]
+After    4 days:  9,  Members per age group 0...8: [ 1, 0, 0, 0, 1, 1, 3, 1, 2 ]
+After    5 days:  10,  Members per age group 0...8: [ 0, 0, 0, 1, 1, 3, 2, 2, 1 ]
+After    6 days:  10,  Members per age group 0...8: [ 0, 0, 1, 1, 3, 2, 2, 1, 0 ]
+After    7 days:  10,  Members per age group 0...8: [ 0, 1, 1, 3, 2, 2, 1, 0, 0 ]
+After    8 days:  10,  Members per age group 0...8: [ 1, 1, 3, 2, 2, 1, 0, 0, 0 ]
+After    9 days:  11,  Members per age group 0...8: [ 1, 3, 2, 2, 1, 0, 1, 0, 1 ]
+After   10 days:  12,  Members per age group 0...8: [ 3, 2, 2, 1, 0, 1, 1, 1, 1 ]
+After   11 days:  15,  Members per age group 0...8: [ 2, 2, 1, 0, 1, 1, 4, 1, 3 ]
+After   12 days:  17,  Members per age group 0...8: [ 2, 1, 0, 1, 1, 4, 3, 3, 2 ]
+After   13 days:  19,  Members per age group 0...8: [ 1, 0, 1, 1, 4, 3, 5, 2, 2 ]
+After   14 days:  20,  Members per age group 0...8: [ 0, 1, 1, 4, 3, 5, 3, 2, 1 ]
+After   15 days:  20,  Members per age group 0...8: [ 1, 1, 4, 3, 5, 3, 2, 1, 0 ]
+After   16 days:  21,  Members per age group 0...8: [ 1, 4, 3, 5, 3, 2, 2, 0, 1 ]
+After   17 days:  22,  Members per age group 0...8: [ 4, 3, 5, 3, 2, 2, 1, 1, 1 ]
+End population in generation 18:  26,  Members per age group 0...8: [ 3, 5, 3, 2, 2, 1, 5, 1, 4 ]
+End population: 26
+Start population:  5
+End population in generation 80:  5934
+End population: 5934
+
+--- Aufgabe 2: In 256 Tagen durch das Meer ---
+Start population:  300,  Members per age group 0...8: [ 0, 86, 53, 54, 55, 52, 0, 0, 0 ]
+After    0 days:  300
+After    1 day:   300
+After    2 days:  386
+After    3 days:  439
+After    4 days:  493
+After    5 days:  548
+After    6 days:  600
+After    7 days:  600
+After    8 days:  600
+After    9 days:  686
+After   10 days:  739
+After   11 days:  879
+After   12 days:  987
+After   13 days:  1093
+After   14 days:  1148
+After   15 days:  1200
+After   16 days:  1286
+After   17 days:  1339
+After   18 days:  1565
+After   19 days:  1726
+After   20 days:  1972
+After   21 days:  2135
+After   22 days:  2293
+After   23 days:  2434
+After   24 days:  2539
+After   25 days:  2851
+After   26 days:  3065
+After   27 days:  3537
+After   28 days:  3861
+After   29 days:  4265
+After   30 days:  4569
+After   31 days:  4832
+After   32 days:  5285
+After   33 days:  5604
+After   34 days:  6388
+After   35 days:  6926
+After   36 days:  7802
+After   37 days:  8430
+After   38 days:  9097
+After   39 days:  9854
+After   40 days:  10436
+After   41 days:  11673
+After   42 days:  12530
+After   43 days:  14190
+After   44 days:  15356
+After   45 days:  16899
+After   46 days:  18284
+After   47 days:  19533
+After   48 days:  21527
+After   49 days:  22966
+After   50 days:  25863
+After   51 days:  27886
+After   52 days:  31089
+After   53 days:  33640
+After   54 days:  36432
+After   55 days:  39811
+After   56 days:  42499
+After   57 days:  47390
+After   58 days:  50852
+After   59 days:  56952
+After   60 days:  61526
+After   61 days:  67521
+After   62 days:  73451
+After   63 days:  78931
+After   64 days:  87201
+After   65 days:  93351
+After   66 days:  104342
+After   67 days:  112378
+After   68 days:  124473
+After   69 days:  134977
+After   70 days:  146452
+After   71 days:  160652
+After   72 days:  172282
+After   73 days:  191543
+After   74 days:  205729
+After   75 days:  228815
+After   76 days:  247355
+After   77 days:  270925
+After   78 days:  295629
+After   79 days:  318734
+After   80 days:  352195
+After   81 days:  378011
+After   82 days:  420358
+After   83 days:  453084
+After   84 days:  499740
+After   85 days:  542984
+After   86 days:  589659
+After   87 days:  647824
+After   88 days:  696745
+After   89 days:  772553
+After   90 days:  831095
+After   91 days:  920098
+After   92 days:  996068
+After   93 days:  1089399
+After   94 days:  1190808
+After   95 days:  1286404
+After   96 days:  1420377
+After   97 days:  1527840
+After   98 days:  1692651
+After   99 days:  1827163
+After  100 days:  2009497
+After  101 days:  2186876
+After  102 days:  2375803
+After  103 days:  2611185
+After  104 days:  2814244
+After  105 days:  3113028
+After  106 days:  3355003
+After  107 days:  3702148
+After  108 days:  4014039
+After  109 days:  4385300
+After  110 days:  4798061
+After  111 days:  5190047
+After  112 days:  5724213
+After  113 days:  6169247
+After  114 days:  6815176
+After  115 days:  7369042
+After  116 days:  8087448
+After  117 days:  8812100
+After  118 days:  9575347
+After  119 days:  10522274
+After  120 days:  11359294
+After  121 days:  12539389
+After  122 days:  13538289
+After  123 days:  14902624
+After  124 days:  16181142
+After  125 days:  17662795
+After  126 days:  19334374
+After  127 days:  20934641
+After  128 days:  23061663
+After  129 days:  24897583
+After  130 days:  27442013
+After  131 days:  29719431
+After  132 days:  32565419
+After  133 days:  35515516
+After  134 days:  38597436
+After  135 days:  42396037
+After  136 days:  45832224
+After  137 days:  50503676
+After  138 days:  54617014
+After  139 days:  60007432
+After  140 days:  65234947
+After  141 days:  71162855
+After  142 days:  77911553
+After  143 days:  84429660
+After  144 days:  92899713
+After  145 days:  100449238
+After  146 days:  110511108
+After  147 days:  119851961
+After  148 days:  131170287
+After  149 days:  143146500
+After  150 days:  155592515
+After  151 days:  170811266
+After  152 days:  184878898
+After  153 days:  203410821
+After  154 days:  220301199
+After  155 days:  241681395
+After  156 days:  262998461
+After  157 days:  286762802
+After  158 days:  313957766
+After  159 days:  340471413
+After  160 days:  374222087
+After  161 days:  405180097
+After  162 days:  445092216
+After  163 days:  483299660
+After  164 days:  528444197
+After  165 days:  576956227
+After  166 days:  627234215
+After  167 days:  688179853
+After  168 days:  745651510
+After  169 days:  819314303
+After  170 days:  888479757
+After  171 days:  973536413
+After  172 days:  1060255887
+After  173 days:  1155678412
+After  174 days:  1265136080
+After  175 days:  1372885725
+After  176 days:  1507494156
+After  177 days:  1634131267
+After  178 days:  1792850716
+After  179 days:  1948735644
+After  180 days:  2129214825
+After  181 days:  2325391967
+After  182 days:  2528564137
+After  183 days:  2772630236
+After  184 days:  3007016992
+After  185 days:  3300344872
+After  186 days:  3582866911
+After  187 days:  3922065541
+After  188 days:  4274127611
+After  189 days:  4657778962
+After  190 days:  5098022203
+After  191 days:  5535581129
+After  192 days:  6072975108
+After  193 days:  6589883903
+After  194 days:  7222410413
+After  195 days:  7856994522
+After  196 days:  8579844503
+After  197 days:  9372149814
+After  198 days:  10193360091
+After  199 days:  11170997311
+After  200 days:  12125465032
+After  201 days:  13295385521
+After  202 days:  14446878425
+After  203 days:  15802254916
+After  204 days:  17229144336
+After  205 days:  18773204594
+After  206 days:  20543147125
+After  207 days:  22318825123
+After  208 days:  24466382832
+After  209 days:  26572343457
+After  210 days:  29097640437
+After  211 days:  31676022761
+After  212 days:  34575459510
+After  213 days:  37772291461
+After  214 days:  41092029717
+After  215 days:  45009529957
+After  216 days:  48891168580
+After  217 days:  53564023269
+After  218 days:  58248366218
+After  219 days:  63673099947
+After  220 days:  69448314222
+After  221 days:  75667489227
+After  222 days:  82781821418
+After  223 days:  89983198297
+After  224 days:  98573553226
+After  225 days:  107139534798
+After  226 days:  117237123216
+After  227 days:  127696680440
+After  228 days:  139340589174
+After  229 days:  152230135640
+After  230 days:  165650687524
+After  231 days:  181355374644
+After  232 days:  197122733095
+After  233 days:  215810676442
+After  234 days:  234836215238
+After  235 days:  256577712390
+After  236 days:  279926816080
+After  237 days:  304991276698
+After  238 days:  333585510284
+After  239 days:  362773420619
+After  240 days:  397166051086
+After  241 days:  431958948333
+After  242 days:  472388388832
+After  243 days:  514763031318
+After  244 days:  561568989088
+After  245 days:  613512326364
+After  246 days:  667764697317
+After  247 days:  730751561370
+After  248 days:  794732368952
+After  249 days:  869554439918
+After  250 days:  946721979651
+After  251 days:  1033957377920
+After  252 days:  1128275357682
+After  253 days:  1229333686405
+After  254 days:  1344263887734
+After  255 days:  1462497066269
+End population in generation 256:  1600306001288,  Members per age group 0...8: [ 141148347315, 162057469235, 171485519495, 188293726992, 209248181091, 219291507258, 252739136348, 118233178535, 137808935019 ]
+End population:  1600306001288
