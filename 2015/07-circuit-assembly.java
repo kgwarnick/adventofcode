@@ -252,6 +252,26 @@ public class CircuitAssembly {
     return instarray;
   }
 
+  /** Replace an instruction for a certain target wire */
+  public static Instruction[] ReplaceInstruction (Instruction[] instructions,
+    Instruction newInstruction, boolean verbose) {
+    Instruction[] newInstructions = instructions;
+    int numfound = 0;
+    for (int i = 0; i < newInstructions.length; i++) {
+      if (newInstruction.outputWire.equals (newInstructions[i].outputWire)) {
+        if (verbose)  System.out.println ("Replacing instruction " + i +
+          " " + newInstructions[i] + " by " + newInstruction);
+        newInstructions[i] = newInstruction;
+        numfound ++;
+      }
+    }
+    if (numfound < 1) {
+      System.err.println ("ReplaceInstruction: Could not find rule to replace");
+    }
+    return newInstructions;
+  }
+
+  /** Print the full list of wires and their values */
   public static void printwires (Map<String, Short> wires) {
     for (String k: wires.keySet())
       System.out.println (k + ": " + Short.toUnsignedInt(wires.get(k)));
@@ -268,7 +288,7 @@ public class CircuitAssembly {
     printwires (wirevalues);
     System.out.println ();
 
-    System.out.println ("--- Aufgabe 1 ---");
+    System.out.println ("--- Aufgabe 1: Signal on wire \"a\" ---");
     String filename = "07-circuit-assembly-input.txt";
     List<String> manual = null;
     try {
@@ -284,14 +304,27 @@ public class CircuitAssembly {
     wirevalues = RunCircuit (instrarr, false);
     System.out.println ("Wire values after running the circuit:");
     printwires (wirevalues);
-    short ergebnis = wirevalues.get ("a");
+    short ergebnis1 = wirevalues.get ("a");
     System.out.println ("*** Ergebnis:  Wire \"a\" has value: " +
-      ergebnis + " ***");
+      Short.toUnsignedInt (ergebnis1) + " ***");
+    System.out.println ();
+
+    System.out.println ("--- Aufgabe 2: Override signal on wire \"b\" ---");
+    Instruction bNewRule = new Instruction ();
+    bNewRule.gatetype = "SET";  bNewRule.outputWire = "b";
+    bNewRule.operand = ergebnis1;
+    Instruction[] newInstr = ReplaceInstruction (instrarr, bNewRule, true);
+    wirevalues = RunCircuit (newInstr, false);
+    System.out.println ("Wire values after running the circuit:");
+    printwires (wirevalues);
+    short ergebnis2 = wirevalues.get ("a");
+    System.out.println ("*** Ergebnis:  Wire \"a\" has value: " +
+      Short.toUnsignedInt (ergebnis2) + " ***");
   }
 
 
   /** Data type to describe one instruction, the "wiring of the gate" */
-  class Instruction {
+  static class Instruction {
     public String gatetype;
     public String inputWire1;
     public String inputWire2;
@@ -305,14 +338,6 @@ public class CircuitAssembly {
       operand = 0;
     }
 
-    /*
-    protected void ReadTwoInputWiresFromString (String gatetype, String input) {
-      String[] operands = input.split (gatetype.trim());
-      inputWire1 = operands[0].trim().charAt(0);
-      inputWire2 = operands[1].trim().charAt(0);
-    }
-    */
-
     public short Apply (short op1, short op2) {
       switch (gatetype) {
         case "AND":  return (short)(op1 & op2);
@@ -322,7 +347,7 @@ public class CircuitAssembly {
         case "ORX":   return (short)(operand | op2);
         case "ORY":   return (short)(op1 | operand);
         case "LSHIFT":  return (short)(op1 << operand);
-        case "RSHIFT":  return (short)(op1 >> operand);
+        case "RSHIFT":  return (short)((op1 & 0xFFFF) >> operand);
         case "NOT":  return (short)~op1;
         case "SET":  return operand;
         case "COPY":  return op1;
@@ -335,9 +360,8 @@ public class CircuitAssembly {
 
     @Override
     public String toString() {
-      return super.toString() + "  " + gatetype + " (" +
-        inputWire1 + ", " + inputWire2 + ", " + operand + " -> " +
-        outputWire + ")";
+      return gatetype + " (" + inputWire1 + ", " + inputWire2 + ", " +
+        operand + " -> " + outputWire + ")";
     }
   }
 }
