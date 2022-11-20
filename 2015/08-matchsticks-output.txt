@@ -1,0 +1,34 @@
+--- Example Unescaping ---
+unescape: "" (2) ->  (0)
+unescape: "abc" (5) -> abc (3)
+unescape: "aaa\"aaa" (10) -> aaa"aaa (7)
+unescape: "\x27" (6) -> ' (1)
+code length 23 -> value length 11
+-> Difference in value and code length: 12
+
+--- Weitere Beispiele ---
+unescape: "AB = \"\x41\x42\"" (19) -> AB = "AB" (9)
+code length 19 -> value length 9
+-> Difference in value and code length: 10
+
+--- Aufgabe 1: Escaping overhead ---
+code length 6202 -> value length 4860
+-> Difference in value and code length: 1342
+
+--- Example Escaping ---
+escape: "" (2) -> "\"\"" (6)
+escape: "abc" (5) -> "\"abc\"" (9)
+escape: "aaa\"aaa" (10) -> "\"aaa\\\"aaa\"" (16)
+escape: "\x27" (6) -> "\"\\x27\"" (11)
+code length 42 -> value length 23
+-> Difference in value and code length: 19
+
+--- Weitere Beispiele ---
+escape: "AB = \"\x41\x42\"" (19) -> "\"AB = \\\"\\x41\\x42\\\"\"" (29)
+code length 29 -> value length 19
+-> Difference in value and code length: 10
+
+--- Aufgabe 2: Escaping overhead ---
+code length 8276 -> value length 6202
+-> Difference in value and code length: 2074
+
