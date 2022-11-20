@@ -83,8 +83,8 @@ Sub Main()
     BandBedarf (1, 1, 10))
 
   ' Dateiinhalt lesen und Liste von Geschenk-Maßen vorbereiten
-  Dim fileContent As String = My.Computer.FileSystem.ReadAllText ("02-geschenkpapier-input.txt")
-  Dim zeilen() As String = Split (fileContent, Chr$(10))   ' Aufteilen an Zeilenenden
+  Dim fileContent As String = FileIO.FileSystem.ReadAllText ("02-geschenkpapier-input.txt")
+  Dim zeilen() As String = Split (fileContent, Chr(10))   ' Aufteilen an Zeilenenden
   Dim AnzahlGeschenke As Integer
   If (zeilen (zeilen.Length - 1) <> "") Then
     AnzahlGeschenke = zeilen.Length
