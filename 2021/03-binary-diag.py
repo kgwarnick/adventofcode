@@ -3,6 +3,8 @@
 # Advent of Code 2021, Day 3 Binary Diagnostic
 # https://adventofcode.com/2021/day/3
 
+from typing import Callable
+
 beispieldiag = """00100
 11110
 10110
@@ -21,6 +23,7 @@ def bitliste (l: list, n: int):
     return [ int (m[n]) for m in l ]
 
 def bits_zaehlen (l: list):
+    # oder?:  return [ [ int(s) for s in i] for i in zip (*[ s.strip() for s in l ]) ]
     return [ bitliste (l, i) for i in range (len (l[0].strip())) ]
 
 def bitwise_reduce (l, aktion):
@@ -40,7 +43,7 @@ def epsilon_rate (l: list) -> int:
     for b in epsilon_bits: epsilon = epsilon * 2 + b
     return epsilon
 
-def filter_list (l: list, pred: callable):
+def filter_list (l: list, pred: Callable):
     return [ e for e in l if pred (l) ]
 
 def filter_most_common_bit (l: list[str], n: int):

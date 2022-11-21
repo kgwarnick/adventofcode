@@ -1,7 +1,7 @@
 Beispiel: [199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
 - Anzahl Zunahmen:      7
 - Anzahl Abnahmen:      2
-- Anzahl ohne Änderung: 2
+- Anzahl ohne Änderung: 0
 Beispiel geglättet: [607, 618, 618, 617, 647, 716, 769, 792]
 - Anzahl Zunahmen:      5
 - Anzahl Abnahmen:      1

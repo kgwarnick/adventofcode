@@ -16,7 +16,8 @@ def änderungen (tiefe: list) -> list:
     return [ tiefe[i] - tiefe[i-1] for i in range (1, len(tiefe)) ]
 
 def glättung (liste: list[int], fenstergröße: int, aktion: Callable[[list[int]], int]) -> list:
-    return [ aktion (liste[i-fenstergröße+1:i+1]) for i in range (fenstergröße - 1, len(liste)) ]
+    # return [ aktion (liste[i-fenstergröße+1:i+1]) for i in range (fenstergröße - 1, len(liste)) ]
+    return [ aktion (liste[i:i+fenstergröße]) for i in range (len(liste) - fenstergröße + 1) ]
 
 
 # Testfälle
@@ -24,12 +25,12 @@ tiefenbeispiel1 = [ 199, 200, 208, 210, 200, 207, 240, 269, 260, 263 ]
 print ("Beispiel: {}".format (tiefenbeispiel1))
 print ("- Anzahl Zunahmen:     ", len ([ ä for ä in änderungen (tiefenbeispiel1) if ä > 0 ]))
 print ("- Anzahl Abnahmen:     ", len ([ ä for ä in änderungen (tiefenbeispiel1) if ä < 0 ]))
-print ("- Anzahl ohne Änderung:", len ([ ä for ä in änderungen (tiefenbeispiel1) if ä < 0 ]))
+print ("- Anzahl ohne Änderung:", len ([ ä for ä in änderungen (tiefenbeispiel1) if ä == 0 ]))
 glattetiefen = glättung (tiefenbeispiel1, 3, sum)
 print ("Beispiel geglättet: {}".format (glattetiefen))
 print ("- Anzahl Zunahmen:     ", len ([ ä for ä in änderungen (glattetiefen) if ä > 0 ]))
 print ("- Anzahl Abnahmen:     ", len ([ ä for ä in änderungen (glattetiefen) if ä < 0 ]))
-print ("- Anzahl ohne Änderung:", len ([ ä for ä in änderungen (glattetiefen) if ä < 0 ]))
+print ("- Anzahl ohne Änderung:", len ([ ä for ä in änderungen (glattetiefen) if ä == 0 ]))
 
 
 # Aufgabe 1: Wie viele Zunahmen der Tiefe
