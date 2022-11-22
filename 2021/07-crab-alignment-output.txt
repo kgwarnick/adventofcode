@@ -1,4 +1,4 @@
---- Example ---
+﻿--- Example with constant fuel consumption ---
 Number of crab positions: 10
 Need to take positions into account from 0 to 16
 - Fuel needed for position 0: 49
@@ -18,11 +18,41 @@ Need to take positions into account from 0 to 16
 - Fuel needed for position 14: 95
 - Fuel needed for position 15: 103
 - Fuel needed for position 16: 111
-Best position: 2 -> Fuel needed: 37
-(2, 37)
+Best position: 2 -> fuel needed: 37
+Position  1 -> fuel needed:  41
+Position  3 -> fuel needed:  39
+Position 10 -> fuel needed:  71
 
---- Aufgabe 1 ---
+--- Aufgabe 1: Constant fuel per distance ---
 Number of crab positions: 1000
 Need to take positions into account from 0 to 1910
-Best position: 313 -> Fuel needed: 335271
-(313, 335271)
+*** Best position: 313 -> needs fuel: 335271 ***
+
+--- Example with linearly increasing fuel consumption ---
+Number of crab positions: 10
+Need to take positions into account from 0 to 16
+- Fuel needed for position 0: 290
+- Fuel needed for position 1: 242
+- Fuel needed for position 2: 206
+- Fuel needed for position 3: 183
+- Fuel needed for position 4: 170
+- Fuel needed for position 5: 168
+- Fuel needed for position 6: 176
+- Fuel needed for position 7: 194
+- Fuel needed for position 8: 223
+- Fuel needed for position 9: 262
+- Fuel needed for position 10: 311
+- Fuel needed for position 11: 370
+- Fuel needed for position 12: 439
+- Fuel needed for position 13: 518
+- Fuel needed for position 14: 607
+- Fuel needed for position 15: 707
+- Fuel needed for position 16: 817
+Best position: 5 -> fuel needed: 168
+Position  2 -> fuel needed:  206
+
+--- Aufgabe 2: Fuel consumption increases with distance ---
+- Best position for constant fuel consumption: 313 -> now needs fuel: 106883588
+Number of crab positions: 1000
+Need to take positions into account from 0 to 1910
+*** Best position: 461 -> needs fuel: 95851339 ***
