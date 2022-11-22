@@ -12,8 +12,9 @@
   London -> Belfast -> Dublin  => Total distance: 659
   London -> Dublin -> Belfast  => Total distance: 605
 Shortest route:  Belfast -> Dublin -> London  => Total travel distance: 605
+Longest route:   Belfast -> London -> Dublin  => Total travel distance: 982
 
---- Aufgabe 1: Shortest route ---
+--- Aufgabe 1 und 2: Shortest and longest route ---
 28 Lines read from file: 09-single-night-input.txt
 28 Distance pairs
            Faerun -- Norrath         = 129
@@ -47,3 +48,4 @@ Shortest route:  Belfast -> Dublin -> London  => Total travel distance: 605
 8 Locations:  AlphaCentauri, Arbre, Faerun, Norrath, Snowdin, Straylight, Tambi, Tristram
 40320 Possible travel routes
 *** Shortest route:  Norrath -> Straylight -> Arbre -> Faerun -> AlphaCentauri -> Snowdin -> Tambi -> Tristram  => Total travel distance: 207 ***
+*** Longest route:   Straylight -> Snowdin -> Arbre -> AlphaCentauri -> Tristram -> Norrath -> Faerun -> Tambi  => total travel distance: 804 ***

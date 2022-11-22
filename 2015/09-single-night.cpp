@@ -148,6 +148,7 @@ template<typename T> std::list<std::list<T> > GetAllPermutationsRec (std::set<T>
 
 void CalculateRoutes (std::list<DistanceDef> distances,
     int& shortestDistance, std::list<std::string>& shortestRoute,
+    int& longestDistance, std::list<std::string>& longestRoute,
     int loglevel = 1) {
   // Print distance table
   if (loglevel >= 1) {
@@ -170,8 +171,8 @@ void CalculateRoutes (std::list<DistanceDef> distances,
   std::list<std::list<std::string> > routes = GetAllPermutationsRec (locations);
   std::cout << routes.size() << " Possible travel routes" << std::endl;
   // Calculate travel distance for all routes
-  int shortestdistance = INT_MAX;
-  std::list<std::string> shortestroute;
+  int shortestdistance = INT_MAX, longestdistance = 0;
+  std::list<std::string> shortestroute, longestroute;
   for (std::list<std::list<std::string> >::iterator lliter = routes.begin();
        lliter != routes.end();  lliter++) {
     int traveldist = GetTotalDistance (*lliter, distances);
@@ -179,15 +180,22 @@ void CalculateRoutes (std::list<DistanceDef> distances,
       std::cout << "  " << ListToString (*lliter, " -> ")
                 << "  => Total distance: " << traveldist << std::endl;
     }
-    // check whether this route is the shorter than all earlier ones
+    // check whether this route is shorter than all earlier ones
     if (traveldist < shortestdistance) {
       shortestdistance = traveldist;
       shortestroute = *lliter;
+    }
+    // check whether this route is longer than all earlier ones
+    if (traveldist > longestdistance) {
+      longestdistance = traveldist;
+      longestroute = *lliter;
     }
   }
   // Set output values
   shortestDistance = shortestdistance;
   shortestRoute = shortestroute;
+  longestDistance = longestdistance;
+  longestRoute = longestroute;
 }
 
 
@@ -199,20 +207,26 @@ int main () {
   ExampleLines.push_back ("London to Belfast = 518");
   ExampleLines.push_back ("Dublin to Belfast = 141");
   std::list<DistanceDef> distances = ParseDistanceList (ExampleLines);
-  int shortestdistance;
-  std::list<std::string> shortestroute;
-  CalculateRoutes (distances, shortestdistance, shortestroute, 3);
+  int shortestdistance, longestdistance;
+  std::list<std::string> shortestroute, longestroute;
+  CalculateRoutes (distances, shortestdistance, shortestroute,
+    longestdistance, longestroute, 3);
   std::cout << "Shortest route:  " << ListToString (shortestroute, " -> ")
     << "  => Total travel distance: " << shortestdistance << std::endl;
+  std::cout << "Longest route:   " << ListToString (longestroute, " -> ")
+    << "  => Total travel distance: " << longestdistance << std::endl;
   std::cout << std::endl;
 
-  std::cout << "--- Aufgabe 1: Shortest route ---" << std::endl;
+  std::cout << "--- Aufgabe 1 und 2: Shortest and longest route ---" << std::endl;
   std::string filename = "09-single-night-input.txt";
   std::list<std::string> lines = ReadLines (filename);
   std::cout << lines.size() << " Lines read from file: " << filename << std::endl;
   distances = ParseDistanceList (lines);
 
-  CalculateRoutes (distances, shortestdistance, shortestroute, 2);
+  CalculateRoutes (distances, shortestdistance, shortestroute,
+    longestdistance, longestroute, 2);
   std::cout << "*** Shortest route:  " << ListToString (shortestroute, " -> ")
     << "  => Total travel distance: " << shortestdistance << " ***" << std::endl;
+  std::cout << "*** Longest route:   " << ListToString (longestroute, " -> ")
+    << "  => total travel distance: " << longestdistance << " ***" << std::endl;
 }
