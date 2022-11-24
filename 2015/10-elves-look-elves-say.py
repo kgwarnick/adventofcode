@@ -28,9 +28,15 @@ if __name__ == "__main__":
     print ("211 ->", LookAndSayOnce ("211"))
     print ("1  -- 5x --> ", LookAndSayMany ("1", 5))
     print ()
-    print ("--- Aufgabe 1 ---")
+
+    print ("--- Aufgabe 1: 40 rounds ---")
     with open ("10-elves-look-elves-say-input.txt", "rt") as infile:
         inputtext = infile.read().strip()
     print ("Input text:", inputtext)
     round40 = LookAndSayMany (inputtext, 40)
     print ("*** After 40 rounds: sentence length {} ***".format (len (round40)))
+    print ()
+
+    print ("--- Aufgabe 2: 50 rounds ---")
+    round50 = LookAndSayMany (inputtext, 50)
+    print ("*** After 40 rounds: sentence length {} ***".format (len (round50)))

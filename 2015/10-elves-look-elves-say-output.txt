@@ -1,6 +1,9 @@
 211 -> 1221
 1  -- 5x -->  312211
 
---- Aufgabe 1 ---
+--- Aufgabe 1: 40 rounds ---
 Input text: 1321131112
 *** After 40 rounds: sentence length 492982 ***
+
+--- Aufgabe 2: 50 rounds ---
+*** After 40 rounds: sentence length 6989950 ***
