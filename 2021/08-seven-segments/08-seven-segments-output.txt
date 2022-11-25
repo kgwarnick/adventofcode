@@ -1,0 +1,6 @@
+--- Example ---
+Number of output digits with unique number of segments (digits 1, 4, 7, 8): 26
+
+--- Aufgabe 1: Easy digits (1, 4, 7, 8) ---
+Number of pattern notes in input: 200
+*** Number of output digits with unique number of segments (digits 1, 4, 7, 8): 409 ***
