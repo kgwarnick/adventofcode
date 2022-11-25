@@ -1,6 +1,25 @@
---- Example ---
+--- Example: Count digits with unique number of segments ---
 Number of output digits with unique number of segments (digits 1, 4, 7, 8): 26
+
+--- Example: Decoding Numbers ---
+One-line example:  acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf  ->  Number: 5353
+
+be cfbegad cbdgef fgaecd cgeb fdcge agebfd fecdb fabcd edb  fdgacbe cefdb cefbgd gcbe  ->  8394
+edbfga begcd cbg gc gcadebf fbgde acbgfd abcde gfcbed gfec  fcgedb cgb dgebacf gc  ->  9781
+fgaebd cg bdaec gdafb agbcfd gdcbef bgcad gfac gcb cdgabef  cg cg fdcagb cbg  ->  1197
+fbegcd cbd adcefb dageb afcb bc aefdc ecdab fgdeca fcdbega  efabcd cedba gadfec cb  ->  9361
+aecbfdg fbg gf bafeg dbefa fcge gcbea fcaegb dgceab fcbdga  gecf egdcabf bgf bfgea  ->  4873
+fgeab ca afcebg bdacfeg cfaedg gcfdb baec bfadeg bafgc acf  gebdcfa ecba ca fadegcb  ->  8418
+dbcfg fgd bdegcaf fgec aegbdf ecdfab fbedc dacgb gdcebf gf  cefg dcbef fcge gbcadfe  ->  4548
+bdfegc cbegaf gecbf dfcage bdacg ed bedf ced adcbefg gebcd  ed bcgafe cdgba cbgef  ->  1625
+egadfb cdbfeg cegd fecab cgb gbdefca cg fgcdab egfdb bfceg  gbdfcae bgc cg cgb  ->  8717
+gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc  fgae cfgab fg bagce  ->  4315
+
+Sum for larger example: 61229
 
 --- Aufgabe 1: Easy digits (1, 4, 7, 8) ---
 Number of pattern notes in input: 200
 *** Number of output digits with unique number of segments (digits 1, 4, 7, 8): 409 ***
+
+--- Aufgabe 2: Decoding the digits ---
+*** Sum of all 4-digit numbers:  1024649
