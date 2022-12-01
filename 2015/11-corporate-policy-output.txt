@@ -10,3 +10,6 @@ Next valid password after ghijklmn: ghjaabcc
 --- Puzzle 1: Santa's next password ---
 input from file: cqjxjnds
 Next valid password after cqjxjnds: cqjxxyzz
+
+--- Puzzle 2: And the next one after that ---
+Next valid password after that    : cqkaabcc

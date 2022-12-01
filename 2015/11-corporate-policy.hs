@@ -112,5 +112,11 @@ main = do
   inputText <- hGetContents fileHandle
   putStrLn ("input from file: " ++ dropTrailingSpaceAndNewLine inputText)
   hClose fileHandle
-  putStrLn ("Next valid password after " ++ (dropTrailingSpaceAndNewLine inputText)
-    ++ ": " ++ (nextValidPassword (dropTrailingSpaceAndNewLine inputText)))
+  putStrLn ("Next valid password after " ++
+    (dropTrailingSpaceAndNewLine inputText) ++ ": " ++
+    (nextValidPassword (dropTrailingSpaceAndNewLine inputText)))
+  putStrLn ""
+
+  putStrLn "--- Puzzle 2: And the next one after that ---"
+  putStrLn ("Next valid password after that    : " ++
+    (nextValidPassword (nextValidPassword (dropTrailingSpaceAndNewLine inputText))))
