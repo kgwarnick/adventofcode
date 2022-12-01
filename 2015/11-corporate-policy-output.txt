@@ -1,0 +1,12 @@
+--- Examples ---
+hijklmmn contains a straight?  Yes
+hijklmmn contains only valid characters?  No
+abbceffg contains a straight?  No
+abbceffg contains at least two different pairs?  Yes
+abbcegjk contains at least two different pairs?  No
+Next valid password after abcdefgh: abcdffaa
+Next valid password after ghijklmn: ghjaabcc
+
+--- Puzzle 1: Santa's next password ---
+input from file: cqjxjnds
+Next valid password after cqjxjnds: cqjxxyzz
