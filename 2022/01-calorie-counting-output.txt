@@ -1,0 +1,6 @@
+--- Example ---
+Largest sum of calories in one group: 24000
+
+--- Puzzle 1: Largest calorie carrier ---
+*** Largest sum of calories in one group: 70698 ***
+
