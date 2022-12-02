@@ -1,0 +1,8 @@
+--- Example ---
+Strategy tips:  A Y,  B X,  C Z
+1st round: A - Y = 8
+2nd round: B - X = 1
+3rd round: C - Z = 6
+
+--- Puzzle 1: Predict score from strategy guide ---
+Total score: 13526
