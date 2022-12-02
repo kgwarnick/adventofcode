@@ -1,4 +1,4 @@
---- Example ---
+--- Example Part 1: Predicted results ---
 Strategy tips:  A Y,  B X,  C Z
 1st round: A - Y = 8
 2nd round: B - X = 1
@@ -6,3 +6,11 @@ Strategy tips:  A Y,  B X,  C Z
 
 --- Puzzle 1: Predict score from strategy guide ---
 Total score: 13526
+
+--- Example Part 2: Produce a certain result in each round ---
+1st round: A - X = 4
+2nd round: B - X = 1
+3rd round: C - X = 7
+
+--- Puzzle 2: Predict score for specific round results ---
+Total score: 14204
