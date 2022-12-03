@@ -1,0 +1,7 @@
+--- Examples ---
+Misplaced items: pLPvts
+Sum: 157
+
+--- Puzzle 1: Find all misplaced items ---
+Read 300 lines
+*** Sum of priority value of misplaced items: 7850
