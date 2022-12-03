@@ -29,6 +29,8 @@ int GetItemPriority (const char item) {
 }
 
 
+/// \brief Find the character present in both halfs of each line
+//
 string FindMisplacedItemInEachRucksack (list<string> rucksacklines) {
   int n = 0;
   string items = "";
@@ -50,6 +52,41 @@ int GetPrioritySum (const string& items) {
 }
 
 
+/// \brief Find the common character in the three lines
+//
+char GetCommonCharacter (const string& s1, const string& s2, const string& s3) {
+  string commonchars;
+  for (char c : s1) {
+    // if this character is also present in the other two strings
+    // and it is not the same as a character already found, then add it
+    if ((s2.find (c) != string::npos) && (s3.find (c) != string::npos) &&
+      (commonchars.find (c) == string::npos))
+      commonchars += c;
+  }
+  if (commonchars.size() != 1)
+    cerr << "Found unexpected number of common characters: expected 1, found "
+         << commonchars.size() << ", " << commonchars << endl;
+  return commonchars[0];
+}
+
+
+/// \brief Find the common character in every group of three lines
+//
+string FindCommonCharacterInGroupsOfThree (list<string> rucksacklines) {
+  int n = 0;
+  string items = "";
+  list<string>::const_iterator siter = rucksacklines.cbegin ();
+  while (siter != rucksacklines.cend ()) {
+    n++;
+    char badge = GetCommonCharacter (*siter++, *siter++, *siter++);
+    items += badge;
+    // cout << "Group " << n << " badge: " << badge << endl;
+  }
+  return items;
+}
+
+
+
 int main () {
 
   cout << "--- Examples ---" << endl;
@@ -62,13 +99,25 @@ int main () {
   examples.push_back ("CrZsJsPPZsGzwwsLwLmpwMDw");
   string misplaced = FindMisplacedItemInEachRucksack (examples);
   cout << "Misplaced items: " << misplaced << endl;
-  cout << "Sum: " << GetPrioritySum (misplaced) << endl << endl;
+  cout << "Sum of priority value of misplaced items: " << GetPrioritySum (misplaced) << endl;
+  string badgelist = FindCommonCharacterInGroupsOfThree (examples);
+  cout << "Badges: " << badgelist << endl;
+  cout << "Sum of priority value of badges: " << GetPrioritySum (badgelist) << endl;
+  cout << endl;
 
   cout << "--- Puzzle 1: Find all misplaced items ---" << endl;
   list<string> lines = ReadLines ("03-rucksack-reorganization-input.txt");
   cout << "Read " << lines.size() << " lines" << endl;
   misplaced = FindMisplacedItemInEachRucksack (lines);
+  cout << "Misplaced items: " << misplaced << endl;
   cout << "*** Sum of priority value of misplaced items: "
        << GetPrioritySum (misplaced) << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Find all badges for groups of three ---" << endl;
+  badgelist = FindCommonCharacterInGroupsOfThree (lines);
+  cout << "Badges: " << badgelist << endl;
+  cout << "*** Sum of priority value of badges: "
+       << GetPrioritySum (badgelist) << endl;
   return 0;
 }

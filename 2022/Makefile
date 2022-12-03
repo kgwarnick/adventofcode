@@ -1,6 +1,6 @@
 HELPER_OBJ := fileread.o strsplit.o
 
-PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o
+PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o 03-rucksack-reorganization.o
 
 # Extension for binaries, empty for Linux binaries
 BINEXT :=
@@ -20,3 +20,6 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	$(LINK_CXX)
 
 02-rock-paper-scissors : %$(BINEXT) : %.o
+
+03-rucksack-reorganization : %$(BINEXT) : %.o fileread.o
+	$(LINK_CXX)

@@ -1,7 +1,14 @@
 --- Examples ---
 Misplaced items: pLPvts
-Sum: 157
+Sum of priority value of misplaced items: 157
+Badges: rZ
+Sum of priority value of badges: 70
 
 --- Puzzle 1: Find all misplaced items ---
 Read 300 lines
+Misplaced items: sjzNnDTLjpqTTGZQJcHbDdgLWNJMvVHlDtZwhVFTLSDRNpfcqsSDpQzSnTzFPBmJDGgGFSMfqHsdWvNbgsTfnsRjzqJRPcFVdjPhmBrTBVQlBnbrQJRDTVLsPJzpmfpsCdtpNBRPngvGHBPCdbqcdPMCmvLdVpmghtSvptcztbqldPDNWzNWqlZrzdJjDMqFNnpDNqHqRlgmjfvcMZrWdZpmRqlZzdtSsMZgmGNZMHqGDTSlLFSgvZJMnbhvdHvZNBwDGNLWsnpnvcwQsWFcpzGwNnltqdhmVsldLpLrgTvC
 *** Sum of priority value of misplaced items: 7850
+
+--- Puzzle 2: Find all badges for groups of three ---
+Badges: GMrzpjWRtdPzsHPmMdTtRqRWdbLDwlqQFghZthGPltQVdBbRttZGsbjLwSVTgJhfBSfbTTZBrwdrcvcJVCRDsVCqlSczgDJbJmNd
+*** Sum of priority value of badges: 2581
