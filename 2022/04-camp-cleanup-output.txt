@@ -1,0 +1,12 @@
+--- Examples ---
+  0  2-4,6-8  ->   PARSEOK      2 ...   4 ,    6 ... 8  [----]
+  1  2-3,4-5  ->   PARSEOK      2 ...   3 ,    4 ... 5  [----]
+  2  5-7,7-9  ->   PARSEOK      5 ...   7 ,    7 ... 9  [----]
+  3  2-8,3-7  ->   PARSEOK      2 ...   8 ,    3 ... 7  [CONT]
+  4  6-6,4-6  ->   PARSEOK      6 ...   6 ,    4 ... 6  [CONT]
+  5  2-6,4-8  ->   PARSEOK      2 ...   6 ,    4 ... 8  [----]
+Number of assignment pairs with one range fully contained in the other: 2
+
+--- Puzzle 1: Fully contained ranges ---
+Lines read: 1000 (1001), characters: 11374
+Number of assignment pairs with one range fully contained in the other: 448
