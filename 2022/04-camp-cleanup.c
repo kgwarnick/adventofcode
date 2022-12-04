@@ -38,6 +38,13 @@ bool IsOneSectionContainedInTheOther (int start1, int end1, int start2, int end2
 }
 
 
+/// \brief Check whether the two sections overlap
+//
+bool IsSectionPairWithOverlap (int start1, int end1, int start2, int end2) {
+  return ((end1 >= start2 && start1 <= end2) || (end2 >= start1 && start2 <= end1));
+}
+
+
 /// \brief Count in how many range pairs one is fully contained in the other
 //
 int NumberOfFullyContainedRanges (int numlines, char **lines, int loglevel) {
@@ -56,6 +63,24 @@ int NumberOfFullyContainedRanges (int numlines, char **lines, int loglevel) {
 }
 
 
+/// \brief Count in how many range pairs the two ranges overlap
+//
+int NumberOfOverlappingRanges (int numlines, char **lines, int loglevel) {
+  int numoverlap = 0;
+  for (int i = 0; i < numlines; i++) {
+    int a1, a2, b1, b2;
+    bool parsesuccess = parsesections (lines[i], &a1, &a2, &b1, &b2);
+    bool overlap = IsSectionPairWithOverlap (a1, a2, b1, b2);
+    if (overlap) numoverlap++;
+    if (loglevel >= 1)
+      printf ("%3d  %s  ->  %s  %3d ... %3d ,  %3d ... %d  %s\n", i, lines[i],
+        parsesuccess ? " PARSEOK  " : "PARSEERROR", a1, a2, b1, b2,
+        overlap ? "[OVER]" : "[----]");
+  }
+  return numoverlap;
+}
+
+
 int main () {
 
   printf ("--- Examples ---\n");
@@ -66,18 +91,27 @@ int main () {
     sizeof (examples) / sizeof (examples[0]), examples, 1);
   printf ("Number of assignment pairs with "
     "one range fully contained in the other: %d\n", numcontained);
+  int numoverlap = NumberOfOverlappingRanges (
+    sizeof (examples) / sizeof (examples[0]), examples, 1);
+  printf ("Number of assignment pairs with overlap: %d\n", numoverlap);
   printf ("\n");
 
   printf ("--- Puzzle 1: Fully contained ranges ---\n"); 
-  size_t maxlines = 1001;
+  size_t maxlines = 1000;
   size_t numlines = 0;
   char **lines = (char**) calloc (maxlines, sizeof (char*));
   ssize_t numchars = readlines ("04-camp-cleanup-input.txt", &maxlines, &numlines, &lines);
-  printf ("Lines read: %zu (%zu), characters: %zd\n", numlines, maxlines, numchars);
-  numcontained = NumberOfFullyContainedRanges (
-    numlines, lines, 0);
+  printf ("Lines read: %zu (array size %zu), characters: %zd\n", numlines, maxlines, numchars);
+  numcontained = NumberOfFullyContainedRanges (numlines, lines, 0);
   printf ("Number of assignment pairs with "
     "one range fully contained in the other: %d\n", numcontained);
+  printf ("\n");
+
+  printf ("--- Puzzle 2: Overlapping ranges ---\n");
+  numoverlap = NumberOfOverlappingRanges (numlines, lines, 0);
+  printf ("Number of assignment pairs with overlap: %d\n", numoverlap);
+  for (int i = 0; i < numlines; i++)  free (lines[i]);
+  free (lines);
 
   return 0;
 }

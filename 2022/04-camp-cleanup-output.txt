@@ -6,7 +6,17 @@
   4  6-6,4-6  ->   PARSEOK      6 ...   6 ,    4 ... 6  [CONT]
   5  2-6,4-8  ->   PARSEOK      2 ...   6 ,    4 ... 8  [----]
 Number of assignment pairs with one range fully contained in the other: 2
+  0  2-4,6-8  ->   PARSEOK      2 ...   4 ,    6 ... 8  [----]
+  1  2-3,4-5  ->   PARSEOK      2 ...   3 ,    4 ... 5  [----]
+  2  5-7,7-9  ->   PARSEOK      5 ...   7 ,    7 ... 9  [OVER]
+  3  2-8,3-7  ->   PARSEOK      2 ...   8 ,    3 ... 7  [OVER]
+  4  6-6,4-6  ->   PARSEOK      6 ...   6 ,    4 ... 6  [OVER]
+  5  2-6,4-8  ->   PARSEOK      2 ...   6 ,    4 ... 8  [OVER]
+Number of assignment pairs with overlap: 4
 
 --- Puzzle 1: Fully contained ranges ---
-Lines read: 1000 (1001), characters: 11374
+Lines read: 1000 (array size 1000), characters: 11374
 Number of assignment pairs with one range fully contained in the other: 448
+
+--- Puzzle 2: Overlapping ranges ---
+Number of assignment pairs with overlap: 794
