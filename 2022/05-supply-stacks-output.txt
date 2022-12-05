@@ -1,0 +1,54 @@
+Stack numbers:  1   2   3 
+Found 4 move instructions
+Total lines parsed: 9
+ 1   [Z] [N]
+ 2   [M] [C] [D]
+ 3   [P]
+ 4  
+ 5  
+ 6  
+ 7  
+ 8  
+ 9  
+[ OK ]  Carry out instruction:  move 1 from 2 to 1
+[ OK ]  Carry out instruction:  move 3 from 1 to 3
+[ OK ]  Carry out instruction:  move 2 from 2 to 1
+[ OK ]  Carry out instruction:  move 1 from 1 to 2
+Instructions run successfully: 4
+ 1   [C]
+ 2   [M]
+ 3   [P] [D] [N] [Z]
+ 4  
+ 5  
+ 6  
+ 7  
+ 8  
+ 9  
+* Top-most crates:  CMZ       *
+
+--- Puzzle 1: Topmost crates ---
+Read 512 lines, vector size: 512
+Stack numbers:  1   2   3   4   5   6   7   8   9 
+Found 502 move instructions
+Total lines parsed: 512
+ 1   [G] [F] [V] [H] [P] [S]
+ 2   [G] [J] [F] [B] [V] [D] [Z] [M]
+ 3   [G] [M] [L] [J] [N]
+ 4   [N] [G] [Z] [V] [D] [W] [P]
+ 5   [V] [R] [C] [B]
+ 6   [V] [R] [S] [M] [P] [W] [L] [Z]
+ 7   [T] [H] [P]
+ 8   [Q] [R] [S] [N] [C] [H] [Z] [V]
+ 9   [F] [L] [G] [P] [V] [Q] [J]
+Instructions run successfully: 502
+ 1   [S] [F]
+ 2   [N] [S] [G] [P] [V] [P] [H] [D] [Z] [V] [R] [J] [G] [H] [C]
+ 3   [H] [Z] [N] [Z] [C] [V] [P] [B] [S] [M] [L] [W] [V]
+ 4   [G] [D] [W] [V] [M] [P] [L] [R]
+ 5   [N] [R] [L]
+ 6   [B] [J] [G] [J] [V] [Q] [F] [F] [G] [Z] [T] [M]
+ 7   [V]
+ 8   [Q]
+ 9   [P]
+*** Top-most crates:  FCVRLMVQP ***
+
