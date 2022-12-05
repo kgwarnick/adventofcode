@@ -92,10 +92,14 @@ list<MoveInstruction> parseinstructions (int& currline, const vector<string>& li
 
 
 /// \brief Carry out a move instruction on the stack vector
+/// \param moveinstr  The move instruction to run
+/// \param stacks     The vector of stacks to operate on
+/// \param allinone   Move multiple crates as on group or one after the other
 /// \return true on success, false on failure (such as a failed move because of an empty stack)
 ///
 /// Beware: Stack numbers are 1-based, vector indices are 0-based!
-bool CarryOutMove (const MoveInstruction& moveinstr, vector<list<char>>& stacks) {
+bool CarryOutMove (const MoveInstruction& moveinstr,
+    vector<list<char>>& stacks, bool allinone = false) {
   // FIXME Could also check for invalid stack numbers <= 0
   // Check for invalid "from" stack
   if (moveinstr.from > stacks.size()) {
@@ -116,8 +120,21 @@ bool CarryOutMove (const MoveInstruction& moveinstr, vector<list<char>>& stacks)
       << stacks[moveinstr.from-1].size() << endl;
     return false;
   }
+  if (allinone) {
+    // Move crates to a temporary stack and then to the destination
+    // to reverse the sequence twice
+    list<char> temp;
+    for (int i = 0; i < moveinstr.count; i++) {
+      temp.push_back (stacks[moveinstr.from-1].back());
+      stacks[moveinstr.from-1].pop_back ();
+    }
+    for (int i = 0; i < moveinstr.count; i++) {
+      stacks[moveinstr.to-1].push_back (temp.back());
+      temp.pop_back ();
+    }
+  }
   // Relocate crates one after the other
-  for (int i = 0; i < moveinstr.count; i++) {
+  else for (int i = 0; i < moveinstr.count; i++) {
     char c = stacks[moveinstr.from-1].back();
     stacks[moveinstr.to-1].push_back (c);
     stacks[moveinstr.from-1].pop_back ();
@@ -128,13 +145,17 @@ bool CarryOutMove (const MoveInstruction& moveinstr, vector<list<char>>& stacks)
 
 
 /// \brief Run all move instructions on the stack vector
+/// \param instrlist  List of instructions to run
+/// \param stacks     Crate stacks to operate on
+/// \param allinone   Move multiple crates together or a multiple moves
+/// \param loglevel   How much output to produce
 /// \return Number of instructions successfully carried out
 //
 int CarryOutMoves (const list<MoveInstruction>& instrlist,
-    vector<list<char>>& stacks, int loglevel = 0) {
+    vector<list<char>>& stacks, bool allinone, int loglevel = 0) {
   int numsuccess = 0;
   for (MoveInstruction m : instrlist) {
-    bool success = CarryOutMove (m, stacks);
+    bool success = CarryOutMove (m, stacks, allinone);
     if (loglevel >= 2)
       cout << (success ? "[ OK ]" : "[FAIL]") << "  Carry out instruction:  "
         << "move " << m.count << " from " << m.from << " to " << m.to << endl;
@@ -154,10 +175,40 @@ string GetTopMostCrates (vector<list<char>> stacks) {
 }
 
 
+/// \brief Parse stack arrangement and move instructions from the input lines
+/// \param lines         (Input) Lines to parse
+/// \param stacks        (Output) Stacks parsed
+/// \param instructions  (Output) Instructions parsed
+/// \return The number of lines parsed
+//
+int ParseStacksAndInstructions (const vector<string> lines,
+    vector<list<char> >& stacks, list<MoveInstruction>& instructions) {
+  int l = 0;   // line counter
+  // Parse starting stack arrangement
+  stacks = parsestacks (l, lines);
+  // Verify there is an empty line between stacks and instructions
+  if (lines[l].empty())  l++;
+  else  cout << "Warning: Line " << l + 1 << " not empty, trying to parse it" << endl;
+  // Parse instructions
+  instructions = parseinstructions (l, lines);
+  // Total number of lines
+  return l;
+}
+
+
+/// \brief Run all the instructions on the stack and return the top-most crates
+//
+string RunInstructions (list<MoveInstruction> instructions,
+    vector<list<char>> stacks, bool allinone, int loglevel = 1) {
+  if (loglevel >= 1)  PrintStacks (stacks);
+  int numrun = CarryOutMoves (instructions, stacks, allinone, loglevel);
+  if (loglevel >= 1)  cout << "Instructions run successfully: " << numrun << endl;
+  if (loglevel >= 1)  PrintStacks (stacks);
+  return GetTopMostCrates (stacks);
+}
+
+
 int main () {
-  vector<list<char>> examplestacks = {
-    { 'C', 'N', 'D' }, { 'M', 'C' }, { 'P' }
-  };
   vector<string> examplelines = {
     "    [D]    ",
     "[N] [C]    ",
@@ -169,43 +220,46 @@ int main () {
     "move 2 from 2 to 1",
     "move 1 from 1 to 2"
   };
-  int l = 0;
-  vector<list<char>> exampleparsed = parsestacks (l, examplelines);
-  // Verify an empty line between stacks and instructions
-  if (examplelines[l].empty())  l++;
-  else  cout << "Warning: Line " << l + 1 << " not empty, trying to parse it" << endl;
-  // Parse instructions
-  list<MoveInstruction> instructions = parseinstructions (l, examplelines);
-  cout << "Found " << instructions.size() << " move instructions" << endl;
-  cout << "Total lines parsed: " << l << endl;
-  PrintStacks (exampleparsed);
-  int numrun = CarryOutMoves (instructions, exampleparsed, 2);
-  cout << "Instructions run successfully: " << numrun << endl;
-  PrintStacks (exampleparsed);
-  cout << "* Top-most crates:  " << GetTopMostCrates (exampleparsed) << " *" << endl;
+  vector<list<char>> examplestacks;
+  list<MoveInstruction> exampleinstructions;
+  int linesparsed = ParseStacksAndInstructions (
+    examplelines, examplestacks, exampleinstructions);
+  cout << "Total lines parsed: " << linesparsed << ", found "
+    << examplestacks.size() << " crate stacks and "
+    << exampleinstructions.size() << " move instructions" << endl;
+
+  string topmost = RunInstructions (exampleinstructions, examplestacks, false, 2);
+  cout << "* Top-most crates:  " << topmost << " *" << endl;
   cout << endl;
 
-  cout << "--- Puzzle 1: Topmost crates ---" << endl;
+  cout << "Move multiple crates in one move" << endl;
+  topmost = RunInstructions (exampleinstructions, examplestacks, true, 2);
+  cout << "* Top-most crates:  " << topmost << " *" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 1: Topmost crates, multiple crates are moved "
+    << "one after the other ---" << endl;
+  // Read input lines and convert the list to a vector
   list<string> inputlines = ReadLines ("05-supply-stacks-input.txt");
   vector<string> inputlinevec (inputlines.size());
-  transform (inputlines.cbegin(), inputlines.cend(), inputlinevec.begin(), [] (const string& s) { return s; });
-  cout << "Read " << inputlines.size() << " lines, vector size: " << inputlinevec.size() << endl;
-  l = 0;
-  vector<list<char>> inputstacks = parsestacks (l, inputlinevec);
-  // Verify an empty line between stacks and instructions
-  if (inputlinevec[l].empty())  l++;
-  else  cout << "Warning: Line " << l + 1 << " not empty, trying to parse it" << endl;
-  // Parse instructions
-  instructions = parseinstructions (l, inputlinevec);
-  cout << "Found " << instructions.size() << " move instructions" << endl;
-  cout << "Total lines parsed: " << l << endl;
-  PrintStacks (inputstacks);
-  numrun = CarryOutMoves (instructions, inputstacks);
-  cout << "Instructions run successfully: " << numrun << endl;
-  PrintStacks (inputstacks);
-  cout << "*** Top-most crates:  " << GetTopMostCrates (inputstacks)
-       << " ***" << endl;
+  transform (inputlines.cbegin(), inputlines.cend(), inputlinevec.begin(),
+    [] (const string& s) { return s; });
+  cout << "Read " << inputlines.size() << " lines, vector size: "
+    << inputlinevec.size() << endl;
+  vector<list<char>> inputstacks;
+  list<MoveInstruction> inputinstructions;
+  linesparsed = ParseStacksAndInstructions (inputlinevec, inputstacks, inputinstructions);
+  cout << "Total lines parsed: " << linesparsed << ", found "
+    << inputstacks.size() << " crate stacks and "
+    << inputinstructions.size() << " move instructions" << endl;
+
+  topmost = RunInstructions (inputinstructions, inputstacks, false);
+  cout << "*** Top-most crates:  " << topmost << " ***" << endl;
   cout << endl;
+
+  cout << "--- Puzzle 2: Topmost crates when mutliple crates are moved as one block ---" << endl;
+  topmost = RunInstructions (inputinstructions, inputstacks, true);
+  cout << "*** Top-most crates:  " << topmost << " ***" << endl;
 
   return 0;
 }

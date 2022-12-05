@@ -1,6 +1,5 @@
 Stack numbers:  1   2   3 
-Found 4 move instructions
-Total lines parsed: 9
+Total lines parsed: 9, found 9 crate stacks and 4 move instructions
  1   [Z] [N]
  2   [M] [C] [D]
  3   [P]
@@ -26,11 +25,36 @@ Instructions run successfully: 4
  9  
 * Top-most crates:  CMZ       *
 
---- Puzzle 1: Topmost crates ---
+Move multiple crates in one move
+ 1   [Z] [N]
+ 2   [M] [C] [D]
+ 3   [P]
+ 4  
+ 5  
+ 6  
+ 7  
+ 8  
+ 9  
+[ OK ]  Carry out instruction:  move 1 from 2 to 1
+[ OK ]  Carry out instruction:  move 3 from 1 to 3
+[ OK ]  Carry out instruction:  move 2 from 2 to 1
+[ OK ]  Carry out instruction:  move 1 from 1 to 2
+Instructions run successfully: 4
+ 1   [M]
+ 2   [C]
+ 3   [P] [Z] [N] [D]
+ 4  
+ 5  
+ 6  
+ 7  
+ 8  
+ 9  
+* Top-most crates:  MCD       *
+
+--- Puzzle 1: Topmost crates, multiple crates are moved one after the other ---
 Read 512 lines, vector size: 512
 Stack numbers:  1   2   3   4   5   6   7   8   9 
-Found 502 move instructions
-Total lines parsed: 512
+Total lines parsed: 512, found 9 crate stacks and 502 move instructions
  1   [G] [F] [V] [H] [P] [S]
  2   [G] [J] [F] [B] [V] [D] [Z] [M]
  3   [G] [M] [L] [J] [N]
@@ -52,3 +76,24 @@ Instructions run successfully: 502
  9   [P]
 *** Top-most crates:  FCVRLMVQP ***
 
+--- Puzzle 2: Topmost crates when mutliple crates are moved as one block ---
+ 1   [G] [F] [V] [H] [P] [S]
+ 2   [G] [J] [F] [B] [V] [D] [Z] [M]
+ 3   [G] [M] [L] [J] [N]
+ 4   [N] [G] [Z] [V] [D] [W] [P]
+ 5   [V] [R] [C] [B]
+ 6   [V] [R] [S] [M] [P] [W] [L] [Z]
+ 7   [T] [H] [P]
+ 8   [Q] [R] [S] [N] [C] [H] [Z] [V]
+ 9   [F] [L] [G] [P] [V] [Q] [J]
+Instructions run successfully: 502
+ 1   [V] [R]
+ 2   [V] [N] [Z] [P] [V] [H] [B] [L] [G] [V] [S] [H] [J] [F] [W]
+ 3   [N] [G] [P] [P] [R] [M] [N] [G] [Z] [V] [D] [F] [L]
+ 4   [C] [S] [Z] [H] [C] [Z] [J] [W]
+ 5   [V] [M] [G]
+ 6   [M] [Q] [B] [Q] [V] [R] [P] [L] [T] [P] [S] [J]
+ 7   [G]
+ 8   [F]
+ 9   [D]
+*** Top-most crates:  RWLWGJGFD ***
