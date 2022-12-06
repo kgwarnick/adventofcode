@@ -1,10 +1,19 @@
 --- Examples ---
 * mjqjpqmgbljsphdztnvjfqwrcgsmlb -> Start-of-packet at position: 7
+* mjqjpqmgbljsphdztnvjfqwrcgsmlb -> Start-of-message at position: 19
 * bvwbjplbgvbhsrlpgdmjqwftvncz -> Start-of-packet at position: 5
+* bvwbjplbgvbhsrlpgdmjqwftvncz -> Start-of-message at position: 23
 * nppdvjthqldpwncqszvftbrmjlhg -> Start-of-packet at position: 6
+* nppdvjthqldpwncqszvftbrmjlhg -> Start-of-message at position: 23
 * nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg -> Start-of-packet at position: 10
+* nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg -> Start-of-message at position: 29
 * zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw -> Start-of-packet at position: 11
+* zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw -> Start-of-message at position: 26
 
 --- Puzzle 1: Find start of packet ---
 Characters read: 4096
-*** Start-of-packet at position: 1929 ***
+*** Start-of-packet at position: 1929, content: mbwq ***
+*** Start-of-4-byte-sequence at position: 1929 ***
+
+--- Puzzle 2: Find start of message ---
+*** Start-of-message = Start-of-14-byte-sequence at position: 3298, content: qgqbjmlsbcrldj ***
