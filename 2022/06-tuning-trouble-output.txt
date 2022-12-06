@@ -1,0 +1,10 @@
+--- Examples ---
+* mjqjpqmgbljsphdztnvjfqwrcgsmlb -> Start-of-packet at position: 7
+* bvwbjplbgvbhsrlpgdmjqwftvncz -> Start-of-packet at position: 5
+* nppdvjthqldpwncqszvftbrmjlhg -> Start-of-packet at position: 6
+* nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg -> Start-of-packet at position: 10
+* zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw -> Start-of-packet at position: 11
+
+--- Puzzle 1: Find start of packet ---
+Characters read: 4096
+*** Start-of-packet at position: 1929 ***
