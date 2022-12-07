@@ -17,7 +17,13 @@ Small dir: a, size: 94853
 Small dir: e, size: 584
 * Sum of sizes of small directories: 95437 *
 
---- Puzzle 1: Directories with sze at most 100000 ---
+Need to free: 8381165
+* Should free: 24933642 *
+
+--- Puzzle 1: Directories with size at most 100000 ---
 1060 lines read from file
-tree root = 0x55963cc9d120
-* Sum of sizes of small directories: 1443806 *
+*** Sum of sizes of small directories: 1443806 ***
+
+--- Puzzle 2: Find deletion candidate ---
+Need to free: 913445
+*** Should free: 942298 ***

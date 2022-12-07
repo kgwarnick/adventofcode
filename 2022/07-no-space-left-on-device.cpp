@@ -1,6 +1,7 @@
 // Advent of Code 2022 Day 7: No Space Left On Device
 // https://adventofcode.com/day/7
 
+#include <climits>
 #include <iostream>
 #include <list>
 #include <map>
@@ -11,6 +12,9 @@
 #include "fileread.hpp"
 
 using namespace std;
+
+const unsigned long int filesystemsize = 70000000;
+const unsigned long int needfreespace  = 30000000;
 
 const list<string> ExampleLines = {
   "$ cd /",
@@ -50,6 +54,12 @@ class DirEntry {
   bool IsDirectory;
 
   DirEntry (const string& entryname = "") : name (entryname), parent(0) { }
+
+  ~DirEntry () {
+    for (pair<string,DirEntry*> d : children) {
+      if (d.second != 0)  delete d.second;
+    }
+  }
 
   /// \brief Calculate the size of this directory with all its children
   //
@@ -103,6 +113,10 @@ class ShellSession {
   DirEntry* tree;
 
   ShellSession () : currdir (0), tree (0) { }
+
+  ~ShellSession () {
+    if (tree != 0)  delete tree;
+  }
 
   /// \brief Change the current directory
   //
@@ -191,6 +205,23 @@ class ShellSession {
 };
 
 
+/// \brief Find the size of the smallest directory larger than or
+///   equal to the specified size
+//
+unsigned long int FindSmallestDirSizeLargerThan (list<DirEntry*> dirs,
+    unsigned long int minsize) {
+  unsigned long int dirsize = ULONG_MAX;
+  for (DirEntry* de : dirs) {
+    unsigned long int ds = de->CalcSize();
+    // cout << "Deletion candidate: " << de->name << ", " << ds << endl;
+    if (ds >= minsize && ds < dirsize) {
+      dirsize = ds;
+    }
+  }
+  return dirsize;
+}
+
+
 int main () {
   cout << "--- Example ---" << endl;
   ShellSession sess;
@@ -205,18 +236,32 @@ int main () {
   cout << "* Sum of sizes of small directories: " << sumsize << " *" << endl;
   cout << endl;
 
-  cout << "--- Puzzle 1: Directories with sze at most 100000 ---" << endl;
+  unsigned long needtofree = needfreespace - (filesystemsize - sess.tree->CalcSize());
+  cout << "Need to free: " << needtofree << endl;
+  smalldirs = sess.tree->FindDirectoriesMaxSize (filesystemsize);
+  unsigned long shouldfree = FindSmallestDirSizeLargerThan (smalldirs, needtofree);
+  cout << "* Should free: " << shouldfree << " *" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 1: Directories with size at most 100000 ---" << endl;
   list<string> InputLines = ReadLines ("07-no-space-left-on-device-input.txt");
   cout << InputLines.size() << " lines read from file" << endl;
   ShellSession inputsess;
   inputsess.WalkDirTree (InputLines);
-  cout << "tree root = " << inputsess.tree << endl;
   smalldirs = inputsess.tree->FindDirectoriesMaxSize (100000);
   sumsize = 0;
   for (DirEntry* sd : smalldirs) {
     sumsize += sd->size;
   }
-  cout << "* Sum of sizes of small directories: " << sumsize << " *" << endl;
+  cout << "*** Sum of sizes of small directories: " << sumsize << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Find deletion candidate ---" << endl;
+  needtofree = needfreespace - (filesystemsize - inputsess.tree->CalcSize());
+  cout << "Need to free: " << needtofree << endl;
+  smalldirs = inputsess.tree->FindDirectoriesMaxSize (filesystemsize);
+   shouldfree = FindSmallestDirSizeLargerThan (smalldirs, needtofree);
+  cout << "*** Should free: " << shouldfree << " ***" << endl;
 }
 
 
