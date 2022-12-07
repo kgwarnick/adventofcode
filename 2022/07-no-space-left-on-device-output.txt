@@ -1,0 +1,23 @@
+--- Example ---
+DIR  48381165  /  /
+  DIR  94853  a  /a
+    DIR  584  e  /a/e
+      FILE 584  i  /a/e/i
+    FILE 29116  f  /a/f
+    FILE 2557  g  /a/g
+    FILE 62596  h.lst  /a/h.lst
+  FILE 14848514  b.txt  /b.txt
+  FILE 8504156  c.dat  /c.dat
+  DIR  24933642  d  /d
+    FILE 5626152  d.ext  /d/d.ext
+    FILE 8033020  d.log  /d/d.log
+    FILE 4060174  j  /d/j
+    FILE 7214296  k  /d/k
+Small dir: a, size: 94853
+Small dir: e, size: 584
+* Sum of sizes of small directories: 95437 *
+
+--- Puzzle 1: Directories with sze at most 100000 ---
+1060 lines read from file
+tree root = 0x55963cc9d120
+* Sum of sizes of small directories: 1443806 *

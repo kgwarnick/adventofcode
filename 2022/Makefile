@@ -2,7 +2,8 @@ HELPER_OBJ := fileread.o strsplit.o freadlns.o
 
 PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   03-rucksack-reorganization.o 04-camp-cleanup.o \
-  05-supply-stacks.o 06-tuning-trouble.o
+  05-supply-stacks.o 06-tuning-trouble.o \
+  07-no-space-left-on-device.o
 
 # Extension for binaries, empty for Linux binaries
 BINEXT :=
@@ -33,3 +34,6 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	$(LINK_CXX)
 
 06-tuning-trouble$(BINEXT) : %$(BINEXT) : %.o
+
+07-no-space-left-on-device$(BINEXT) : %$(BINEXT) : %.o fileread.o
+	$(LINK_CXX)
