@@ -1,0 +1,8 @@
+--- Example ---
+5 x 5 trees
+* Visible trees: 21 *
+
+--- Puzzle 1: Visible trees ---
+9900 characters on 99 lines read
+99 x 99 trees
+*** Visible trees: 1719 ***
