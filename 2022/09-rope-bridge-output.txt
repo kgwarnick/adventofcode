@@ -1,10 +1,46 @@
---- Example ---
+--- Examples ---
 Running 8 movements
 Head visited positions: 21
 Tail visited positions: 13
+      0    
+   4  ..41.     4
+   3  ...16     3
+   2  .3111     2
+   1  ....1     1
+   0  2112.     0
 
---- Puzzle 1: Positions visited by the rope tail ---
+Running 8 movements
+Head visited positions: 21
+Tail visited positions: 1
+      0
+   0  *     0
+
+Running 8 movements
+Head visited positions: 96
+Tail visited positions: 36
+       :         0         :
+   6  1.....................     6
+   5  1.............112.....     5
+   4  1............2...2....     4
+   3  .2..........*.....2...     3
+   2  ..2..........2.....2..     2
+   1  ...2........2.......2.     1
+   0  ....2......*.........*     0
+  -1  .....2..............2.    -1
+  -2  ......2............2..    -2
+  -3  .......2..........2...    -3
+  -4  ........2........2....    -4
+  -5  .........21111111.....    -5
+
+--- Puzzle 1: Positions visited by the rope tail for two nodes ---
 2000 lines read
 Running 2000 movements
 Head visited positions: 7071
 Tail visited positions: 6212
+*** Number of nodes visited by the tail at least once: 6212 ***
+
+--- Puzzle 2: Positions visited by the rope tail for 10 nodes ---
+Running 2000 movements
+Head visited positions: 7071
+Tail visited positions: 2522
+*** Number of nodes visited by the tail at least once: 2522 ***

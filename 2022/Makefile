@@ -1,12 +1,15 @@
+# Extension for object files, typically .o on Linux, .obj on Windows
+OBJEXT := .o
+# Extension for binaries, empty for Linux binaries
+BINEXT :=
+
 HELPER_OBJ := fileread.o strsplit.o freadlns.o
 
 PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   03-rucksack-reorganization.o 04-camp-cleanup.o \
   05-supply-stacks.o 06-tuning-trouble.o \
-  07-no-space-left-on-device.o 08-treetop-tree-house.o
-
-# Extension for binaries, empty for Linux binaries
-BINEXT :=
+  07-no-space-left-on-device.o 08-treetop-tree-house.o \
+  09-rope-bridge$(OBJEXT)
 
 PUZZLE_BIN := $(PUZZLE_OBJ:.o=)
 
@@ -39,3 +42,6 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	$(LINK_CXX)
 
 08-treetop-tree-house$(BINEXT) : %$(BINEXT) : %.o freadlns.o
+
+09-rope-bridge$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
+	$(LINK_CXX)
