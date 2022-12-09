@@ -1,0 +1,10 @@
+--- Example ---
+Running 8 movements
+Head visited positions: 21
+Tail visited positions: 13
+
+--- Puzzle 1: Positions visited by the rope tail ---
+2000 lines read
+Running 2000 movements
+Head visited positions: 7071
+Tail visited positions: 6212
