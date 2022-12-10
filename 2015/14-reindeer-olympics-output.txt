@@ -1,0 +1,17 @@
+--- Beispiel: Nach 1000 Sekunden ---
+     Comet   14 km/s for  10 s, rest 127 s --> travelled 1120 km
+    Dancer   16 km/s for  11 s, rest 162 s --> travelled 1056 km
+Winner: Comet with distance 1120 km
+
+--- Aufgabe 1: Nach 2503 Sekunden ---
+Read 9 lines
+     Vixen    8 km/s for   8 s, rest  53 s --> travelled 2640 km
+   Blitzen   13 km/s for   4 s, rest  49 s --> travelled 2496 km
+   Rudolph   20 km/s for   7 s, rest 132 s --> travelled 2540 km
+     Cupid   12 km/s for   4 s, rest  43 s --> travelled 2592 km
+    Donner    9 km/s for   5 s, rest  38 s --> travelled 2655 km
+    Dasher   10 km/s for   4 s, rest  37 s --> travelled 2460 km
+     Comet    3 km/s for  37 s, rest  76 s --> travelled 2493 km
+   Prancer    9 km/s for  12 s, rest  97 s --> travelled 2484 km
+    Dancer   37 km/s for   1 s, rest  36 s --> travelled 2516 km
+Winner: Donner with distance 2655 km
