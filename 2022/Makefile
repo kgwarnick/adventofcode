@@ -9,9 +9,9 @@ PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   03-rucksack-reorganization.o 04-camp-cleanup.o \
   05-supply-stacks.o 06-tuning-trouble.o \
   07-no-space-left-on-device.o 08-treetop-tree-house.o \
-  09-rope-bridge$(OBJEXT)
+  09-rope-bridge$(OBJEXT) 10-cathode-ray-tube$(OBJEXT)
 
-PUZZLE_BIN := $(PUZZLE_OBJ:.o=)
+PUZZLE_BIN := $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
 all : $(PUZZLE_BIN)
 
@@ -45,3 +45,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 09-rope-bridge$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)
+
+10-cathode-ray-tube$(BINEXT): %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
