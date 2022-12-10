@@ -3,7 +3,11 @@
     Dancer   16 km/s for  11 s, rest 162 s --> travelled 1056 km
 Winner: Comet with distance 1120 km
 
---- Aufgabe 1: Nach 2503 Sekunden ---
+     Comet   312 points
+    Dancer   689 points
+Winner: Dancer with 689 points
+
+--- Aufgabe 1: Nach 2503 Sekunden, weiteste Entfernung ---
 Read 9 lines
      Vixen    8 km/s for   8 s, rest  53 s --> travelled 2640 km
    Blitzen   13 km/s for   4 s, rest  49 s --> travelled 2496 km
@@ -15,3 +19,26 @@ Read 9 lines
    Prancer    9 km/s for  12 s, rest  97 s --> travelled 2484 km
     Dancer   37 km/s for   1 s, rest  36 s --> travelled 2516 km
 Winner: Donner with distance 2655 km
+
+--- Aufgabe 2: Nach 2503 Sekunden, meiste Punkte ---
+     Vixen  1059 points
+   Blitzen     5 points
+   Rudolph   887 points
+     Cupid    13 points
+    Donner   414 points
+    Dasher     0 points
+     Comet    22 points
+   Prancer   153 points
+    Dancer     1 points
+Winner: Vixen with 1059 points
+
+--- Zusatz-Information: Durchschnittsgeschwindigkeiten auf langen Strecken ---
+     Vixen    8 km/s for   8 s, rest  53 s --> average 1,04918032786885 km/s
+   Blitzen   13 km/s for   4 s, rest  49 s --> average 0,981132075471698 km/s
+   Rudolph   20 km/s for   7 s, rest 132 s --> average 1,00719424460432 km/s
+     Cupid   12 km/s for   4 s, rest  43 s --> average 1,02127659574468 km/s
+    Donner    9 km/s for   5 s, rest  38 s --> average 1,04651162790698 km/s
+    Dasher   10 km/s for   4 s, rest  37 s --> average 0,975609756097561 km/s
+     Comet    3 km/s for  37 s, rest  76 s --> average 0,982300884955752 km/s
+   Prancer    9 km/s for  12 s, rest  97 s --> average 0,990825688073395 km/s
+    Dancer   37 km/s for   1 s, rest  36 s --> average 1 km/s
