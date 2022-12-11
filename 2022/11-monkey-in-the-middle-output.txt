@@ -1,4 +1,4 @@
---- Example ---
+--- Example: 20 rounds with dividing worry levels ---
 Used lines: 27, monkeys found: 4
 Monkey 0: Items { 79 98 }, * 19, DivisibleBy? 23 -> 2 / 3
 Monkey 1: Items { 54 65 75 74 }, + 6, DivisibleBy? 19 -> 2 / 0
@@ -9,11 +9,23 @@ Monkey 0: 10 12 14 26 34   (Inspections: 101)
 Monkey 1: 245 93 53 199 115   (Inspections: 95)
 Monkey 2:   (Inspections: 7)
 Monkey 3:   (Inspections: 105)
-Most active monkey has inspections: 105
-Second most active monkey has inspections: 101
 * Monkey business level: 10605 *
 
---- Puzzle 1: Monkey business level after 20 rounds ---
+--- Example: 10000 rounds without dividing worry levels ---
+Used lines: 27, monkeys found: 4
+Monkey 0: Items { 79 98 }, * 19, DivisibleBy? 23 -> 2 / 3
+Monkey 1: Items { 54 65 75 74 }, + 6, DivisibleBy? 19 -> 2 / 0
+Monkey 2: Items { 79 60 97 }, Squared 0, DivisibleBy? 13 -> 1 / 3
+Monkey 3: Items { 74 }, + 3, DivisibleBy? 17 -> 0 / 1
+Worry level modulo: 96577
+Item possession after 10000 rounds:
+Monkey 0: 63602 56040 11941 10573 61607   (Inspections: 52166)
+Monkey 1: 90861 86149 27648 21340 76915   (Inspections: 47830)
+Monkey 2:   (Inspections: 1938)
+Monkey 3:   (Inspections: 52013)
+* Monkey business level: 2713310158 *
+
+--- Puzzle 1: Monkey business level after 20 rounds, divided worries ---
 Used lines: 55, monkeys found: 8
 Monkey 0: Items { 78 53 89 51 52 59 58 85 }, * 3, DivisibleBy? 5 -> 2 / 7
 Monkey 1: Items { 64 }, + 7, DivisibleBy? 2 -> 3 / 6
@@ -32,6 +44,26 @@ Monkey 4:   (Inspections: 55)
 Monkey 5: 3 3 3 73715547 3 3 3 3 3 3 3 3 3 3   (Inspections: 211)
 Monkey 6:   (Inspections: 188)
 Monkey 7:   (Inspections: 222)
-Most active monkey has inspections: 228
-Second most active monkey has inspections: 222
-* Monkey business level: 50616 *
+*** Monkey business level: 50616 ***
+
+--- Puzzle 2: Monkey business level after 10000 rounds, undivided worries ---
+Used lines: 55, monkeys found: 8
+Monkey 0: Items { 78 53 89 51 52 59 58 85 }, * 3, DivisibleBy? 5 -> 2 / 7
+Monkey 1: Items { 64 }, + 7, DivisibleBy? 2 -> 3 / 6
+Monkey 2: Items { 71 93 65 82 }, + 5, DivisibleBy? 13 -> 5 / 4
+Monkey 3: Items { 67 73 95 75 56 74 }, + 8, DivisibleBy? 19 -> 6 / 0
+Monkey 4: Items { 85 91 90 }, + 4, DivisibleBy? 11 -> 3 / 1
+Monkey 5: Items { 67 96 69 55 70 83 62 }, * 2, DivisibleBy? 3 -> 4 / 1
+Monkey 6: Items { 53 86 98 70 64 }, + 6, DivisibleBy? 7 -> 7 / 0
+Monkey 7: Items { 88 64 }, Squared 0, DivisibleBy? 17 -> 2 / 5
+Worry level modulo: 9699690
+Item possession after 10000 rounds:
+Monkey 0: 4092690 6732905 1117295 1872665 2524063 799357 2010097 2371725 2371725   (Inspections: 106346)
+Monkey 1: 6669136 6732892 1117282 652156 2013540 143370 7604670 799344 799344 9348654 6486864 5395502   (Inspections: 98133)
+Monkey 2: 2013531 2013531   (Inspections: 49031)
+Monkey 3: 4092682 3088899   (Inspections: 16402)
+Monkey 4: 2192352 4026492 3451212 652152 6621192 6621192   (Inspections: 106342)
+Monkey 5: 5946021 8184411 2993379 6352581 2697751   (Inspections: 65512)
+Monkey 6:   (Inspections: 98135)
+Monkey 7:   (Inspections: 81799)
+*** Monkey business level: 11309046332 ***

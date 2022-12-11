@@ -7,6 +7,7 @@
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 
 #include "strsplit.hpp"
 #include "fileread.hpp"
@@ -17,8 +18,8 @@ using namespace std;
 //
 class Item {
  public:
-  int WorryLevel;
-  Item (int worrylevel = 999) : WorryLevel (worrylevel) { }
+  unsigned long int WorryLevel;
+  Item (unsigned long int worrylevel = 999) : WorryLevel (worrylevel) { }
   string str();
 };
 
@@ -43,7 +44,7 @@ string MonkeyOperatorName (MonkeyOperator op) {
   else return "Unknown";
 }
 
-int ApplyOperation (int oldlevel, MonkeyOperator oper, int operand) {
+unsigned long int ApplyOperation (unsigned long int oldlevel, MonkeyOperator oper, int operand) {
   if (oper == Noop)  return oldlevel;
   else if (oper == Plus)  return oldlevel + operand;
   else if (oper == Mult)  return oldlevel * operand;
@@ -65,7 +66,7 @@ string MonkeyTestName (MonkeyTest op) {
   else return "Unknown";
 }
 
-bool ApplyTest (int worrylevel, MonkeyTest testoper, int operand) {
+bool ApplyTest (unsigned long int worrylevel, MonkeyTest testoper, int operand) {
   if (testoper == AlwaysTrue)  return true;
   else if (testoper == AlwaysFalse)  return false;
   else if (testoper == Divisible)  return worrylevel % operand == 0;
@@ -86,17 +87,29 @@ class Monkey {
   int   DestTrue;   ///< Throw to this monkey if the test is true
   int   DestFalse;   ///< Throw to this monkey if the test is false
   int   InspectionCount;   ///< How many items did the monkey inspect and throw
+
+  /// \brief Store worry levels modulo this number, to keep the numbers low.
+  ///
+  /// This should be set to the least common multiple (or simply the product)
+  /// of the divisors the "divisible by" test rules of all monkeys.
+  /// It will only produce corect results if ThrowNextItem() or ThrowItems()
+  /// are called with `divideworries=false`, however.
+  /// Otherwise the integer division in every turn (division by 3 followed
+  /// by rounding off to the nearest integer) can change the factorisation
+  /// of the original number so that divisibility is not preserved.
+  unsigned long int WorryModulo;
+
   size_t Parse (size_t currline, const vector<string> lines);
   Monkey () : Operation(Noop), Operand(0),
     TestOperator(AlwaysTrue), TestOperand(0),
-    DestTrue(-1), DestFalse(-1), InspectionCount(0)  { }
+    DestTrue(-1), DestFalse(-1), InspectionCount(0), WorryModulo(1)  { }
   void ParseItems (const string& s);
   void ParseOperation (const string& s);
   void ParseTest (const string& s);
   void Print ();
   size_t GetItemCount () const { return Items.size(); }
-  bool ThrowNextItem (vector<Monkey>& monkeys);
-  int ThrowItems (vector<Monkey>& monkeys);
+  bool ThrowNextItem (vector<Monkey>& monkeys, bool divideworries, int loglevel = 0);
+  int ThrowItems (vector<Monkey>& monkeys, bool divideworries = true, int loglevel = 0);
 };
 
 
@@ -193,26 +206,46 @@ void Monkey::Print () {
   cout << endl;
 }
 
-bool Monkey::ThrowNextItem (vector<Monkey>& monkeys) {
-  if (Items.size() < 1)  return -2;   // no more items
+/// \brief Inspect and throw the next items
+/// \param monkeys        Other monkeys who can receive the items thrown
+/// \param divideworries  Divide worry levels by 3 after the item's inspection
+/// \return  The next item was successfully  thrown
+//
+bool Monkey::ThrowNextItem (vector<Monkey>& monkeys, bool divideworries, int loglevel) {
+  if (Items.size() < 1)  return false;   // no more items
   // Get item
   Item item = Items.front ();
   // Inspect the item:  Apply start operation
-  int w = ApplyOperation (item.WorryLevel, Operation, Operand);
+  unsigned long int w = ApplyOperation (item.WorryLevel, Operation, Operand);
   // Finished inspection:  Divide worry level
-  w /= 3;
+  if (divideworries)  w /= 3;
+  // To keep the worry levels small:
+  if (WorryModulo > 1) {
+    // All tests are of the form "divisible by m".
+    // If a number x is divisible by n if and only if its modulo is also
+    // divisible by n.
+    // If n is the product (or better: the least common multiple) of all
+    // individual "divisible by n" tests, then noone's tests will be disturbed.
+    // Beware: This will only work WITHOUT the division by 3 above,
+    //   so setting WorryModulo to something other than 1 is only sensible
+    //   with divideworries = false
+    if (TestOperator == Divisible) {
+      w %= WorryModulo;
+    }
+    else {
+      cerr << "Internal error: Not a \"divisible by\" test, "
+        << "expect incorrect results because of number overflows" << endl;
+    }
+  }
   // Decide to which monkey to throw this item
-  int destmonkey = ApplyTest (w, TestOperator, TestOperand) ?
-    DestTrue : DestFalse;
+  int destmonkey = ApplyTest (w, TestOperator, TestOperand) ? DestTrue : DestFalse;
   if (destmonkey < 0 || destmonkey >= monkeys.size()) {
     cerr << "Error: Cannot throw to unknown monkey " << destmonkey << endl;
     return false;
   }
   // Modify item worry level and throw it
-#if DEBUG
-  cout << "- Throw " << item.WorryLevel << " as " << w
+  if (loglevel >= 3)  cout << "- Throw " << item.WorryLevel << " as " << w
     << " to " << destmonkey << endl;
-#endif
   item.WorryLevel = w;
   monkeys[destmonkey].Items.push_back (item);
   Items.pop_front ();
@@ -221,12 +254,14 @@ bool Monkey::ThrowNextItem (vector<Monkey>& monkeys) {
 }
 
 /// \brief Throw all items in possession
+/// \param monkeys        Other monkeys who can receive the items thrown
+/// \param divideworries  Divide worry levels by 3 after the item's inspection
 /// \return  Number of thrown items
 //
-int Monkey::ThrowItems (vector<Monkey>& monkeys) {
+int Monkey::ThrowItems (vector<Monkey>& monkeys, bool divideworries, int loglevel) {
   int n;
   while (!this->Items.empty()) {
-    if (ThrowNextItem (monkeys))  n++;
+    if (ThrowNextItem (monkeys, divideworries, loglevel))  n++;
   }
   return n;
 }
@@ -314,9 +349,10 @@ void PrintMonkeyItems (vector<Monkey> monkeys) {
 
 /// \brief Play one round: every monkey throws all their items
 //
-void PlayOneRound (vector<Monkey>& monkeys) {
+void PlayOneRound (vector<Monkey>& monkeys, bool divideworries, int loglevel) {
   for (int i = 0; i < monkeys.size(); i++) {
-    monkeys[i].ThrowItems (monkeys);
+    if (loglevel >= 3)  cout << "Monkey " << i << "'s turn" << endl;
+    monkeys[i].ThrowItems (monkeys, divideworries, loglevel);
   }
 }
 
@@ -324,9 +360,9 @@ void PlayOneRound (vector<Monkey>& monkeys) {
 /// \brief Play a number of rounds
 //
 void PlayManyRounds (vector<Monkey>& monkeys, int rounds = 1,
-    int loglevel = 1) {
+    bool divideworries = true, int loglevel = 1) {
   for (int r = 1; r <= rounds; r++) {
-    PlayOneRound (monkeys);
+    PlayOneRound (monkeys, divideworries, loglevel);
     if (loglevel >= 2) {
       cout << "After round " << r << ":" << endl;
       PrintMonkeyItems (monkeys);
@@ -336,7 +372,7 @@ void PlayManyRounds (vector<Monkey>& monkeys, int rounds = 1,
 
 /// \brief Calculate level of monkey business from two most active ones
 //
-int GetMonkeyBusinessLevel (const vector<Monkey> monkeys) {
+unsigned long int GetMonkeyBusinessLevel (const vector<Monkey> monkeys) {
   list<Monkey> ml (monkeys.size());
   transform (monkeys.cbegin(), monkeys.cend(), ml.begin(),
     [] (const Monkey& m) { return m; });
@@ -344,13 +380,14 @@ int GetMonkeyBusinessLevel (const vector<Monkey> monkeys) {
   list<Monkey>::const_iterator it = ml.cbegin();
   int inspec1 = (it++)->InspectionCount;
   int inspec2 = it->InspectionCount;
-  cout << "Most active monkey has inspections: " << inspec1 << endl;
-  cout << "Second most active monkey has inspections: " << inspec2 << endl;
-  return inspec1 * inspec2;
+  return (unsigned long int)inspec1 * (unsigned long int)inspec2;
 }
 
-
-void PlayInput (const vector<string> lines, int rounds, int loglevel = 1) {
+/// \brief Play according to monkey descriptions from input lines
+/// \return The "monkey business level"
+//
+unsigned long int PlayInput (const vector<string> lines, int rounds,
+    bool divideworries, bool storemodulo, int loglevel = 1) {
   size_t nextline = 0;
   vector<Monkey> monkeys = ParseMonkeys (nextline, lines);
   cout << "Used lines: " << nextline << ", monkeys found: "
@@ -362,23 +399,49 @@ void PlayInput (const vector<string> lines, int rounds, int loglevel = 1) {
       monkeys[i].Print ();
     }
   }
-  PlayManyRounds (monkeys, 20, loglevel);
+  // Store reduced worry levels by dividing them in every round?
+  // Multiply all the divisors from the "divisible by" tests
+  // (least common multiple would be better but in this puzzle there
+  // are no common factors anyway)
+  if (storemodulo) {
+    // Calculate product of all divisors
+    int prod = accumulate (monkeys.cbegin(), monkeys.cend(), 1,
+      [] (int p, const Monkey& m) { return p * m.TestOperand; });
+    if (loglevel >= 1)  cout << "Worry level modulo: " << prod << endl;
+    // And set every monkey to use it
+    for (int i = 0; i < monkeys.size(); i++) {
+      monkeys[i].WorryModulo = prod;
+    }
+  }
+  // Play rounds
+  PlayManyRounds (monkeys, rounds, divideworries, loglevel);
   if (loglevel >= 1) {
-    cout << "Item possession after 20 rounds:" << endl;
+    cout << "Item possession after " << rounds << " rounds:" << endl;
     PrintMonkeyItems (monkeys);
   }
-  int mbl = GetMonkeyBusinessLevel (monkeys);
-  cout << "* Monkey business level: " << mbl << " *" << endl;
+  return GetMonkeyBusinessLevel (monkeys);
 }
 
 
 int main () {
-  cout << "--- Example ---" << endl;
-  PlayInput (ExampleMonkeys, 20, 1);
+  cout << "--- Example: 20 rounds with dividing worry levels ---" << endl;
+  unsigned long int mbl = PlayInput (ExampleMonkeys, 20, true, false, 1);
+  cout << "* Monkey business level: " << mbl << " *" << endl;
   cout << endl;
 
-  cout << "--- Puzzle 1: Monkey business level after 20 rounds ---" <<endl;
+  cout << "--- Example: 10000 rounds without dividing worry levels ---" << endl;
+  mbl = PlayInput (ExampleMonkeys, 10000, false, true, 1);
+  cout << "* Monkey business level: " << mbl << " *" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 1: Monkey business level after 20 rounds, divided worries ---" <<endl;
   vector<string> InputMonkeys =
     ReadLinesVector ("11-monkey-in-the-middle-input.txt");
-  PlayInput (InputMonkeys, 20, 1);
+  mbl = PlayInput (InputMonkeys, 20, true, false, 1);
+  cout << "*** Monkey business level: " << mbl << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Monkey business level after 10000 rounds, undivided worries ---" <<endl;
+  mbl = PlayInput (InputMonkeys, 10000, false, true, 1);
+  cout << "*** Monkey business level: " << mbl << " ***" << endl;
 }
