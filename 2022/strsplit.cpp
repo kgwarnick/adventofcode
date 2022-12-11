@@ -3,8 +3,6 @@
 #include <string>
 #include <iostream>
 
-/// \brief Helper function to split a string into a list of string
-/// \return A list of lines without the end-of-line character
 std::list<std::string> SplitString (const std::string& s,
   const std::string& splitter){
   std::list<std::string> sl;

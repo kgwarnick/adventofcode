@@ -1,0 +1,37 @@
+--- Example ---
+Used lines: 27, monkeys found: 4
+Monkey 0: Items { 79 98 }, * 19, DivisibleBy? 23 -> 2 / 3
+Monkey 1: Items { 54 65 75 74 }, + 6, DivisibleBy? 19 -> 2 / 0
+Monkey 2: Items { 79 60 97 }, Squared 0, DivisibleBy? 13 -> 1 / 3
+Monkey 3: Items { 74 }, + 3, DivisibleBy? 17 -> 0 / 1
+Item possession after 20 rounds:
+Monkey 0: 10 12 14 26 34   (Inspections: 101)
+Monkey 1: 245 93 53 199 115   (Inspections: 95)
+Monkey 2:   (Inspections: 7)
+Monkey 3:   (Inspections: 105)
+Most active monkey has inspections: 105
+Second most active monkey has inspections: 101
+* Monkey business level: 10605 *
+
+--- Puzzle 1: Monkey business level after 20 rounds ---
+Used lines: 55, monkeys found: 8
+Monkey 0: Items { 78 53 89 51 52 59 58 85 }, * 3, DivisibleBy? 5 -> 2 / 7
+Monkey 1: Items { 64 }, + 7, DivisibleBy? 2 -> 3 / 6
+Monkey 2: Items { 71 93 65 82 }, + 5, DivisibleBy? 13 -> 5 / 4
+Monkey 3: Items { 67 73 95 75 56 74 }, + 8, DivisibleBy? 19 -> 6 / 0
+Monkey 4: Items { 85 91 90 }, + 4, DivisibleBy? 11 -> 3 / 1
+Monkey 5: Items { 67 96 69 55 70 83 62 }, * 2, DivisibleBy? 3 -> 4 / 1
+Monkey 6: Items { 53 86 98 70 64 }, + 6, DivisibleBy? 7 -> 7 / 0
+Monkey 7: Items { 88 64 }, Squared 0, DivisibleBy? 17 -> 2 / 5
+Item possession after 20 rounds:
+Monkey 0: 36828 3 3 3 3 3 3 3 3 3 3 3   (Inspections: 228)
+Monkey 1: 26844991 85 2 2 2 2 2 2 2 2   (Inspections: 218)
+Monkey 2:   (Inspections: 20)
+Monkey 3:   (Inspections: 48)
+Monkey 4:   (Inspections: 55)
+Monkey 5: 3 3 3 73715547 3 3 3 3 3 3 3 3 3 3   (Inspections: 211)
+Monkey 6:   (Inspections: 188)
+Monkey 7:   (Inspections: 222)
+Most active monkey has inspections: 228
+Second most active monkey has inspections: 222
+* Monkey business level: 50616 *
