@@ -10,7 +10,7 @@ PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   05-supply-stacks.o 06-tuning-trouble.o \
   07-no-space-left-on-device.o 08-treetop-tree-house.o \
   09-rope-bridge$(OBJEXT) 10-cathode-ray-tube$(OBJEXT) \
-  11-monkey-in-the-middle$(OBJEXT)
+  11-monkey-in-the-middle$(OBJEXT) 12-hill-climbing-algorithm$(OBJEXT)
 
 PUZZLE_BIN := $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
@@ -51,3 +51,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 11-monkey-in-the-middle$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)
+
+12-hill-climbing-algorithm$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
