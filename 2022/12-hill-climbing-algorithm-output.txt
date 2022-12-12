@@ -1,9 +1,12 @@
 --- Example ---
-End point (5, 2) reached in 31 steps
-Minimum number of steps: 31
+* Minimum number of steps: 31 *
+
+* Best starting point has minimum number of steps: 29 *
 
 --- Puzzle 1: Shortest Path ---
 Lines read: 41, characters: 6560
 Width x Height = 159 x 41
-End point (135, 20) reached in 447 steps
-Minimum number of steps: 447
+*** Minimum number of steps: 447 ***
+
+--- Puzzle 2: Best starting point ---
+*** Best starting point has minimum number of steps: 446 ***
