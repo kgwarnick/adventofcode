@@ -21,7 +21,7 @@ clean :
 	$(RM) $(HELPER_OBJ) $(PUZZLE_OBJ)
 	$(RM) $(PUZZLE_BIN)
 
-CFLAGS   = -g
+CFLAGS   = -g -Wall -Wextra
 CXXFLAGS = -g -Wall -Wextra
 LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 

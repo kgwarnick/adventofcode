@@ -41,7 +41,7 @@ Position FindStartEndPoint (unsigned short width, unsigned short height,
 }
 
 
-// Currently not used
+/// \brief Output the path in text form
 //
 void PrintPath (unsigned short numsteps, const Position *path) {
   for (unsigned short i = 0; i < numsteps; i++) {
@@ -50,8 +50,7 @@ void PrintPath (unsigned short numsteps, const Position *path) {
   }
 }
 
-
-// Currently not used
+/// \brief Visualise the path
 //
 void DrawPath (unsigned short numsteps, const Position *path,
     unsigned short width, unsigned short height) {
@@ -94,8 +93,10 @@ bool AlreadyVisited (Position pos, unsigned short numsteps, const Position *path
 /// \brief Test for an allowed step between the two elevation values
 //
 bool IsValidStep (char currelev, char destelev) {
-  if (currelev == 'S')  currelev = 'a';  if (currelev == 'E')  currelev = 'z';
-  if (destelev == 'S')  destelev = 'a';  if (destelev == 'E')  destelev = 'z';
+  if (currelev == 'S')  currelev = 'a';
+  if (currelev == 'E')  currelev = 'z';
+  if (destelev == 'S')  destelev = 'a';
+  if (destelev == 'E')  destelev = 'z';
   return (destelev <= currelev + 1);
 }
 
@@ -132,24 +133,114 @@ void PrintDistanceTable (unsigned short width, unsigned short height,
 }
 
 
-void SetNeighbourValueIfLarger (unsigned short currelev, unsigned short neighelev,
-    unsigned short *distanceptr, bool *visitedptr, unsigned short neighx, unsigned short neighy) {
-  // TODO
+/// \brief Extract a path by following positions from end to start point
+/// \param width    Width of the field
+/// \param height   Height of the field
+/// \param distmap  Elevation map of the field
+/// \param startpt  Start point with low elevation to reach
+/// \param endpt    End point with high elevation to start backtracking the path
+/// \param numpositions  Pointer to integer with number of positions in the path,
+///   including start and end point, so should be one larger than the distance
+/// \param path     Pointer to the array of path nodes, shoud already be
+///   allocated to have room for all nodes including the start and end point,
+///   i.e. one more than the elevation distance from start to end.
+///   If it is too small, it will be reallocated
+/// The path must be freed by the caller
+//
+bool RetraceSteps (unsigned short width, unsigned short height,
+    unsigned short *distmap, Position startpt, Position endpt,
+    unsigned short *numpositions, Position **path) {
+  // Elevation of start and end point
+  unsigned short startelev = distmap[startpt.y * width + startpt.x];
+  unsigned short endelev = distmap[endpt.y * width + endpt.x];
+  *numpositions = endelev - startelev + 1;
+  // Enough space for the path or reallocate?
+  // - Don't reallocate if the solution is longer than necessary or we
+  //   destroy the result of recursive calls higher up
+  if (path == NULL || *numpositions < endelev - startelev + 1)
+    *path = realloc (*path, (endelev - startelev + 1) * sizeof (Position));
+  if (path == NULL)  return false;
+  if (*numpositions == 0)  return false;   // Should not happen, wrong start point reached?!
+  // Stop if the start point was reached (or the distance is zero? should be equivalent)
+  if ((startpt.x == endpt.x) && (endpt.y == startpt.y)) {
+    // Store the start point as first point of the path
+    (*path)[*numpositions-1].x = endpt.x;  (*path)[*numpositions-1].y = endpt.y;
+    return true;
+  }
+  // Follow from end to start by decreasing the distance in every step:
+  // Put the current end point as last point of the path
+  unsigned short currstep = *numpositions - 1;
+  (*path)[currstep].x = endpt.x;  (*path)[currstep].y = endpt.y;
+  // Find a suitable neighbour and recursively get the path from there to start
+  // - Try left neighbour
+  if (endpt.x > 0 && (distmap[endpt.y * width + endpt.x - 1] == endelev - 1)) {
+    Position prevpt;  prevpt.x = endpt.x - 1;  prevpt.y = endpt.y;
+    if (RetraceSteps (width, height, distmap, startpt, prevpt, &currstep, path))
+      return true;
+  }
+  // - Try right neighbour
+  if (endpt.x < width - 1 && (distmap[endpt.y * width + endpt.x + 1] == endelev - 1)) {
+    Position prevpt;  prevpt.x = endpt.x + 1;  prevpt.y = endpt.y;
+    if (RetraceSteps (width, height, distmap, startpt, prevpt, &currstep, path))
+      return true;
+  }
+  // - Try upper neighbour
+  if (endpt.y > 0 && (distmap[(endpt.y - 1) * width + endpt.x] == endelev - 1)) {
+    Position prevpt;  prevpt.x = endpt.x;  prevpt.y = endpt.y - 1;
+    if (RetraceSteps (width, height, distmap, startpt, prevpt, &currstep, path))
+      return true;
+  }
+  // - Try lower neighbour
+  if (endpt.x < width && (distmap[(endpt.y + 1) * width + endpt.x] == endelev - 1)) {
+    Position prevpt;  prevpt.x = endpt.x;  prevpt.y = endpt.y + 1;
+    if (RetraceSteps (width, height, distmap, startpt, prevpt, &currstep, path))
+      return true;
+  }
+  // No path from any neighbour could be found
+  return false;
+}
+
+
+/// \brief Show a path from start to end point in text form and visualised
+/// \param width    Width of the field
+/// \param height   Height of the field
+/// \param distmap  Elevation map of the field
+/// \param startpt  Start point with low elevation to reach
+/// \param endpt    End point with high elevation to start backtracking from
+/// \param numsteps Number of steps from start to end point
+//
+void ShowRetracedPath (unsigned short width, unsigned short height,
+    unsigned short *distmap, Position startpoint, Position endpoint,
+    unsigned short numsteps) {
+  unsigned short pathsteps = numsteps + 1;
+  // Allocate one position more to include start AND end point in the path
+  Position *solutionpath = (Position*) malloc ((numsteps + 1) * sizeof (Position));
+  if (RetraceSteps (width, height, distmap,
+      startpoint, endpoint, &pathsteps, &solutionpath)) {
+    PrintPath (pathsteps, solutionpath);
+    DrawPath (pathsteps, solutionpath, width, height);
+  }
+  else {
+    printf ("Error: Failed to retrace the path from start to end\n");
+  }
+  free (solutionpath);
 }
 
 
 /// \brief Find the shortest path to the destination point by Diijkstra's algorithm
 //
 unsigned short FindShortestPath (Position startpoint,
-    unsigned short width, unsigned short height, const char **field) {
+    unsigned short width, unsigned short height, const char **field, int loglevel) {
   // Visited markers, initialise to false
   bool *visited = (bool*) malloc (width * height * sizeof (bool));
   memset (visited, 0, width * height * sizeof (bool));
   Position currpos;
   if (startpoint.x != (unsigned short)-1 && startpoint.y != (unsigned short)-1)
     currpos = startpoint;
-  else
+  else {
     currpos = FindStartEndPoint (width, height, field, 'S');
+    startpoint = currpos;   // also save starting point
+  }
   Position endpoint = FindStartEndPoint (width, height, field, 'E');
   // Distance table, fill with maximum value
   unsigned short *distance = (unsigned short*) malloc (width * height * sizeof (short));
@@ -210,6 +301,10 @@ unsigned short FindShortestPath (Position startpoint,
       mindistance = distance[endpoint.y * width + endpoint.x];
       // printf ("End point (%u, %u) reached in %d steps\n",
       //   endpoint.x, endpoint.y, mindistance);
+      // Show the current path
+      if (loglevel >= 2)
+        ShowRetracedPath (width, height, distance, startpoint, endpoint, mindistance);
+      // Stop searching
       break;
     }
     // Find next node to visit: smallest unvisited distance
@@ -226,20 +321,20 @@ unsigned short FindShortestPath (Position startpoint,
 ///   from all points with lowest elevation
 //
 unsigned short FindBestStartingPoint (unsigned short width, unsigned short height,
-    const char **terrain) {
-  Position beststart;  beststart.x = (unsigned short)-1;  beststart.y = (unsigned short)-1;
+    const char **terrain, int loglevel) {
+  // Position beststart;  beststart.x = (unsigned short)-1;  beststart.y = (unsigned short)-1;
   unsigned short shortestpath = (unsigned short)-1;
   // Find all points with elevation a to calculate the minimum path length
   for (unsigned short y = 0; y < height; y++) {
     for (unsigned short x = 0; x < width; x++) {
       if (terrain[y][x] == 'a') {
         Position testpos;  testpos.x = x;  testpos.y = y;
-        unsigned short pathlen = FindShortestPath (testpos, width, height, terrain);
+        unsigned short pathlen = FindShortestPath (testpos, width, height, terrain, loglevel);
         // printf ("Possible starting point at (%u, %u) with path length %u\n",
         //   x, y, pathlen);
         if (pathlen < shortestpath) {
           shortestpath = pathlen;
-          beststart = testpos;
+          // beststart = testpos;
         }
       }
     }
@@ -255,12 +350,12 @@ int main () {
   Position invalidpoint = { (unsigned short)-1, (unsigned short)-1 };
   unsigned short minsteps = FindShortestPath (invalidpoint,
     strlen (ExampleField[0]), sizeof (ExampleField) / sizeof (ExampleField[0]),
-    ExampleField);
+    ExampleField, 2);
   printf ("* Minimum number of steps: %u *\n", minsteps);
   printf ("\n");
   minsteps = FindBestStartingPoint (
     strlen (ExampleField[0]), sizeof (ExampleField) / sizeof (ExampleField[0]),
-    ExampleField);
+    ExampleField, 1);
   printf ("* Best starting point has minimum number of steps: %u *\n", minsteps);
   printf ("\n");
 
@@ -274,16 +369,16 @@ int main () {
   TrimLineEndings (numlines, inputlines);
   printf ("Width x Height = %zu x %zu\n", strlen (inputlines[0]), numlines);
   minsteps = FindShortestPath (invalidpoint,
-    strlen (inputlines[0]), numlines, (const char**)inputlines);
+    strlen (inputlines[0]), numlines, (const char**)inputlines, 2);
   printf ("*** Minimum number of steps: %u ***\n", minsteps);
   printf ("\n");
 
   printf ("--- Puzzle 2: Best starting point ---\n");
   minsteps = FindBestStartingPoint (
-    strlen (inputlines[0]), numlines, (const char**)inputlines);
+    strlen (inputlines[0]), numlines, (const char**)inputlines, 1);
   printf ("*** Best starting point has minimum number of steps: %u ***\n", minsteps);
 
-  for (int i = 0; i < numlines; i++)  free (inputlines[i]);
+  for (size_t i = 0; i < numlines; i++)  free (inputlines[i]);
   free (inputlines);
   return 0;
 }
