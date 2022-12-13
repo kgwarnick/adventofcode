@@ -1,0 +1,9 @@
+--- Example ---
+Read 23 lines
+Compared 8 pairs
+* Sum of indices of correctly ordered pairs: 13 *
+
+--- Puzzle 1: Sum of indices of correctly ordered pairs ---
+Read 449 lines
+Compared 150 pairs
+*** Sum of indices of correctly ordered pairs: 6187 ***
