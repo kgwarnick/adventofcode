@@ -3,7 +3,7 @@ OBJEXT := .o
 # Extension for binaries, empty for Linux binaries
 BINEXT :=
 
-HELPER_OBJ := fileread.o strsplit.o freadlns.o
+HELPER_OBJ := fileread$(OBJEXT) strsplit$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
 
 PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   03-rucksack-reorganization.o 04-camp-cleanup.o \
@@ -22,7 +22,7 @@ clean :
 	$(RM) $(PUZZLE_BIN)
 
 CFLAGS   = -g
-CXXFLAGS = -g
+CXXFLAGS = -g -Wall -Wextra
 LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 01-calorie-counting$(BINEXT) : %$(BINEXT) : %.o strsplit.o fileread.o

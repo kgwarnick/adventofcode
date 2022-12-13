@@ -122,9 +122,16 @@ int IntOrListCompare (const IntOrList& a, const IntOrList& b) {
 bool operator== (const IntOrList& a, const IntOrList& b) {
   return IntOrListCompare (a, b) == 0;
 }
+
 /// \brief Determine whether a is less than b
 //
 bool operator< (const IntOrList& a, const IntOrList& b) {
+  return IntOrListCompare (a, b) < 0;
+}
+
+/// \brief Determine whether a is less than b (function)
+//
+bool IntOrListLessThan (const IntOrList& a, const IntOrList& b) {
   return IntOrListCompare (a, b) < 0;
 }
 
@@ -171,6 +178,63 @@ int SumIndicesCorrectlyOrderedPairs (const vector<string>& lines) {
 }
 
 
+/// \brief Build a packet list including divider packets and sort it
+//
+list<IntOrList> SortedPacketList (const vector<string> lines) {
+  list<IntOrList> packetlist;
+  size_t numlines = 0;
+  // Parse all input packets
+  for (string line : lines) {
+    numlines++;
+    if (line.empty())  continue;
+    IntOrList iorl;  size_t cursor = 0;
+    if (iorl.TryParse (line, cursor))
+      packetlist.push_back (iorl);
+    else
+      cerr << "Error parsing line " << numlines << ": " << line << endl;
+  }
+  // Add divider packets
+  list<IntOrList> l2;  l2.push_back (IntOrList (2));
+  list<IntOrList> ll2;  ll2.push_back (l2);
+  IntOrList div2 (ll2);
+  list<IntOrList> l6;  l6.push_back (IntOrList (6));
+  list<IntOrList> ll6;  ll6.push_back (l6);
+  IntOrList div6 (ll6);
+  packetlist.push_back (div2);  packetlist.push_back (div6);
+  // Sort
+  packetlist.sort (IntOrListLessThan);
+  // - or? :   packetlist.sort (::operator<);
+  // Return packet list
+  return packetlist;
+}
+
+
+/// \brief Find indices of divider packets and multiply them to get the "decoder key"
+//
+unsigned int GetDecoderKey (const list<IntOrList> packetlist) {
+  unsigned int div2index = 0, div6index = 0, index = 0;
+  // Construct divider packets to compare against
+  list<IntOrList> l2;  l2.push_back (IntOrList (2));
+  list<IntOrList> ll2;  ll2.push_back (l2);
+  IntOrList div2 (ll2);
+  list<IntOrList> l6;  l6.push_back (IntOrList (6));
+  list<IntOrList> ll6;  ll6.push_back (l6);
+  IntOrList div6 (ll6);
+  // Search list for divider packets
+  for (IntOrList packet : packetlist) {
+    index++;   // increment now because 1-based indices are needed
+    if (IntOrListCompare (packet, div2) == 0)  div2index = index;
+    if (IntOrListCompare (packet, div6) == 0) {
+      div6index = index;
+      break;   // div6 has to come after div6, so stop searching now
+    }
+  }
+  cout << "Divider packets at indices " << div2index << ", " << div6index << endl;
+  // Return the product -- if one or both dividers have not been found, returns 0
+  return div2index * div6index;
+}
+
+
 int main () {
   cout << "--- Example ---" << endl;
   vector<string> inputlines = ReadLinesVector ("13-distress-lists-example.txt");
@@ -180,11 +244,26 @@ int main () {
     << " *" << endl;
   cout << endl;
 
+  list<IntOrList> packets = SortedPacketList (inputlines);
+  for (IntOrList packet : packets) {
+    cout << packet.str() << endl;
+  }
+  unsigned int decoderkey = GetDecoderKey (packets);
+  cout << "* Decoder key: " << decoderkey << " *" << endl;
+  cout << endl;
+
   cout << "--- Puzzle 1: Sum of indices of correctly ordered pairs ---" << endl;
   inputlines = ReadLinesVector ("13-distress-lists-input.txt");
   cout << "Read " << inputlines.size() << " lines" << endl;
   orderedcount = SumIndicesCorrectlyOrderedPairs (inputlines);
   cout << "*** Sum of indices of correctly ordered pairs: " << orderedcount
     << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Decoder key ---" << endl;
+  packets = SortedPacketList (inputlines);
+  cout << "Packets: " << packets.size() << endl;
+  decoderkey = GetDecoderKey (packets);
+  cout << "*** Decoder key: " << decoderkey << " ***" << endl;
   return 0;
 }

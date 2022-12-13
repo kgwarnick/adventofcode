@@ -3,7 +3,33 @@ Read 23 lines
 Compared 8 pairs
 * Sum of indices of correctly ordered pairs: 13 *
 
+[ ]
+[ [ ] ]
+[ [ [ ] ] ]
+[ 1 1 3 1 1 ]
+[ 1 1 5 1 1 ]
+[ [ 1 ] [ 2 3 4 ] ]
+[ 1 [ 2 [ 3 [ 4 [ 5 6 0 ] ] ] ] 8 9 ]
+[ 1 [ 2 [ 3 [ 4 [ 5 6 7 ] ] ] ] 8 9 ]
+[ [ 1 ] 4 ]
+[ [ 2 ] ]
+[ 3 ]
+[ [ 4 4 ] 4 4 ]
+[ [ 4 4 ] 4 4 4 ]
+[ [ 6 ] ]
+[ 7 7 7 ]
+[ 7 7 7 7 ]
+[ [ 8 7 6 ] ]
+[ 9 ]
+Divider packets at indices 10, 14
+* Decoder key: 140 *
+
 --- Puzzle 1: Sum of indices of correctly ordered pairs ---
 Read 449 lines
 Compared 150 pairs
 *** Sum of indices of correctly ordered pairs: 6187 ***
+
+--- Puzzle 2: Decoder key ---
+Packets: 302
+Divider packets at indices 120, 196
+*** Decoder key: 23520 ***
