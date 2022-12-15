@@ -1,0 +1,46 @@
+--- Example ---
+Read 14 sensors
+Sensor at (2, 18), closest beacon at (-2, 15), current sensor range 7, covering -5...9
+Sensor at (9, 16), closest beacon at (10, 16), current sensor range 1, covering 8...10
+Sensor at (13, 2), closest beacon at (15, 3), current sensor range 3, covering 10...16
+Sensor at (12, 14), closest beacon at (10, 16), current sensor range 4, covering 8...16
+Sensor at (10, 20), closest beacon at (10, 16), current sensor range 4, covering 6...14
+Sensor at (14, 17), closest beacon at (10, 16), current sensor range 5, covering 9...19
+Sensor at (8, 7), closest beacon at (2, 10), current sensor range 9, covering -1...17
+Sensor at (2, 0), closest beacon at (2, 10), current sensor range 10, covering -8...12
+Sensor at (0, 11), closest beacon at (2, 10), current sensor range 3, covering -3...3
+Sensor at (20, 14), closest beacon at (25, 17), current sensor range 8, covering 12...28
+Sensor at (17, 20), closest beacon at (21, 22), current sensor range 6, covering 11...23
+Sensor at (16, 7), closest beacon at (15, 3), current sensor range 5, covering 11...21
+Sensor at (14, 3), closest beacon at (15, 3), current sensor range 1, covering 13...15
+Sensor at (20, 1), closest beacon at (15, 3), current sensor range 7, covering 13...27
+Have to test x = -8 ... 28
+* Sensor coverage: 26 *
+
+--- Puzzle 1: Where can't the signal originate ---
+Read 23 sensors
+Sensor at (2391367, 3787759), closest beacon at (2345659, 4354867), current sensor range 612816, covering 1778551...3004183
+Sensor at (1826659, 2843839), closest beacon at (1654342, 3193298), current sensor range 521776, covering 1304883...2348435
+Sensor at (980874, 2369046), closest beacon at (31358, 2000000), current sensor range 1318562, covering -337688...2299436
+Sensor at (2916267, 2516612), closest beacon at (3064453, 2107409), current sensor range 557389, covering 2358878...3473656
+Sensor at (3304786, 844925), closest beacon at (3064453, 2107409), current sensor range 1502817, covering 1801969...4807603
+Sensor at (45969, 76553), closest beacon at (31358, 2000000), current sensor range 1938058, covering -1892089...1984027
+Sensor at (2647492, 1985479), closest beacon at (2483905, 2123337), current sensor range 301445, covering 2346047...2948937
+Sensor at (15629, 2015720), closest beacon at (31358, 2000000), current sensor range 31449, covering -15820...47078
+Sensor at (3793239, 3203486), closest beacon at (3528871, 3361675), current sensor range 422557, covering 3370682...4215796
+Sensor at (3998240, 15268), closest beacon at (4731853, 1213406), current sensor range 1931751, covering 2066489...5929991
+Sensor at (3475687, 3738894), closest beacon at (3528871, 3361675), current sensor range 430403, covering 3045284...3906090
+Sensor at (3993022, 3910207), closest beacon at (3528871, 3361675), current sensor range 1012683, covering 2980339...5005705
+Sensor at (258318, 2150378), closest beacon at (31358, 2000000), current sensor range 377338, covering -119020...635656
+Sensor at (1615638, 1108834), closest beacon at (2483905, 2123337), current sensor range 1882770, covering -267132...3498408
+Sensor at (1183930, 3997648), closest beacon at (1654342, 3193298), current sensor range 1274762, covering -90832...2458692
+Sensor at (404933, 3377916), closest beacon at (1654342, 3193298), current sensor range 1434027, covering -1029094...1838960
+Sensor at (3829801, 2534117), closest beacon at (3528871, 3361675), current sensor range 1128488, covering 2701313...4958289
+Sensor at (2360813, 2494240), closest beacon at (2483905, 2123337), current sensor range 493995, covering 1866818...2854808
+Sensor at (2286195, 3134541), closest beacon at (1654342, 3193298), current sensor range 690610, covering 1595585...2976805
+Sensor at (15626, 1984269), closest beacon at (31358, 2000000), current sensor range 31463, covering -15837...47089
+Sensor at (3009341, 3849969), closest beacon at (3528871, 3361675), current sensor range 1007824, covering 2001517...4017165
+Sensor at (1926292, 193430), closest beacon at (1884716, -881769), current sensor range 1116775, covering 809517...3043067
+Sensor at (3028318, 3091480), closest beacon at (3528871, 3361675), current sensor range 770748, covering 2257570...3799066
+Have to test x = -1892089 ... 5929991
+*** Sensor coverage: 4424278 ***

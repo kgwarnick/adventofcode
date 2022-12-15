@@ -2,6 +2,8 @@
 #include <list>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 std::list<std::string> SplitString (const std::string& s,
   const std::string& splitter){
@@ -14,4 +16,15 @@ std::list<std::string> SplitString (const std::string& s,
   }
   sl.push_back (s.substr (splitpos));
   return sl;
+}
+
+std::vector<std::string> SplitStringVector (const std::string& s,
+  const std::string& splitter) {
+  // Read as a list
+  std::list<std::string> strlist = SplitString (s, splitter);
+  // And convert the list to a vector
+  std::vector<std::string> strvec (strlist.size());
+  std::transform (strlist.cbegin(), strlist.cend(), strvec.begin(),
+    [] (const std::string& s) { return s; });
+  return strvec;
 }
