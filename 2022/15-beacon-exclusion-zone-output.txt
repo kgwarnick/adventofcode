@@ -15,7 +15,9 @@ Sensor at (16, 7), closest beacon at (15, 3), current sensor range 5, covering 1
 Sensor at (14, 3), closest beacon at (15, 3), current sensor range 1, covering 13...15
 Sensor at (20, 1), closest beacon at (15, 3), current sensor range 7, covering 13...27
 Have to test x = -8 ... 28
-* Sensor coverage: 26 *
+* Sensor coverage in y = 10: 26 *
+
+* Beacon Position: x = 14, y = 11 -> Tuning frequency = 56000011 *
 
 --- Puzzle 1: Where can't the signal originate ---
 Read 23 sensors
@@ -44,3 +46,6 @@ Sensor at (1926292, 193430), closest beacon at (1884716, -881769), current senso
 Sensor at (3028318, 3091480), closest beacon at (3528871, 3361675), current sensor range 770748, covering 2257570...3799066
 Have to test x = -1892089 ... 5929991
 *** Sensor coverage: 4424278 ***
+
+--- Puzzle 2: Where is the beacon ---
+*** Beacon Position: x = 2595657, y = 2753392 -> Tuning frequency = 10382630753392 ***

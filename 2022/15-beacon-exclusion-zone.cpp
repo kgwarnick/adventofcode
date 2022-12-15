@@ -44,6 +44,14 @@ struct Sensor {
   int bx;   ///< x Position of nearest beacon
   int by;   ///< y Position of nearest beacon
   int GetCurrRange() const { return manhdist (sx, sy, bx, by); }
+  int GetRangeLeftEdge (int y) const {
+    if (y < sy - GetCurrRange() || y > sy + GetCurrRange()) return 0;
+    return sx - GetCurrRange() + (y < sy ? sy - y : y - sy);
+  }
+  int GetRangeRightEdge (int y) const {
+    if (y < sy - GetCurrRange() || y > sy + GetCurrRange()) return 0;
+    return sx + GetCurrRange() - (y < sy ? sy - y : y - sy);
+  }
   bool IsInRange (int x, int y) const {
     return manhdist (x, y, sx, sy) <= GetCurrRange(); }
   void Print () const {
@@ -110,13 +118,117 @@ int GetSensorCoverageOnLine (const vector<Sensor>& sensors, int y) {
 }
 
 
+/// \brief Data type to map an x coordinate to a transition from "covered" to "uncovered" state or "covered" to "uncovered"
+//
+struct RangeTransition {
+  int x;
+  int n;
+};
+
+
+/// \brief How many locations on a particular line and in the specified x range
+///   are not covered by any sensor
+//
+list<int> FindUncoveredPointsOnLine (const vector<Sensor>& sensors, int y,
+    int xmin, int xmax) {
+  // Work through a line and observe changes into or out of a sensor range
+  // Transitions are collected as pairs of x coordinate and number of ranges
+  // at that location
+  list<RangeTransition> transitions;
+  // Collect all enter and exit points as change +1/-1
+  for (const Sensor& s : sensors) {
+    transitions.push_back (RangeTransition { s.GetRangeLeftEdge (y), +1 });
+    transitions.push_back (RangeTransition { s.GetRangeRightEdge (y) + 1, -1 });
+  }
+  // Combine single changes to a list of number of ranges, in ascending order;
+  // each entry describes the number of covering sensors at this point and
+  // right of it, up to the next entry
+  transitions.sort ([] (const RangeTransition& a, const RangeTransition& b) {
+    return a.x < b.x; });
+  // Note: Saving numranges is not really necessary
+  vector<RangeTransition> numranges;
+  // Collect non-covered locations while combining the list
+  list<int> unoccupied;
+  // Remember the last non-covered x coordinate, initialise to "invalid",
+  // i.e. not currently collecting unoccupied points
+  int lastx = xmin - 1;
+  int ncovered = 0;
+  for (RangeTransition rt : transitions) {
+    // cout << rt.x << " -> " << rt.n << endl;
+    // Add to last value if the x coordinate is the same
+    if (numranges.size() > 0 && numranges.back().x == rt.x) {
+      ncovered += rt.n;
+      numranges.back().n += rt.n;
+    }
+    // Otherwise add a new entry
+    else {
+      ncovered += rt.n;
+      numranges.push_back (RangeTransition { rt.x, ncovered });
+    }
+    // Remember points which are covered by no sensor
+    if (ncovered == 0 && numranges.back().x >= xmin && numranges.back().x <= xmax) {
+      // cout << "Found non-covered location(s) starting at "
+      //   << numranges.back().x << ", " << y << endl;
+      lastx = numranges.back().x;
+    }
+    // Stop a range of uncovered points, record all of them
+    if (ncovered > 0 && lastx >= xmin) {
+      // cout << "Range of non-covered location(s) stopped at "
+      //   << numranges.back().x << ", " << y << endl;
+      for (int i = lastx; i < numranges.back().x && i <= xmax; i++)
+        unoccupied.push_back (i);
+      lastx = xmin - 1;   // set to "invalid" again
+    }
+  }
+  if (ncovered > 0)
+    cerr << "Internal Error: Inconsistency: Unexpected signals at infinity: "
+      << ncovered << endl;
+  // Output sensor transitions found
+  // for (RangeTransition rt : numranges) {
+  //   cout << rt.x << " -> " << rt.n << endl;
+  // }
+  return unoccupied;
+}
+
+
+/// \brief Data type for a coordinate pair
+//
+struct Coord2D {
+  int x;
+  int y;
+};
+
+
+/// \brief Find all points covered by no sensor in the specified x and y range
+//
+list<Coord2D> FindUncoveredPoints (const vector<Sensor>& sensors,
+    int xmin, int xmax, int ymin, int ymax) {
+  list<Coord2D> uncov;
+  for (int y = ymin; y <= ymax; y++) {
+    list<int> l = FindUncoveredPointsOnLine (sensors, y, xmin, xmax);
+    // if (l.size() > 0)  cout << "Number of unoccupied points on y = "
+    //     << y << ": " << l.size() << endl;
+    for (int x : l)  uncov.push_back (Coord2D { x, y });
+  }
+  return uncov;
+}
+
+
 int main () {
   cout << "--- Example ---" << endl;
   vector<Sensor> sensors = ParseSensors (example);
   cout << "Read " << sensors.size() << " sensors" << endl;
   for (size_t i = 0; i < sensors.size (); i++)  sensors[i].Print();
   int cov = GetSensorCoverageOnLine (sensors, 10);
-  cout << "* Sensor coverage: " << cov << " *" << endl;
+  cout << "* Sensor coverage in y = 10: " << cov << " *" << endl;
+  // list<int> beaconlocs = FindUncoveredPointsOnLine (sensors, 11, 0, 20);
+  // for (int i : beaconlocs)  cout << "- Location: x = " << i << endl;
+  cout << endl;
+
+  list<Coord2D> beaconpositions = FindUncoveredPoints (sensors, 0, 20, 0, 20);
+  for (Coord2D bpos : beaconpositions)
+    cout << "* Beacon Position: x = " << bpos.x << ", y = " << bpos.y
+      << " -> Tuning frequency = " << bpos.x * 4000000 + bpos.y << " *" << endl;
   cout << endl;
 
   cout << "--- Puzzle 1: Where can't the signal originate ---" << endl;
@@ -126,4 +238,18 @@ int main () {
   for (size_t i = 0; i < sensors.size (); i++)  sensors[i].Print();
   cov = GetSensorCoverageOnLine (sensors, 2000000);
   cout << "*** Sensor coverage: " << cov << " ***" << endl;
+  // beaconlocs = FindUncoveredPointsOnLine (sensors, 2000000, 0, 4000000);
+  // for (int i : beaconlocs)  cout << "- Location: x = " << i << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Where is the beacon ---" << endl;
+  beaconpositions = FindUncoveredPoints (sensors, 0, 4000000, 0, 4000000);
+  if (beaconpositions.size() != 1) {
+    cerr << "Error: Expected one beacon position, but found "
+      << beaconpositions.size() << endl;
+  }
+  for (Coord2D bpos : beaconpositions)
+    cout << "*** Beacon Position: x = " << bpos.x << ", y = " << bpos.y
+      << " -> Tuning frequency = " << bpos.x * 4000000L + bpos.y << " ***" << endl;
+  return 0;
 }
