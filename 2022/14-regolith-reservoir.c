@@ -8,8 +8,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef size_t ssize_t;
-
 #include "freadlns.h"
 
 typedef struct Position_struct {
@@ -113,7 +111,7 @@ void PrintRocks (size_t numrocks, const Rock *rocks) {
 /// \brief Create a cave map from the list of rock structures
 //
 void CreateCaveMap (size_t numrocks, const Rock *rock,
-    int *left, int *right, int *top, int *bottom, char ***cave) {
+    int *left, int *right, int *top, int *bottom, char ***cave, int sandx, int sandy) {
   // Determine dimensions
   *left = INT_MAX;  *right = INT_MIN;  *top = INT_MAX;  *bottom = INT_MIN;
   for (size_t i = 0; i < numrocks; i++) {
@@ -126,6 +124,13 @@ void CreateCaveMap (size_t numrocks, const Rock *rock,
   }
   // top needs to include the row where sand enters
   if (*top > 0)  *top = 0;
+  // Extend cave to the left and right to be able to fill it up
+  // to the sand entry point:  At least the distance from top to bottom
+  // is also needed to the left and right, plus two more units
+  // for the additional floor structure below
+  if (sandx - *left < *bottom - *top + 1)  *left = sandx - (*bottom - *top + 3);
+  if (*right - sandx < *bottom - *top + 1)  *right = sandx + (*bottom - *top + 3);
+  (*bottom) += 2;
   // Allocate a cave and fill it with air
   *cave = (char**) malloc ((*bottom - *top + 1) * sizeof (char*));
   if (*cave == NULL)  return;
@@ -164,6 +169,10 @@ void CreateCaveMap (size_t numrocks, const Rock *rock,
         }
       }
     }
+  }
+  // Add the long floor structure below
+  for (int x = 0; x < *right - *left + 1; x++) {
+    (*cave)[*bottom - *top][x] = '#';
   }
   // Find egdes into nowhere: Test every x from bottom up
   for (int tx = 0; tx <= *right - *left; tx++) {
@@ -205,11 +214,20 @@ bool IsFreePos (int left, int right, int top, int bottom, const char **map,
 
 
 /// \brief Let sand trickle into the cave at the specified position
+/// \param left Left edge of cave dimensions
+/// \param right Right edge of cave dimensions
+/// \param top Upper edge of cave dimensions
+/// \param bottom Lower edge of cave dimensions
+/// \param cave Map of the cave
+/// \param sandx Sand start position, x coordinate
+/// \param sandy Sand start position, y coordinate
+/// \param numtofill On output: Number of sand units until cave is filled
+/// \return Number of sand units (grains of sand) resting in the cave structures above ground
 //
-long int PourSand (int left, int right, int top, int bottom, char **cave,
-    int sandx, int sandy) {
-  long int numsand = 0;
-  long int numtimesteps = 0;
+unsigned long int PourSand (int left, int right, int top, int bottom, char **cave,
+    int sandx, int sandy, unsigned long *numtofill) {
+  unsigned long int numsand = 0, numrest = 0;
+  unsigned long int numtimesteps = 0;
   bool trickle = true;
   while (trickle) {
     // Draw "current frame"
@@ -226,6 +244,13 @@ long int PourSand (int left, int right, int top, int bottom, char **cave,
     //   to simplify all the stacked tests below
     bool freefall = true;
     while (freefall) {
+      // Reached the level two above the floor for the first time,
+      // i.e. no longer inside the structures above;
+      // save this as the number of resting sand units and visualise the cave
+      if (numrest == 0 && sy >= bottom - 2) {
+        numrest = numsand;
+        PrintCave (left, right, top, bottom, (const char**)cave);
+      }
       // Still inside the cave grid and at least one row below?
       if (sy > bottom - 1 || sx < left || sx > right) {
         trickle = false;  break;
@@ -265,14 +290,18 @@ long int PourSand (int left, int right, int top, int bottom, char **cave,
       freefall = false;
     }
   }
-  return numsand;
+  *numtofill = numsand;
+  return numrest;
 }
 
 
 /// \brief Build a cave from the rock description lines and fill it with sand
+/// \param numlines Number of lines to consider for rock descriptions
+/// \param lines Lines with rock descriptions
+/// \param numtofill On output: Number of sand units until cave is filled
 /// \return Number of sand units (grains of sand) resting in the cave at the end
 //
-unsigned long LetItSand (size_t numlines, const char **lines) {
+unsigned long LetItSand (size_t numlines, const char **lines, unsigned long *numtofill) {
   // Read rock structures
   size_t maxrocks = 100, numrocks = 0;
   Rock *rocks = (Rock*) malloc (maxrocks * sizeof (Rock));
@@ -282,12 +311,12 @@ unsigned long LetItSand (size_t numlines, const char **lines) {
   // Convert rock structures to a cave map
   int cavel, caver, cavet, caveb;
   char **cavemap = NULL;
-  CreateCaveMap (numrocks, rocks, &cavel, &caver, &cavet, &caveb, &cavemap);
+  CreateCaveMap (numrocks, rocks, &cavel, &caver, &cavet, &caveb, &cavemap, 500, 0);
   printf ("Cave: %d ... %d x %d ... %d\n", cavel, caver, cavet, caveb);
   // PrintCave (cavel, caver, cavet, caveb, (const char**)cavemap);
   // Let the sand trickle down
   // TODO free positions
-  long int numsand = PourSand (cavel, caver, cavet, caveb, cavemap, 500, 0);
+  unsigned long int numsand = PourSand (cavel, caver, cavet, caveb, cavemap, 500, 0, numtofill);
   PrintCave (cavel, caver, cavet, caveb, (const char**)cavemap);
   // Cleanup and return
   for (int i = 0; i < numrocks; i++)  free (rocks[i].pos);
@@ -306,17 +335,23 @@ const char *examplelines[] = {
 
 int main () {
   printf ("--- Example ---\n");
-  long int numsand = LetItSand (sizeof (examplelines) / sizeof (examplelines[0]), examplelines);
+  unsigned long int numtillfull;
+  unsigned long int numsand = LetItSand (sizeof (examplelines) / sizeof (examplelines[0]), examplelines, &numtillfull);
   printf ("* Number of sand units resting in the cave: %lu *\n", numsand);
+  printf ("* Number of sand units in the cave at the end: %lu *\n", numtillfull);
   printf ("\n");
 
-  printf ("--- Puzzle 1 ---\n");
+  printf ("--- Puzzle 1: Number of sand units in the structures ---\n");
   size_t maxlines = 200, numlines = 0;
   char **lines = (char**) malloc (maxlines * sizeof (char*));
   readlines ("14-regolith-reservoir-input.txt", &maxlines, &numlines, &lines);
   printf ("%zd lines read\n", numlines);
-  numsand = LetItSand (numlines, lines);
+  numsand = LetItSand (numlines, lines, &numtillfull);
   printf ("*** Number of sand units resting in the cave: %lu ***\n", numsand);
+  printf ("\n");
+
+  printf ("--- Puzzle 2: Total number of sand units in the cave ---\n");
+  printf ("*** Number of sand units in the cave at the end: %lu ***\n", numtillfull);
   for (int i = 0; i < numlines; i++)  free (lines[i]);
   free (lines);
 }
