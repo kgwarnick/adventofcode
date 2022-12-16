@@ -1,0 +1,7 @@
+--- Example ---
+Start at valve: 0
+Pressure released: 1651
+
+--- Puzzle 1: Best pressure release ---
+Start at valve: 25
+Pressure released: 1820

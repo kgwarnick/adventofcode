@@ -12,7 +12,7 @@ PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   09-rope-bridge$(OBJEXT) 10-cathode-ray-tube$(OBJEXT) \
   11-monkey-in-the-middle$(OBJEXT) 12-hill-climbing-algorithm$(OBJEXT) \
   13-distress-lists$(OBJEXT) 14-regolith-reservoir$(OBJEXT) \
-  15-beacon-exclusion-zone$(OBJEXT)
+  15-beacon-exclusion-zone$(OBJEXT) 16-proboscidea-volcanium$(OBJEXT)
 
 PUZZLE_BIN := $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
@@ -63,3 +63,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 15-beacon-exclusion-zone$(BINEXT) : %$(BINEXT) : %$(OBJEXT) strsplit$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)
+
+16-proboscidea-volcanium$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
