@@ -1,7 +1,15 @@
 --- Example ---
-Start at valve: 0
-Pressure released: 1651
+Start at valves: actor 1: 0, actor 2: 0
+* Pressure released: 1651 *
+
+--- Example with help by an elephant ---
+Start at valves: actor 1: 0, actor 2: 0
+* Pressure released: 1707 *
 
 --- Puzzle 1: Best pressure release ---
-Start at valve: 25
-Pressure released: 1820
+Start at valves: actor 1: 25, actor 2: 25
+*** Pressure released: 1820 ***
+
+--- Puzzle 2: Best pressure release with help by an elephant ---
+Start at valves: actor 1: 25, actor 2: 25
+*** Pressure released: 2602 ***

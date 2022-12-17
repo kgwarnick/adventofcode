@@ -1,1 +1,2 @@
 2022 Day 15  More efficient implementation (currently 1min runtime)
+2022 Day 16  Cleanup of recursive function, make path reporting work

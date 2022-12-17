@@ -149,35 +149,63 @@ void FreeValves (int numvalves, Valve *valves) {
 //
 //   Note:  Reporting of best path not working
 //
-int MaxRelease (int numvalves, Valve *valves, const int **dist,
-    int timeleft, bool *opened, int rate, int amount, int currvalve,
+//   TODO:  Cleanup: Collect actor properties (rate, amount, currvalve, timeleft)
+//     in an Actor struct
+//
+int MaxRelease (int numvalves, Valve *valves, const int **dist, bool *opened,
+    int rate, int amount, int currvalve, int timeleft,
+    int otherrate, int otheramount, int othervalve, int otherleft,
     int numsteps, char *currpath, char *bestpath) {
-  int bestamount = amount;
+  int bestamount = amount + otheramount;
+  // printf ("Info: Amounts: %d %d,  rate: %d %d,  time left: %d %d\n",
+  //   amount, otheramount, rate, otherrate, timeleft, otherleft);
   currpath[numsteps * 2] = '-';  currpath[numsteps*2+1] = '-';  currpath[numsteps*2+2] = '\0';
   // Try each valve
   for (int i = 0; i < numvalves; i++) {
     // Ignore valves without flow or which are already open
     if (valves[i].rate == 0 || opened[i])  continue;
-    if (i == currvalve)  continue;
+    // if (i == currvalve)  continue;
     // Open this valve and get the best result from following that path
-    int needtime = dist[currvalve][i] + 1;
-    if (needtime >= timeleft)  continue;   // Cannot reach that valve in time
     opened[i] = true;   // Open the valve for recursive call
-    currpath[numsteps*2] = valves[i].name[0];  currpath[numsteps*2+1] = valves[i].name[1];
-    int temp = MaxRelease (numvalves, valves, dist, timeleft - needtime,
-      opened, rate + valves[i].rate, amount + needtime * rate, i,
-      numsteps + 1, currpath, bestpath);
-    opened[i] = false;   // Close the valve again before trying the next
-    if (temp > bestamount) {
-      bestamount = temp;
-      bestpath[numsteps*2] = valves[i].name[0];  bestpath[numsteps*2+1] = valves[i].name[1];
+    // Try first actor
+    int needtime = dist[currvalve][i] + 1;
+    if (timeleft >= otherleft && timeleft > needtime) {
+      // if (needtime >= timeleft)  continue;   // Cannot reach that valve in time
+      currpath[numsteps*2] = valves[i].name[0];  currpath[numsteps*2+1] = valves[i].name[1];
+      int temp = MaxRelease (numvalves, valves, dist,
+        opened, rate + valves[i].rate, amount + needtime * rate, i, timeleft - needtime,
+        otherrate, otheramount, othervalve, otherleft, numsteps + 1, currpath, bestpath);
+      // printf ("[1] Opening %s at time left %d gives result %d\n", valves[i].name, timeleft, temp);
+      if (temp > bestamount) {
+        bestamount = temp;
+        bestpath[numsteps*2] = valves[i].name[0];  bestpath[numsteps*2+1] = valves[i].name[1];
+      }
     }
+    // Try second actor
+    // - For same remaining time and same position there is no need to try
+    //   the same path again, so skip (otherleft == timeleft && othervalve == currvalve)
+    needtime = dist[othervalve][i] + 1;
+    if (otherleft > needtime &&
+        (otherleft > timeleft || (otherleft == timeleft && othervalve != currvalve))) {
+      // if (needtime >= otherleft)  continue;   // Cannot reach that valve in time
+      int temp = MaxRelease (numvalves, valves, dist, opened,
+        rate, amount, currvalve, timeleft,
+        otherrate + valves[i].rate, otheramount + needtime * otherrate,
+        i, otherleft - needtime, numsteps + 1, currpath, bestpath);
+      // printf ("[2] Opening %s at time left %d gives result %d\n", valves[i].name, otherleft, temp);
+      if (temp > bestamount) {
+        bestamount = temp;
+        bestpath[numsteps*2] = valves[i].name[0];  bestpath[numsteps*2+1] = valves[i].name[1];
+      }
+    }
+    opened[i] = false;   // Close the valve again before trying the next
   }
   // Just run down the remaining seconds
-  if (amount + timeleft * rate > bestamount) {
-    bestamount = amount + timeleft * rate;
+  if (amount + timeleft * rate + otheramount + otherleft * otherrate > bestamount) {
+    bestamount = amount + timeleft * rate + otheramount + otherleft * otherrate;
     bestpath[numsteps*2] = '-';  bestpath[numsteps*2+1] = '-';  bestpath[numsteps*2+2] = '\0';
   }
+  // printf ("Best result: %d\n", bestamount);
   return bestamount;
 }
 
@@ -205,9 +233,10 @@ int **CreateValveDistances (int numvalves, Valve *valves) {
 }
 
 
-/// \brief Determine the best path to open the valves for the setup given
+/// \brief Determine the maximum possible pressure release for two actors and the given valve setup
 //
-int FindMaximumPressureRelease (int numlines, const char **lines, int timesteps) {
+int FindMaximumPressureRelease (int numlines, const char **lines,
+    const char *startvalve1, int timesteps1, const char *startvalve2, int timesteps2) {
   Valve *v = ParseValves (numlines, lines);
   int **dist = CreateValveDistances (numlines, v);
   bool *openvalves = (bool*) malloc (numlines * sizeof (bool));
@@ -215,13 +244,13 @@ int FindMaximumPressureRelease (int numlines, const char **lines, int timesteps)
   char testpath[256], bestpath[256];
   testpath[0] = '\0';  bestpath[0] = '\0';
   // Find starting position
-  int startvalve = FindValve (numlines, v, "AA") ->index;
-  printf ("Start at valve: %d\n", startvalve);
+  int valveindex1 = FindValve (numlines, v, startvalve1) ->index;
+  int valveindex2 = FindValve (numlines, v, startvalve2) ->index;
+  printf ("Start at valves: actor 1: %d, actor 2: %d\n", valveindex1, valveindex2);
   // Calculate maximum pressure release
-  int released = MaxRelease (numlines, v, (const int**)dist, timesteps,
-    openvalves, 0, 0, startvalve, 0, testpath, bestpath);
-  // printf ("Pressure released: %d with path \"%s\"\n", released, bestpath);
-  printf ("Pressure released: %d\n", released);
+  int released = MaxRelease (numlines, v, (const int**)dist, openvalves,
+    0, 0, valveindex1, timesteps1,  0, 0, valveindex2, timesteps2,
+    0, testpath, bestpath);
   free (openvalves);
   for (int i = 0; i < numlines; i++)  free (dist[i]);
   free (dist);
@@ -232,7 +261,14 @@ int FindMaximumPressureRelease (int numlines, const char **lines, int timesteps)
 
 int main () {
   printf ("--- Example ---\n");
-  FindMaximumPressureRelease (sizeof (Example) / sizeof (Example[0]), Example, 30);
+  int maxrel = FindMaximumPressureRelease (
+    sizeof (Example) / sizeof (Example[0]), Example, "AA", 30, "AA", 0);
+  // printf ("Pressure released: %d with path \"%s\"\n", released, bestpath);
+  printf ("* Pressure released: %d *\n", maxrel);
+  printf ("\n");
+  printf ("--- Example with help by an elephant ---\n");
+  maxrel = FindMaximumPressureRelease (sizeof (Example) / sizeof (Example[0]), Example, "AA", 26, "AA", 26);
+  printf ("* Pressure released: %d *\n", maxrel);
   printf ("\n");
 
   printf ("--- Puzzle 1: Best pressure release ---\n");
@@ -240,5 +276,11 @@ int main () {
   char **lines = (char**) malloc (maxlines * sizeof (char*));
   readlines ("16-proboscidea-volcanium-input.txt",
     &maxlines, &numlines, &lines);
-  FindMaximumPressureRelease (numlines, (const char**)lines, 30);
+  maxrel = FindMaximumPressureRelease (numlines, (const char**)lines, "AA", 30, "AA", 0);
+  printf ("*** Pressure released: %d ***\n", maxrel);
+  printf ("\n");
+
+  printf ("--- Puzzle 2: Best pressure release with help by an elephant ---\n");
+  maxrel =  FindMaximumPressureRelease (numlines, (const char**)lines, "AA", 26, "AA", 26);
+  printf ("*** Pressure released: %d ***\n", maxrel);
 }
