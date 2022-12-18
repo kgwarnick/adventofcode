@@ -1,0 +1,10 @@
+--- Example ---
+Droplet dimensions: (1, 1, 1) ... (3, 3, 6)
+Read a droplet with volume 54 (3 x 3 x 6)
+* Surface area: 64 *
+
+--- Puzzle 1: Surface area of the droplet ---
+Number of lines read: 2831, characters: 21746
+Droplet dimensions: (1, 0, 0) ... (21, 21, 21)
+Read a droplet with volume 10164 (21 x 22 x 22)
+*** Surface area: 4548 ***
