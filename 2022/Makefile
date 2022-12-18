@@ -13,7 +13,7 @@ PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   11-monkey-in-the-middle$(OBJEXT) 12-hill-climbing-algorithm$(OBJEXT) \
   13-distress-lists$(OBJEXT) 14-regolith-reservoir$(OBJEXT) \
   15-beacon-exclusion-zone$(OBJEXT) 16-proboscidea-volcanium$(OBJEXT) \
-  17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(BINEXT)
+  17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(OBJEXT)
 
 PUZZLE_BIN := $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 

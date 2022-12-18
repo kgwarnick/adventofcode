@@ -86,8 +86,11 @@ unsigned long ParseDroplet (Droplet *droplet,
 
 
 /// \brief Calculate the surface area of a droplet
+/// \param The droplet to calculate the surface area for
+/// \param includeinner  Whether to include inner volume elemnts (true) or only
+///   surface accessible from the outside (false)
 //
-unsigned long DropletSurface (const Droplet *droplet) {
+unsigned long DropletSurface (const Droplet *droplet, bool includeinner) {
   long surf = 0;
   for (int z = droplet->pz; z < droplet->pz + (int)droplet->nz; z++)
     for (int y = droplet->py; y < droplet->py + (int)droplet->ny; y++)
@@ -95,16 +98,108 @@ unsigned long DropletSurface (const Droplet *droplet) {
         if (GetVoxel (droplet, x, y, z) != '*')  continue;   // Not part of droplet
         int n = 0;
         // Check all six neighbours
-        if (GetVoxel (droplet, x-1, y  , z  ) != '*')  n++;
-        if (GetVoxel (droplet, x+1, y  , z  ) != '*')  n++;
-        if (GetVoxel (droplet, x  , y-1, z  ) != '*')  n++;
-        if (GetVoxel (droplet, x  , y+1, z  ) != '*')  n++;
-        if (GetVoxel (droplet, x  , y  , z-1) != '*')  n++;
-        if (GetVoxel (droplet, x  , y  , z+1) != '*')  n++;
+        if (includeinner) {
+          // Accept a neighbour which is not a part of the droplet
+          if (GetVoxel (droplet, x-1, y  , z  ) != '*')  n++;
+          if (GetVoxel (droplet, x+1, y  , z  ) != '*')  n++;
+          if (GetVoxel (droplet, x  , y-1, z  ) != '*')  n++;
+          if (GetVoxel (droplet, x  , y+1, z  ) != '*')  n++;
+          if (GetVoxel (droplet, x  , y  , z-1) != '*')  n++;
+          if (GetVoxel (droplet, x  , y  , z+1) != '*')  n++;
+        }
+        else {
+          // Accept only neighbour which is "outside air"
+          if (GetVoxel (droplet, x-1, y  , z  ) == ' ')  n++;
+          if (GetVoxel (droplet, x+1, y  , z  ) == ' ')  n++;
+          if (GetVoxel (droplet, x  , y-1, z  ) == ' ')  n++;
+          if (GetVoxel (droplet, x  , y+1, z  ) == ' ')  n++;
+          if (GetVoxel (droplet, x  , y  , z-1) == ' ')  n++;
+          if (GetVoxel (droplet, x  , y  , z+1) == ' ')  n++;
+        }
         // printf ("Cube (%d, %d, %d) has %d uncovered faces\n", x, y, z, n);
         surf += n;
       }
   return surf;
+}
+
+
+/// \brief Identify accessible and inaccessible air cubes
+///
+/// "Propagation of accessible volume elements to the inside":
+///
+/// After parsing, cubes part of the droplet are marked by '*',
+/// cubes not part of the droplet ("air") are marked by '.' .
+/// Now mark all air cubes accessible from the outside with ' ' (space).
+/// Cubes that remain '.' are enclosed air cubes and not accessible.
+///
+/// \return Number of enclosed inner volume elements
+//
+unsigned long CloseDroplet (Droplet *droplet) {
+  // Surround the droplet with a layer of air and loop over all droplet
+  // volume elements to identify elements connected to outside air
+  // until no new volume elements could be identified in a loop
+  bool foundcube = true;
+  size_t runs = 0;   // Count runs necessary
+  while (foundcube && runs < droplet->nz * droplet->ny * droplet->nx) {
+    foundcube = false;
+    for (int z = droplet->pz; z < droplet->pz + (int)droplet->nz; z++) {
+      for (int y = droplet->py; y < droplet->py + (int)droplet->ny; y++) {
+        for (int x = droplet->px; x < droplet->px + (int)droplet->nx; x++) {
+          // Only consider air volume elements
+          if (GetVoxel (droplet, x, y, z) != '.')  continue;
+          // If this volume element is at the outside of the droplet, it is accessible
+          if (z == droplet->pz || z == droplet->pz + (int)droplet->nz - 1 ||
+              y == droplet->py || y == droplet->py + (int)droplet->ny - 1 ||
+              x == droplet->px || y == droplet->px + (int)droplet->nx - 1) {
+            SetVoxel (droplet, x, y, z, ' ');
+            foundcube = true;
+            continue;
+          }
+          // If this volume element has an air neighbour, mark it as accessible as well
+          if (GetVoxel (droplet, x-1, y  , z  ) == ' ' ||
+              GetVoxel (droplet, x+1, y  , z  ) == ' ' ||
+              GetVoxel (droplet, x  , y-1, z  ) == ' ' ||
+              GetVoxel (droplet, x  , y+1, z  ) == ' ' ||
+              GetVoxel (droplet, x  , y  , z-1) == ' ' ||
+              GetVoxel (droplet, x  , y  , z+1) == ' ') {
+            SetVoxel (droplet, x, y, z, ' ');
+            foundcube = true;
+            continue;
+          }
+    } } } // for x, y, z
+    runs++;
+  } // while foundcube
+  printf ("Needed %zu runs to close the droplet\n", runs);
+  // Count inner volume elements
+  long unsigned inner = 0;
+  for (int z = droplet->pz; z < droplet->pz + (int)droplet->nz; z++) {
+    for (int y = droplet->py; y < droplet->py + (int)droplet->ny; y++) {
+      for (int x = droplet->px; x < droplet->px + (int)droplet->nx; x++) {
+        // Only consider air volume elements
+        if (GetVoxel (droplet, x, y, z) == '.') {
+          // printf ("Inner cube (%d, %d, %d)\n", x, y, z);
+          inner++;
+        }
+  } } }
+  return inner;
+}
+
+/// \brief Output droplet xy layers for the specified z range
+///
+/// Note: z values outside the droplet are not an error
+///   (but will be output as empty layers)
+//
+void PrintDropletLayers (const Droplet *droplet, int zmin, int zmax) {
+  for (int z = zmin; z <= zmax; z++) {
+    printf ("z = %d\n", z);
+    for (int y = droplet->py + (int)droplet->ny - 1; y >= droplet->py; y--) {
+      printf ("%4d|", y);
+      for (int x = droplet->px; x < droplet->px + (int)droplet->nx; x++) {
+        printf ("%c", GetVoxel (droplet, x, y, z));
+      }
+      printf ("|\n");
+    }
+  }
 }
 
 
@@ -115,7 +210,15 @@ int main () {
     sizeof (examplelines) / sizeof (examplelines[0]), examplelines);
   printf ("Read a droplet with volume %lu (%zu x %zu x %zu)\n",
     dropvol, droplet.nx, droplet.ny, droplet.nz);
-  unsigned long dropsurface = DropletSurface (&droplet);
+  unsigned long dropsurface = DropletSurface (&droplet, true);
+  printf ("* Surface area: %lu *\n", dropsurface);
+  printf ("\n");
+
+  printf ("--- Example without inner volume elements ---\n");
+  unsigned long innercubes = CloseDroplet (&droplet);
+  PrintDropletLayers (&droplet, droplet.pz - 1, droplet.pz + droplet.nz);
+  printf ("Number of inaccessible volume elements: %lu\n", innercubes);
+  dropsurface = DropletSurface (&droplet, false);
   printf ("* Surface area: %lu *\n", dropsurface);
   free (droplet.voxels);
   printf ("\n");
@@ -129,9 +232,16 @@ int main () {
   dropvol = ParseDroplet (&droplet, numlines, (const char**)inputlines);
   printf ("Read a droplet with volume %lu (%zu x %zu x %zu)\n",
     dropvol, droplet.nx, droplet.ny, droplet.nz);
-  dropsurface = DropletSurface (&droplet);
+  dropsurface = DropletSurface (&droplet, true);
   printf ("*** Surface area: %lu ***\n", dropsurface);
+  printf ("\n");
 
+  printf ("--- Puzzle 2: Surface area without counting inner volume elements ---\n");
+  innercubes = CloseDroplet (&droplet);
+  PrintDropletLayers (&droplet, droplet.pz, droplet.pz + droplet.nz - 1);
+  printf ("Number of inaccessible volume elements: %lu\n", innercubes);
+  dropsurface = DropletSurface (&droplet, false);
+  printf ("* Surface area: %lu *\n", dropsurface);
   free (droplet.voxels);
   for (size_t i = 0; i < numlines; i++)   free (inputlines[i]);
   free (inputlines);
