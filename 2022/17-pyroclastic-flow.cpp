@@ -3,15 +3,17 @@
 
 #include <iostream>
 #include <iomanip>
+#include <map>
 #include <vector>
-#include <algorithm>
-#include <numeric>
 #include <cstring>
 
 using namespace std;
 
 #include "fileread.hpp"
 
+
+const long ChamberHeight = 32000;
+const string ExampleJet = ">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>";
 
 int min4 (int a, int b, int c, int d) {
   return a < b && a < c && a < d ? a : b < c && b < d ? b : c < d ? c : d;
@@ -91,17 +93,61 @@ void Rock::SetShape (int index) {
 }
 
 
+/// \brief Properties of a rock tower
+//
+struct RockTower {
+  long numrocks;
+  long height;
+};
+
+/// \brief Floor heights described as individual height of every floor element
+//
+struct FloorHeights {
+  short f[7];
+  string str () const {
+    string s = to_string (f[0]);
+    for (int i = 1; i < 7; i++)  s += ", " + to_string(f[i]);
+    return s;
+  }
+};
+
+/// \brief Chamber state, consisting of shape, jet offset and floor height
+//
+struct ChamberState {
+  char shape;   ///< Shape index 0...4
+  unsigned short jetoffset;   ///< current position in the jet data
+  FloorHeights flheight;   ///< Floor offsets, relative to the floor height
+};
+
+/// \brief Compare two chamber states and find out if the first is "less than" the second
+//
+bool operator< (const ChamberState& a, const ChamberState& b) {
+  if (a.jetoffset < b.jetoffset)  return true;
+  if (a.jetoffset > b.jetoffset)  return false;
+  if (a.shape < b.shape)  return true;
+  if (a.shape > b.shape)  return false;
+  for (int i = 0; i < 7; i++) {
+    if (a.flheight.f[i] < b.flheight.f[i]) return true;
+    if (a.flheight.f[i] > b.flheight.f[i]) return false;
+  }
+  return false;   // not less than, but equal
+}
+
+
 /// \brief Data type to keep track of the chamber state
 //
 class Chamber {
  public:
-  bool floor[5000][7];
+  bool floor[ChamberHeight][7];
   int floorheight;
   int numrocks;
   bool fallingrock;
   string gasjet;
   size_t jetunits;
   Rock rock;   ///< Currently falling rock
+  /// Dictionary of previously seen states, collected just before a new rock s selected
+  map<ChamberState,RockTower> seenstates;
+  /// Create a chamber with the specified gas stream
   Chamber (const string& gasstream) :
       floorheight(0), numrocks(0), fallingrock(false),
       gasjet(gasstream), jetunits(0) {
@@ -109,13 +155,15 @@ class Chamber {
     for (int i = 0; i < 7; i++)  floor[0][i] = true;
   }
   void Draw (int down = 10) const;
-  void SpawnRock ();
+  bool SpawnRock ();
   bool PushRock ();
   bool FallRock ();
-  void DoStep ();   // Perform the next push + fall step on the rock
+  bool DoStep ();   ///< Perform the next push + fall step on the rock, create new rock if necessary
   int DoSteps (int numsteps);
   int FloorHeightAfterManyRocks (int numrestingrocks);
+  long FloorHeightAfterVeryManyRocksShortcut (int numsim, long numrestingrocks);
   bool RockCrashed (const Rock& rock) const;   // Collision test for rock
+  FloorHeights GetFloorLevels() const;
 };
 
 
@@ -136,12 +184,38 @@ void Chamber::Draw (int down) const {
 
 
 /// \brief Start falling of the next rock
+/// \return  true if a repeating pattern of (shape, jet, floor) was detected
 //
-void Chamber::SpawnRock () {
+bool Chamber::SpawnRock () {
+  // Add current state to dictionary of all previously seen states
+  ChamberState chst;   // { (char)(numrocks % 5), (unsigned short)(jetunits % gasjet.size()) };
+  chst.shape = numrocks % 5;
+  chst.jetoffset = jetunits % gasjet.size();
+  chst.flheight = GetFloorLevels ();
+  map<ChamberState,RockTower>::iterator oldstate = seenstates.find (chst);
+  bool repeated = false;
+  if (oldstate != seenstates.end()) {
+    repeated = true;
+    // cout << "Chamber state (numrocks: " << numrocks << ", jet: "
+    //   << jetunits << "/" << jetunits % gasjet.size() << ") -> "
+    //   << "(rocks: " << numrocks << ", height: " << floorheight
+    //   << "): Already seen in (rocks: " << oldstate->second.numrocks
+    //   << ", height: " << oldstate->second.height << ")" << endl;
+    // if (oldstate->second.height == 62) Draw();
+    // cout << "Diff: (rocks: " << numrocks - oldstate->second.numrocks
+    //   << ", jet: " << jetunits - oldstate->first.jetoffset << ", floor: "
+    //   << floorheight - oldstate->second.height << ")" << endl;
+  } else {
+    RockTower roctow { numrocks, floorheight };
+    // cout << "Storing chamber state: (rocks: " << roctow.numrocks
+    //   << ", height: " << roctow.height << ")" << endl;
+    seenstates[chst] = roctow;
+  }
   // Select next rock shape
   fallingrock = true;
   rock.SetShape (numrocks);
   rock.SetPos (2, floorheight + 4);
+  return repeated;
 }
 
 
@@ -156,13 +230,7 @@ bool Chamber::PushRock () {
   Rock pushed (rock);
   pushed.Move (dx, 0);
   bool movepossible = !RockCrashed (pushed);
-  if (movepossible) {
-    rock = pushed;
-    // cout << "[" << jetunits << "] Pushed rock to " << rock.x << ", " << rock.y << endl;
-  }
-  // else {
-  //   cout << "[" << jetunits << "] Could not move rock " << rock.x << ", " << rock.y << endl;
-  // }
+  if (movepossible)  rock = pushed;   // Use new position
   return movepossible;
 }
 
@@ -175,23 +243,20 @@ bool Chamber::FallRock () {
   Rock fallen = rock;
   fallen.Move (0, -1);
   bool collision = RockCrashed (fallen);
-  if (!collision) {
-    rock = fallen;
-    // cout << "Rock fell down one unit to " << rock.x << ", " << rock.y << endl;
-  } // else {
-  //   cout << "Rock has reached the ground at " << rock.x << ", " << rock.y << endl;
-  //}
+  if (!collision)  rock = fallen;   // Use new position
   return collision;
 }
 
 
 /// \brief Do one step: A new rock enters the chamber, or the current one is moved
+/// \return  true if the chamber's state is a repetition of an earlier state
 //
-void Chamber::DoStep () {
+bool Chamber::DoStep () {
   if (!fallingrock) {
-    SpawnRock ();
+    // We count spawning a rock as one step and return immediately from here
+    bool repeated = SpawnRock ();
     // Draw ();
-    return;   // Spawning a rock counts as one step?
+    return repeated;
   }
   PushRock ();
   if (FallRock ()) {
@@ -199,7 +264,7 @@ void Chamber::DoStep () {
     // cout << "Rock " << numrocks << " has landed" << endl;
     // Make the rock part of the ground
     for (Coord2D p: rock.points) {
-      if (p.x < 0 || p.x > 6 || p.y < 0 || p.y > 5000)  continue;   // outside
+      if (p.x < 0 || p.x > 6 || p.y < 0 || p.y > ChamberHeight)  continue;   // outside
       floor[p.y][p.x] = true;
     }
     floorheight = max (floorheight, rock.GetUpperEdge());
@@ -207,6 +272,9 @@ void Chamber::DoStep () {
     // No falling rock any more at the moment
     fallingrock = false;
   }
+  // No repeated pattern could be detected because checks are only done
+  // when a new rock enters the chamber
+  return false;
 }
 
 
@@ -229,21 +297,107 @@ int Chamber::FloorHeightAfterManyRocks (int numrestingrocks) {
 }
 
 
+/// \brief Do steps until a repetition of the state of the chamber is detected, then calculate the final height
+/// \param numsim  Number of steps to simulate at most
+/// \param numrestingrocks  Number of rocks to calculate the height for
+//
+long Chamber::FloorHeightAfterVeryManyRocksShortcut (int numsim, long numrestingrocks) {
+  bool repetitionfound = false;
+  long nsim;
+  for (nsim = 0; nsim < numsim && !repetitionfound; nsim++) {
+    repetitionfound = DoStep ();
+  }
+  if (!repetitionfound) {
+    cerr << "Error: No repetition was detected for " << numsim << endl;
+    return 0;
+  }
+  // Get the oldstate
+  ChamberState currstate;
+  currstate.shape = numrocks % 5;
+  currstate.jetoffset = jetunits % gasjet.size();
+  currstate.flheight = GetFloorLevels ();
+  map<ChamberState,RockTower>::iterator oldstate = seenstates.find (currstate);
+  if (oldstate == seenstates.end()) {
+    cerr << "Internal error: Repeated state was detected and lost again?!" << endl;
+    return 0;
+  }
+  cout << "Repetition found in simulation step " << nsim << endl;
+  cout << "- Chamber state (rocks/shape: " << numrocks << "/" << numrocks % 5
+    << ", jet/offset: " << jetunits << "/" << jetunits % gasjet.size() << ", floor: "
+    << currstate.flheight.str() << ") -> "
+    << "(rocks: " << numrocks << ", height: " << floorheight << ")" << endl;
+  cout << "- Already seen in (shape: " << (int)oldstate->first.shape
+    << ", jetoffset: " << oldstate->first.jetoffset
+    <<" ) -> (rocks: " << oldstate->second.numrocks
+    << ", height: " << oldstate->second.height << ")" << endl;
+  long reprocks = numrocks - oldstate->second.numrocks;
+  long repjet = jetunits - oldstate->first.jetoffset;
+  long repheight = floorheight - oldstate->second.height;
+  cout << "- Differences: (rocks: " << reprocks << ", jet: " << repjet
+    << ", height: " << repheight << ")" << endl;
+  // Calculate final tower height:
+  //   height until repeated unit starts + n * repeated unit + rest to top
+  // TODO
+  // - How many repetitions do we need
+  long needreps = (numrestingrocks - numrocks) / reprocks;
+  long towerheight = floorheight + needreps * repheight;
+  long remainingrocks = numrestingrocks - numrocks - needreps * reprocks;
+  cout << "- Need repetitions: " << needreps << endl;
+  cout << "- Need " << remainingrocks << " more rocks" << endl;
+  // Get the remaining height by finding a suitable rock to end the tower,
+  // it should already have been simulated
+  ChamberState endchstate;
+  RockTower enddata { 0, 0 };
+  for (pair<ChamberState,RockTower> rt : seenstates) {
+    // Search for a data with the right number of rocks
+    // after the beginning of the repetition unit
+    if (rt.second.numrocks == oldstate->second.numrocks + remainingrocks) {
+      endchstate = rt.first;
+      enddata = rt.second;
+    }
+  }
+  cout << "- End rock state, should be rock " << oldstate->second.numrocks + remainingrocks
+    << ": (shape: " << (int)endchstate.shape
+    << ", jetoffset: " << endchstate.jetoffset
+    <<" ) -> (rocks: " << enddata.numrocks
+    << ", height: " << enddata.height << ")" << endl;
+  long remheight = enddata.height - oldstate->second.height;
+  cout << "- Additonal height: " << remheight << endl;
+  towerheight += remheight;
+  return towerheight;
+}
+
+
 bool Chamber::RockCrashed (const Rock& r) const {
   for (Coord2D p: r.points) {
     if (p.x < 0 || r.GetRightEdge() > 6)  return true;   // Crashed into left or right wall
-    if (p.y < 0 || p.y > 5000)  continue;   // Cannot test outside the chamber
+    if (p.y < 0 || p.y > ChamberHeight)  continue;   // Cannot test outside the chamber
     if (floor[p.y][p.x])  return true;   // Rock and ground in same location
   }
   return false;   // No rock point collided with the floor
 }
 
 
+/// \brief Calculate height of floor tiles relative to the topmost tile = floorheight
+//
+FloorHeights Chamber::GetFloorLevels () const {
+  FloorHeights flh;
+  for (int x = 0; x < 7; x++) {
+    flh.f[x] = floorheight;   // Start with endless void down to bottom
+    for (int y = 0; y < 1000 && y <= floorheight; y++) {
+      if (floor[floorheight-y][x]) { flh.f[x] = y; break; }
+    }
+  }
+  return flh;
+}
+
+
 int main () {
   cout << "--- Example ---" << endl;
-  Chamber chamber (">>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>");
+  Chamber chamber (ExampleJet);
   cout << "Start chamber:" << endl;
   chamber.Draw ();
+  // - Do a certain number of simulation steps
   // int numrest = chamber.DoSteps (65);
   // cout << "Resting rocks: " << numrest << endl;
   int floorheight = chamber.FloorHeightAfterManyRocks (2022);
@@ -252,10 +406,26 @@ int main () {
   cout << "* Floor height: " << floorheight << " *" << endl;
   cout << endl;
 
+  cout << "Calculate height after 10^12 rocks" << endl;
+  Chamber ExampleChamber (ExampleJet);
+  // - To verify with the result of the first method:
+  // long ohoh = ExampleChamber.FloorHeightAfterVeryManyRocksShortcut (2022, 2022);
+  long babeltower = ExampleChamber.FloorHeightAfterVeryManyRocksShortcut (12000, 1000000L * 1000000L);
+  cout << "* Floor height: " << babeltower << " *" << endl;
+
   cout << "--- Puzzle 1: Tower height after 2022 rocks ---" << endl;
   vector<string> InputLines = ReadLinesVector ("17-pyroclastic-flow-input.txt");
   Chamber InputChamber (InputLines[0]);
   floorheight = InputChamber.FloorHeightAfterManyRocks (2022);
   InputChamber.Draw ();
   cout << "*** Floor height: " << floorheight << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Really big tower of 10^12 rocks ---" << endl;
+  Chamber TestChamber (InputLines[0]);
+  babeltower = TestChamber.FloorHeightAfterVeryManyRocksShortcut (24000, 1000000L * 1000000L);
+  cout << "Simulated chamber:  Height: " << TestChamber.floorheight << ", number of gas jet blows: "
+    << TestChamber.jetunits << endl;
+  TestChamber.Draw ();
+  cout << "*** Total floor height: " << babeltower << " ***" << endl;
 }

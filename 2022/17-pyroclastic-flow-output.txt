@@ -47,6 +47,16 @@ Top layers of the end chamber:
  3036|###.###|
 * Floor height: 3068 *
 
+Calculate height after 10^12 rocks
+Repetition found in simulation step 412
+- Chamber state (rocks/shape: 63/3, jet/offset: 348/28, floor: 2, 2, 0, 2, 3, 5, 7) -> (rocks: 63, height: 102)
+- Already seen in (shape: 3, jetoffset: 28 ) -> (rocks: 28, height: 49)
+- Differences: (rocks: 35, jet: 320, height: 53)
+- Need repetitions: 28571428569
+- Need 22 more rocks
+- End rock state, should be rock 50: (shape: 0, jetoffset: 2 ) -> (rocks: 50, height: 78)
+- Additonal height: 29
+* Floor height: 1514285714288 *
 --- Puzzle 1: Tower height after 2022 rocks ---
  3156|.......|
  3155|.......|
@@ -65,3 +75,32 @@ Top layers of the end chamber:
  3142|.####..|
  3141|.####..|
 *** Floor height: 3151 ***
+
+--- Puzzle 2: Really big tower of 10^12 rocks ---
+Repetition found in simulation step 12664
+- Chamber state (rocks/shape: 1862/2, jet/offset: 10801/710, floor: 1, 0, 1, 1, 1, 1, 1) -> (rocks: 1862, height: 2903)
+- Already seen in (shape: 2, jetoffset: 710 ) -> (rocks: 122, height: 187)
+- Differences: (rocks: 1740, jet: 10091, height: 2716)
+- Need repetitions: 574712642
+- Need 1058 more rocks
+- End rock state, should be rock 1180: (shape: 0, jetoffset: 6792 ) -> (rocks: 1180, height: 1857)
+- Additonal height: 1670
+Simulated chamber:  Height: 2903, number of gas jet blows: 10801
+ 2909|....@..|
+ 2908|....@..|
+ 2907|..@@@..|
+ 2906|.......|
+ 2905|.......|
+ 2904|.......|
+ 2903|.#.....|
+ 2902|#######|
+ 2901|.###...|
+ 2900|..##...|
+ 2899|..#....|
+ 2898|..#....|
+ 2897|..#.#..|
+ 2896|..#.#..|
+ 2895|..###..|
+ 2894|...#...|
+ 2893|..###..|
+*** Total floor height: 1560919540245 ***
