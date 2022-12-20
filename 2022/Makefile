@@ -1,7 +1,7 @@
 # Extension for object files, typically .o on Linux, .obj on Windows
-OBJEXT = .obj
+OBJEXT = .o
 # Extension for binaries, empty for Linux binaries
-BINEXT = .exe
+BINEXT =
 
 HELPER_OBJ = fileread$(OBJEXT) strsplit$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
 
@@ -73,5 +73,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 18-boiling-boulders$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
 
-19-not-enough-minerals$(BINEXT) : %$(BINEXT= : %$(OBJEXT) fileread$(OBJEXT)
+19-not-enough-minerals$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)

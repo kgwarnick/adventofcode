@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <ctime>
+#include <chrono>
 
 using namespace std;
 
@@ -65,7 +65,8 @@ struct RobotFleet {
 
 /// \brief Simulate one time step and determine the best result
 ///
-/// Recursion in units of "one time step", takes much too long for actual inputs
+/// Recursion in units of "one time step",
+/// takes much too long for actual inputs with more than about 20 iterations
 //
 unsigned long TryTimeStep (const Blueprint& blueprint, int step, int maxsteps, const RobotFleet& robots, const Minerals& minerals) {
   // Debug info
@@ -133,7 +134,9 @@ unsigned long TryTimeStep (const Blueprint& blueprint, int step, int maxsteps, c
 
 /// \brief Build next bot and determine best result
 ///
-/// Recursion in units of "one robot built", including waiting until enough resources are available
+/// Recursion in units of "one robot built",
+/// including waiting until enough resources are available and skipping build
+/// choices that would not improve the result any more
 ///
 /// Build a certain robot if either enough resources are already available
 /// or the collection rate is high enough to build one later.
@@ -152,11 +155,22 @@ unsigned long TryBuildStep (const Blueprint& blueprint, int step, int maxsteps, 
   unsigned long bestresult = minerals.geodes, testresult;
   RobotFleet testbots = robots;
   Minerals collected;
+  // Note:  All robots other than a geode cracker do not increase the result immediately,
+  //   so producing them is only worth the ressources
+  //   if there is time to build a geode cracking robot later,
+  // How many robots of a kind are enough?
+  //   There is no point building more robots of a kind that the demand
+  //   of that ressource per cycle (example: if no robot costs more than 3 ore,
+  //   3 ore robots will restock the reservoir in every step)
+  // - Ore is needed by every type of robot, so calculate the maximum ore;
+  // - The other resources are given by the matching blueprint entry
+  // - You can never have enough geode crackers
+  int enoughore = max (max (blueprint.orecollneedore, blueprint.claycollneedore),
+                       max (blueprint.obsidiancollneedore, blueprint.geodecrackneedore));
+  // Choices: What robot to build next?
   // - Produce ore-collecting robot
-  //   TODO Ore robots do not increase the result immediately, so producing one only pays off
-  //   if there is time to build another one (a geode cracking robot) and use that,
-  //   so one could require one more time step?
-  if (minerals.ore + robots.orecoll * (maxsteps - step - 2) >= blueprint.orecollneedore) {
+  if (robots.orecoll < enoughore &&
+      minerals.ore + robots.orecoll * (maxsteps - step - 2) >= blueprint.orecollneedore) {
     int waittime = max (0, ceildiv ((blueprint.orecollneedore - minerals.ore), robots.orecoll));
     // cout << "[" << step << "] (ore) Need to wait " << waittime << endl;
     testbots.orecoll++;
@@ -169,7 +183,15 @@ unsigned long TryBuildStep (const Blueprint& blueprint, int step, int maxsteps, 
     testbots.orecoll--;
   }
   // - Produce clay-collecting robot
-  if (minerals.ore + robots.orecoll * (maxsteps - step - 2) >= blueprint.claycollneedore) {
+  //   Producing a clay-collecting robot only pays off if
+  //   (1) it can collect some clay,
+  //   (2) an obsidian-collecting robot is built with that clay,
+  //   (3) that collects some obsidian and
+  //   (4) another geode-cracking robot is built
+  //   (5) and can crack some geodes.
+  //   So require additional 5 cycles
+  if (robots.claycoll < blueprint.obsidiancollneedclay &&
+      minerals.ore + robots.orecoll * (maxsteps - step - 6) >= blueprint.claycollneedore) {
     int waittime = max (0, ceildiv ((blueprint.claycollneedore - minerals.ore), robots.orecoll));
     // cout << "[" << step << "] (clay) Need to wait " << waittime << endl;
     testbots.claycoll++;
@@ -182,8 +204,14 @@ unsigned long TryBuildStep (const Blueprint& blueprint, int step, int maxsteps, 
     testbots.claycoll--;
   }
   // - Produce obsidian-collecting robot
-  if (minerals.ore + robots.orecoll * (maxsteps - step - 2) >= blueprint.obsidiancollneedore &&
-      minerals.clay + robots.claycoll * (maxsteps - step - 2) >= blueprint.obsidiancollneedclay) {
+  //   only pays off if
+  //   (1) at least one obsidian unit is collected
+  //   (2) to build a geode-cracking robot
+  //   (3) that cracks at least one geode
+  //   Require 3 more cycles
+  if (robots.obsidiancoll < blueprint.geodecrackneedobsidian &&
+      minerals.ore + robots.orecoll * (maxsteps - step - 4) >= blueprint.obsidiancollneedore &&
+      minerals.clay + robots.claycoll * (maxsteps - step - 4) >= blueprint.obsidiancollneedclay) {
     int waittime = max (0, ceildiv ((blueprint.obsidiancollneedore - minerals.ore), robots.orecoll));
     waittime = max (waittime, ceildiv ((blueprint.obsidiancollneedclay - minerals.clay), robots.claycoll));
     // cout << "[" << step << "] (obsidian) Need to wait " << waittime << endl;
@@ -216,7 +244,7 @@ unsigned long TryBuildStep (const Blueprint& blueprint, int step, int maxsteps, 
   collected.clay = minerals.clay + robots.claycoll * (maxsteps - step);
   collected.obsidian = minerals.obsidian + robots.obsidiancoll * (maxsteps - step);
   collected.geodes = minerals.geodes + robots.geodecrack * (maxsteps - step);
-  if (collected.geodes > bestresult) { bestresult = collected.geodes; }
+  if ((unsigned long)collected.geodes > bestresult) { bestresult = collected.geodes; }
   // Best option
   return bestresult;
 }
@@ -236,6 +264,8 @@ const vector<string> ExampleLines = {
 };
 
 
+/// \brief Read robot blueprints from lines
+//
 vector<Blueprint> ParseBlueprints (const vector<string>& lines) {
   vector<Blueprint> blueprints (lines.size());
   for (size_t i = 0; i < lines.size(); i++) {
@@ -258,6 +288,8 @@ vector<Blueprint> ParseBlueprints (const vector<string>& lines) {
 }
 
 
+/// \brief Determine quality levels of all blueprints and return the total
+//
 unsigned long TestBlueprints (const vector<string>& bluelines, int maxsteps,
     RobotFleet startrobots, Minerals startressources) {
   vector<Blueprint> blueprints = ParseBlueprints (bluelines);
@@ -265,16 +297,43 @@ unsigned long TestBlueprints (const vector<string>& bluelines, int maxsteps,
   unsigned long totalquality = 0;
   for (Blueprint bluepr : blueprints) {
     bluepr.Print ();
-    time_t starttime = time (0);
+    chrono::time_point<chrono::steady_clock> starttp = chrono::steady_clock::now();
     // unsigned long cracknum = TryTimeStep (bluepr, 0, maxsteps, startrobots, startressources);
     unsigned long cracknum = TryBuildStep (bluepr, 0, maxsteps, startrobots, startressources);
-    time_t endtime = time (0);
+    chrono::time_point<chrono::steady_clock> endtp = chrono::steady_clock::now();
     cout << "- Number of open geodes: " << cracknum
       << ", quality level = " << cracknum * bluepr.id
-      << "  (Time taken to calculate: " << endtime - starttime << " seconds)" << endl;
+      << "  (Time taken to calculate: "
+      << chrono::duration_cast<chrono::microseconds> (endtp - starttp) .count()
+      << " microseconds)" << endl;
     totalquality += cracknum * bluepr.id;
   }
   return totalquality;
+}
+
+
+/// \brief Run blueprints and multiply the results
+//
+unsigned long RunBlueprints (const vector<string>& bluelines, int maxsteps,
+    RobotFleet startrobots, Minerals startressources) {
+  vector<Blueprint> blueprints = ParseBlueprints (bluelines);
+  cout << "Read " << blueprints.size() << " blueprints" << endl;
+  unsigned long geodeproduct = 1;
+  for (Blueprint bluepr : blueprints) {
+    bluepr.Print ();
+    chrono::time_point<chrono::steady_clock> starttp =
+      chrono::steady_clock::now();
+    // unsigned long cracknum = TryTimeStep (bluepr, 0, maxsteps, startrobots, startressources);
+    unsigned long cracknum = TryBuildStep (bluepr, 0, maxsteps, startrobots, startressources);
+    chrono::time_point<chrono::steady_clock> endtp =
+      chrono::steady_clock::now();
+    cout << "- Number of open geodes: " << cracknum
+      << "  (Time taken to calculate: "
+      << chrono::duration_cast<chrono::microseconds> (endtp - starttp) .count()
+      << " microseconds)" << endl;
+    geodeproduct *= cracknum;
+  }
+  return geodeproduct;
 }
 
 
@@ -284,10 +343,22 @@ int main () {
     RobotFleet { 1, 0, 0, 0 }, Minerals { 0, 0, 0, 0 });
   cout << "* Sum of quality levels: " << sumquality << " *" << endl;
   cout << endl;
+  vector<string> selectedprints = { ExampleLines[0], ExampleLines[1] };
+  unsigned long product = RunBlueprints (selectedprints, 32,
+    RobotFleet { 1, 0, 0, 0 }, Minerals { 0, 0, 0, 0 });
+  cout << "* Product of two blueprints: " << product << " *" << endl;
+  cout << endl;
 
-  cout << "--- Puzzle: Find best blueprint ---" << endl;
-  vector<string> inputlines = ReadLinesVector ("19-geode-cracking-input.txt");
+  cout << "--- Puzzle 1: Find best blueprint ---" << endl;
+  vector<string> inputlines = ReadLinesVector ("19-not-enough-minerals-input.txt");
   sumquality = TestBlueprints (inputlines, 24,
     RobotFleet { 1, 0, 0, 0 }, Minerals { 0, 0, 0, 0 });
   cout << "*** Sum of quality levels: " << sumquality << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Run three blueprints and multiply the results ---" << endl;
+  selectedprints = { inputlines[0], inputlines[1], inputlines[2] };
+  product = RunBlueprints (selectedprints, 32,
+    RobotFleet { 1, 0, 0, 0 }, Minerals { 0, 0, 0, 0 });
+  cout << "*** Product of first three blueprints: " << product << " ***" << endl;
 }
