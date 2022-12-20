@@ -1,11 +1,11 @@
 # Extension for object files, typically .o on Linux, .obj on Windows
-OBJEXT := .o
+OBJEXT = .obj
 # Extension for binaries, empty for Linux binaries
-BINEXT :=
+BINEXT = .exe
 
-HELPER_OBJ := fileread$(OBJEXT) strsplit$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
+HELPER_OBJ = fileread$(OBJEXT) strsplit$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
 
-PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
+PUZZLE_OBJ = 01-calorie-counting.o 02-rock-paper-scissors.o \
   03-rucksack-reorganization.o 04-camp-cleanup.o \
   05-supply-stacks.o 06-tuning-trouble.o \
   07-no-space-left-on-device.o 08-treetop-tree-house.o \
@@ -13,9 +13,10 @@ PUZZLE_OBJ := 01-calorie-counting.o 02-rock-paper-scissors.o \
   11-monkey-in-the-middle$(OBJEXT) 12-hill-climbing-algorithm$(OBJEXT) \
   13-distress-lists$(OBJEXT) 14-regolith-reservoir$(OBJEXT) \
   15-beacon-exclusion-zone$(OBJEXT) 16-proboscidea-volcanium$(OBJEXT) \
-  17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(OBJEXT)
+  17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(OBJEXT) \
+  19-not-enough-minerals$(OBJEXT)
 
-PUZZLE_BIN := $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
+PUZZLE_BIN = $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
 all : $(PUZZLE_BIN)
 
@@ -71,3 +72,6 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	$(LINK_CXX)
 
 18-boiling-boulders$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
+
+19-not-enough-minerals$(BINEXT) : %$(BINEXT= : %$(OBJEXT) fileread$(OBJEXT)
+	$(LINK_CXX)

@@ -1,0 +1,71 @@
+--- Example ---
+Read 2 blueprints
+Blueprint 1:  ore robot needs 4 ore,  clay robot needs 2 ore,  obsidian robot needs 3 ore and 14 clay,  geode robot needs 2 ore and 7 obsidian.
+- Number of open geodes: 9, quality level = 9  (Time taken to calculate: 0 seconds)
+Blueprint 2:  ore robot needs 2 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 8 clay,  geode robot needs 3 ore and 12 obsidian.
+- Number of open geodes: 12, quality level = 24  (Time taken to calculate: 9 seconds)
+* Sum of quality levels: 33 *
+
+--- Puzzle: Find best blueprint ---
+Read 30 blueprints
+Blueprint 1:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 5 clay,  geode robot needs 3 ore and 7 obsidian.
+- Number of open geodes: 9, quality level = 9  (Time taken to calculate: 0 seconds)
+Blueprint 2:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 15 clay,  geode robot needs 4 ore and 17 obsidian.
+- Number of open geodes: 0, quality level = 0  (Time taken to calculate: 0 seconds)
+Blueprint 3:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 9 clay,  geode robot needs 3 ore and 15 obsidian.
+- Number of open geodes: 1, quality level = 3  (Time taken to calculate: 0 seconds)
+Blueprint 4:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 8 clay,  geode robot needs 3 ore and 9 obsidian.
+- Number of open geodes: 4, quality level = 16  (Time taken to calculate: 1 seconds)
+Blueprint 5:  ore robot needs 3 ore,  clay robot needs 3 ore,  obsidian robot needs 2 ore and 19 clay,  geode robot needs 2 ore and 12 obsidian.
+- Number of open geodes: 1, quality level = 5  (Time taken to calculate: 0 seconds)
+Blueprint 6:  ore robot needs 2 ore,  clay robot needs 3 ore,  obsidian robot needs 2 ore and 14 clay,  geode robot needs 3 ore and 8 obsidian.
+- Number of open geodes: 10, quality level = 60  (Time taken to calculate: 3 seconds)
+Blueprint 7:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 12 clay,  geode robot needs 4 ore and 19 obsidian.
+- Number of open geodes: 0, quality level = 0  (Time taken to calculate: 0 seconds)
+Blueprint 8:  ore robot needs 4 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 10 clay,  geode robot needs 3 ore and 10 obsidian.
+- Number of open geodes: 5, quality level = 40  (Time taken to calculate: 0 seconds)
+Blueprint 9:  ore robot needs 2 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 9 clay,  geode robot needs 3 ore and 9 obsidian.
+- Number of open geodes: 15, quality level = 135  (Time taken to calculate: 9 seconds)
+Blueprint 10:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 11 clay,  geode robot needs 4 ore and 8 obsidian.
+- Number of open geodes: 3, quality level = 30  (Time taken to calculate: 0 seconds)
+Blueprint 11:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 18 clay,  geode robot needs 4 ore and 20 obsidian.
+- Number of open geodes: 0, quality level = 0  (Time taken to calculate: 0 seconds)
+Blueprint 12:  ore robot needs 4 ore,  clay robot needs 3 ore,  obsidian robot needs 4 ore and 20 clay,  geode robot needs 4 ore and 8 obsidian.
+- Number of open geodes: 1, quality level = 12  (Time taken to calculate: 0 seconds)
+Blueprint 13:  ore robot needs 2 ore,  clay robot needs 4 ore,  obsidian robot needs 3 ore and 19 clay,  geode robot needs 4 ore and 13 obsidian.
+- Number of open geodes: 2, quality level = 26  (Time taken to calculate: 1 seconds)
+Blueprint 14:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 3 ore and 19 clay,  geode robot needs 4 ore and 15 obsidian.
+- Number of open geodes: 0, quality level = 0  (Time taken to calculate: 0 seconds)
+Blueprint 15:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 7 clay,  geode robot needs 2 ore and 16 obsidian.
+- Number of open geodes: 1, quality level = 15  (Time taken to calculate: 0 seconds)
+Blueprint 16:  ore robot needs 3 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 20 clay,  geode robot needs 4 ore and 7 obsidian.
+- Number of open geodes: 2, quality level = 32  (Time taken to calculate: 0 seconds)
+Blueprint 17:  ore robot needs 4 ore,  clay robot needs 3 ore,  obsidian robot needs 4 ore and 15 clay,  geode robot needs 4 ore and 9 obsidian.
+- Number of open geodes: 2, quality level = 34  (Time taken to calculate: 0 seconds)
+Blueprint 18:  ore robot needs 3 ore,  clay robot needs 4 ore,  obsidian robot needs 3 ore and 6 clay,  geode robot needs 4 ore and 11 obsidian.
+- Number of open geodes: 8, quality level = 144  (Time taken to calculate: 0 seconds)
+Blueprint 19:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 17 clay,  geode robot needs 4 ore and 16 obsidian.
+- Number of open geodes: 0, quality level = 0  (Time taken to calculate: 0 seconds)
+Blueprint 20:  ore robot needs 2 ore,  clay robot needs 2 ore,  obsidian robot needs 2 ore and 8 clay,  geode robot needs 2 ore and 14 obsidian.
+- Number of open geodes: 13, quality level = 260  (Time taken to calculate: 21 seconds)
+Blueprint 21:  ore robot needs 2 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 13 clay,  geode robot needs 3 ore and 15 obsidian.
+- Number of open geodes: 5, quality level = 105  (Time taken to calculate: 2 seconds)
+Blueprint 22:  ore robot needs 3 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 9 clay,  geode robot needs 2 ore and 10 obsidian.
+- Number of open geodes: 7, quality level = 154  (Time taken to calculate: 1 seconds)
+Blueprint 23:  ore robot needs 3 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 18 clay,  geode robot needs 2 ore and 11 obsidian.
+- Number of open geodes: 1, quality level = 23  (Time taken to calculate: 0 seconds)
+Blueprint 24:  ore robot needs 2 ore,  clay robot needs 3 ore,  obsidian robot needs 2 ore and 16 clay,  geode robot needs 2 ore and 9 obsidian.
+- Number of open geodes: 7, quality level = 168  (Time taken to calculate: 2 seconds)
+Blueprint 25:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 3 ore and 6 clay,  geode robot needs 2 ore and 14 obsidian.
+- Number of open geodes: 3, quality level = 75  (Time taken to calculate: 0 seconds)
+Blueprint 26:  ore robot needs 4 ore,  clay robot needs 4 ore,  obsidian robot needs 4 ore and 8 clay,  geode robot needs 4 ore and 14 obsidian.
+- Number of open geodes: 1, quality level = 26  (Time taken to calculate: 0 seconds)
+Blueprint 27:  ore robot needs 3 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 9 clay,  geode robot needs 3 ore and 7 obsidian.
+- Number of open geodes: 12, quality level = 324  (Time taken to calculate: 2 seconds)
+Blueprint 28:  ore robot needs 4 ore,  clay robot needs 3 ore,  obsidian robot needs 3 ore and 11 clay,  geode robot needs 4 ore and 7 obsidian.
+- Number of open geodes: 6, quality level = 168  (Time taken to calculate: 0 seconds)
+Blueprint 29:  ore robot needs 2 ore,  clay robot needs 4 ore,  obsidian robot needs 2 ore and 16 clay,  geode robot needs 4 ore and 12 obsidian.
+- Number of open geodes: 3, quality level = 87  (Time taken to calculate: 0 seconds)
+Blueprint 30:  ore robot needs 4 ore,  clay robot needs 3 ore,  obsidian robot needs 2 ore and 20 clay,  geode robot needs 3 ore and 9 obsidian.
+- Number of open geodes: 1, quality level = 30  (Time taken to calculate: 0 seconds)
+*** Sum of quality levels: 1981 ***
