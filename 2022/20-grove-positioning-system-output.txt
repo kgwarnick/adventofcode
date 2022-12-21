@@ -4,8 +4,20 @@ Adding number: -3
 Adding number: 2
 * Result: 3 *
 
+--- Example with key ---
+Adding number: 811589153
+Adding number: 2434767459
+Adding number: -1623178306
+* Result: 1623178306 *
+
 --- Puzzle 1: Mix once ---
 Adding number: -619
 Adding number: 929
 Adding number: 1905
 *** Result: 2215 ***
+
+--- Puzzle 2: Mix ten times and use decryption key ---
+Adding number: -47883760027
+Adding number: 1731931252502
+Adding number: -1675120011792
+*** Result: 8927480683 ***
