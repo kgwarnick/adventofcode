@@ -4,8 +4,94 @@
 - Available results after 3 resolver passes: 15
 * Result of "root": 152 *
 
+Pass equality test of root
+- Number of monkeys: 15
+- Available results after reading monkey instructions: 7
+- Available results after 2 resolver passes: 9
+Info: Depth 0, need to find result 1 for operation = of monkey root
+Info: Depth 1, need to find result 150 for operation / of monkey pppw
+Info: Depth 2, need to find result 600 for operation + of monkey cczh
+Info: Depth 3, need to find result 596 for operation * of monkey lgvd
+Info: Depth 4, need to find result 298 for operation - of monkey ptdq
+Info: Found result 301 for "humn" at recursion depth 5
+* Number for "humn": 152 *
+
 --- Puzzle 1: Predict root result ---
 - Number of monkeys: 2979
 - Available results after reading monkey instructions: 1490
 - Available results after 37 resolver passes: 2979
 *** Result of "root": 331319379445180 ***
+
+--- Puzzle 2: Number to pass root equality test ---
+- Number of monkeys: 2979
+- Available results after reading monkey instructions: 1489
+- Available results after 16 resolver passes: 2911
+Info: Depth 0, need to find result 1 for operation = of monkey root
+Info: Depth 1, need to find result 94625185243550 for operation * of monkey wrvq
+Info: Depth 2, need to find result 822827697770 for operation + of monkey mbmw
+Info: Depth 3, need to find result 822827697001 for operation / of monkey cwhv
+Info: Depth 4, need to find result 5759793879007 for operation - of monkey zjhb
+Info: Depth 5, need to find result 8647678813188 for operation * of monkey bzhj
+Info: Depth 6, need to find result 2882559604396 for operation - of monkey bfdj
+Info: Depth 7, need to find result 2882559604909 for operation / of monkey rrjg
+Info: Depth 8, need to find result 8647678814727 for operation + of monkey lmzh
+Info: Depth 9, need to find result 8647678813974 for operation / of monkey jpsf
+Info: Depth 10, need to find result 103772145767688 for operation - of monkey hhht
+Info: Depth 11, need to find result 103772145768088 for operation * of monkey vggd
+Info: Depth 12, need to find result 12971518221011 for operation + of monkey dfnw
+Info: Depth 13, need to find result 12971518220483 for operation / of monkey srln
+Info: Depth 14, need to find result 142686700425313 for operation + of monkey dnds
+Info: Depth 15, need to find result 142686700425064 for operation * of monkey svpm
+Info: Depth 16, need to find result 71343350212532 for operation - of monkey prsf
+Info: Depth 17, need to find result 71343350213300 for operation * of monkey mmpl
+Info: Depth 18, need to find result 35671675106650 for operation + of monkey ppgl
+Info: Depth 19, need to find result 35671675106019 for operation / of monkey hbmd
+Info: Depth 20, need to find result 71343350212038 for operation - of monkey prtm
+Info: Depth 21, need to find result 71343350212188 for operation * of monkey cfmt
+Info: Depth 22, need to find result 17835837553047 for operation + of monkey bcwt
+Info: Depth 23, need to find result 17835837552272 for operation / of monkey cjtb
+Info: Depth 24, need to find result 71343350209088 for operation - of monkey mmtz
+Info: Depth 25, need to find result 71343350209834 for operation * of monkey pqgp
+Info: Depth 26, need to find result 35671675104917 for operation - of monkey qltn
+Info: Depth 27, need to find result 35671675105037 for operation / of monkey vpcr
+Info: Depth 28, need to find result 107015025315111 for operation + of monkey lscj
+Info: Depth 29, need to find result 107015025314318 for operation * of monkey fgjj
+Info: Depth 30, need to find result 53507512657159 for operation + of monkey czjf
+Info: Depth 31, need to find result 53507512656506 for operation / of monkey qlnd
+Info: Depth 32, need to find result 107015025313012 for operation - of monkey cjbl
+Info: Depth 33, need to find result 107015025313742 for operation * of monkey chsv
+Info: Depth 34, need to find result 53507512656871 for operation + of monkey gmzj
+Info: Depth 35, need to find result 53507512655989 for operation / of monkey qlcr
+Info: Depth 36, need to find result 107015025311978 for operation - of monkey hngp
+Info: Depth 37, need to find result 107015025312801 for operation * of monkey pbcl
+Info: Depth 38, need to find result 11890558368089 for operation - of monkey fscw
+Info: Depth 39, need to find result 11890558368574 for operation / of monkey vfdp
+Info: Depth 40, need to find result 59452791842870 for operation + of monkey nlnh
+Info: Depth 41, need to find result 59452791842113 for operation + of monkey pmlv
+Info: Depth 42, need to find result 59452791841204 for operation * of monkey nljr
+Info: Depth 43, need to find result 14863197960301 for operation + of monkey nwzg
+Info: Depth 44, need to find result 14863197959801 for operation / of monkey bwwn
+Info: Depth 45, need to find result 29726395919602 for operation - of monkey twmt
+Info: Depth 46, need to find result 29726395919888 for operation * of monkey bvpn
+Info: Depth 47, need to find result 14863197959944 for operation + of monkey fbvd
+Info: Depth 48, need to find result 14863197959279 for operation / of monkey gctj
+Info: Depth 49, need to find result 29726395918558 for operation + of monkey bwbs
+Info: Depth 50, need to find result 29726395917809 for operation - of monkey djcb
+Info: Depth 51, need to find result 29726395918028 for operation * of monkey jvzj
+Info: Depth 52, need to find result 14863197959014 for operation - of monkey spbh
+Info: Depth 53, need to find result 14863197959260 for operation / of monkey wgdg
+Info: Depth 54, need to find result 29726395918520 for operation + of monkey flnw
+Info: Depth 55, need to find result 29726395917690 for operation / of monkey sbsc
+Info: Depth 56, need to find result 267537563259210 for operation + of monkey rffb
+Info: Depth 57, need to find result 267537563258966 for operation * of monkey ddfg
+Info: Depth 58, need to find result 133768781629483 for operation - of monkey mmgv
+Info: Depth 59, need to find result 133768781629704 for operation * of monkey jtnf
+Info: Depth 60, need to find result 3715799489714 for operation - of monkey vpqg
+Info: Depth 61, need to find result 3715799489801 for operation / of monkey rqvh
+Info: Depth 62, need to find result 22294796938806 for operation + of monkey cpwj
+Info: Depth 63, need to find result 22294796938704 for operation * of monkey hlfj
+Info: Depth 64, need to find result 1238599829928 for operation + of monkey zbrw
+Info: Depth 65, need to find result 1238599829353 for operation / of monkey stqg
+Info: Depth 66, need to find result 3715799488059 for operation - of monkey fgtl
+Info: Found result 3715799488132 for "humn" at recursion depth 67
+*** Number for "humn": 3715799488132 ***
