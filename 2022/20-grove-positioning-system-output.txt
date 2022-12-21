@@ -1,0 +1,11 @@
+--- Example ---
+Adding number: 4
+Adding number: -3
+Adding number: 2
+* Result: 3 *
+
+--- Puzzle 1: Mix once ---
+Adding number: -619
+Adding number: 929
+Adding number: 1905
+*** Result: 2215 ***

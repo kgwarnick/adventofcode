@@ -14,7 +14,7 @@ PUZZLE_OBJ = 01-calorie-counting.o 02-rock-paper-scissors.o \
   13-distress-lists$(OBJEXT) 14-regolith-reservoir$(OBJEXT) \
   15-beacon-exclusion-zone$(OBJEXT) 16-proboscidea-volcanium$(OBJEXT) \
   17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(OBJEXT) \
-  19-not-enough-minerals$(OBJEXT)
+  19-not-enough-minerals$(OBJEXT) 20-grove-positioning-system$(OBJEXT)
 
 PUZZLE_BIN = $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
@@ -75,3 +75,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 19-not-enough-minerals$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)
+
+20-grove-positioning-system$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
