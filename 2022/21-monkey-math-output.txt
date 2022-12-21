@@ -1,0 +1,11 @@
+--- Example ---
+- Number of monkeys: 15
+- Available results after reading monkey instructions: 8
+- Available results after 3 resolver passes: 15
+* Result of "root": 152 *
+
+--- Puzzle 1: Predict root result ---
+- Number of monkeys: 2979
+- Available results after reading monkey instructions: 1490
+- Available results after 37 resolver passes: 2979
+*** Result of "root": 331319379445180 ***

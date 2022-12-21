@@ -77,3 +77,6 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 	$(LINK_CXX)
 
 20-grove-positioning-system$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT)
+
+21-monkey-math$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
+	$(LINK_CXX)
