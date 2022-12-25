@@ -1,0 +1,12 @@
+--- Example ---
+Map height: 12, path description: 10R5L5R10L4R5L5
+Start position (8, 0), facing 0, path length: 15 characters
+End position after 13 actions: (7, 5), facing: 0
+* Password: 6032 *
+
+--- Puzzle 1: Find end position ---
+Read 202 lines, 25820 characters
+Last two line lengths: 0, 5618
+Start position (50, 0), facing 0, path length: 5618 characters
+End position after 4001 actions: (62, 74), facing: 2
+*** Password: 75254 ***
