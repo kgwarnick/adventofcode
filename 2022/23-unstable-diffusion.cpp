@@ -300,6 +300,8 @@ unsigned long GetEmptyGround (const list<Elf>& elves) {
     [] (int n, const Elf& e) { return min (n, e.y); });
   int maxy = accumulate (elves.cbegin(), elves.cend(), INT_MIN,
     [] (int n, const Elf& e) { return max (n, e.y); });
+  cout << "- Ground covered: (" << minx << ", " << miny << ") ... ("
+    << maxx << ", " << maxy << ")" << endl;
   return (maxy - miny + 1) * (maxx - minx + 1) - elves.size();
 }
 
@@ -333,7 +335,8 @@ int main () {
   Ground grmap = CreateGroundMap (diffused);
   cout << "After " << needrounds << " rounds" << endl;
   OutputMap (grmap);
-  cout << "* Empty ground tiles: " << GetEmptyGround (diffused) << " *" << endl;
+  long emptyground = GetEmptyGround (diffused);
+  cout << "* Empty ground tiles: " << emptyground << " *" << endl;
   cout << endl;
 
   cout << "--- Larger Example ---" << endl;
@@ -344,7 +347,17 @@ int main () {
   grmap = CreateGroundMap (diffused);
   cout << "After " << needrounds << " rounds" << endl;
   OutputMap (grmap);
-  cout << "* Empty ground tiles: " << GetEmptyGround (diffused) << " *" << endl;
+  emptyground = GetEmptyGround (diffused);
+  cout << "* Empty ground tiles: " << emptyground << " *" << endl;
+  cout << endl;
+
+  diffused = RunRounds (elves, 25, needrounds);
+  grmap = CreateGroundMap (diffused);
+  cout << "After " << needrounds << " rounds" << endl;
+  OutputMap (grmap);
+  emptyground = GetEmptyGround (diffused);
+  cout << "Empty ground tiles: " << emptyground << endl;
+  cout << "* First round without movement: " << needrounds + 1 << " *" << endl;
   cout << endl;
 
   cout << "--- Puzzle 1: Empty ground after 10 rounds ---" << endl;
@@ -356,7 +369,19 @@ int main () {
   grmap = CreateGroundMap (diffused);
   cout << "After " << needrounds << " rounds" << endl;
   OutputMap (grmap);
-  cout << "*** Empty ground tiles: " << GetEmptyGround (diffused) << " ***" << endl;
+  emptyground = GetEmptyGround (diffused);
+  cout << "*** Empty ground tiles: " << emptyground << " ***" << endl;
+  cout << endl;
+
+  cout << "--- Puzzle 2: Number of rounds until no movements are "
+    "necessary any more ---" << endl;
+  diffused = RunRounds (elves, 1000, needrounds);
+  grmap = CreateGroundMap (diffused);
+  cout << "After " << needrounds << " rounds" << endl;
+  OutputMap (grmap);
+  emptyground = GetEmptyGround (diffused);
+  cout << "Empty ground tiles: " << emptyground << endl;
+  cout << "*** First round without movement: " << needrounds + 1 << " ***" << endl;
 
   return 0;
 }
