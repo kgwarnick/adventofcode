@@ -1,2 +1,11 @@
 2022 Day 15  More efficient implementation (currently 1min runtime)
 2022 Day 16  Cleanup of recursive function, make path reporting work
+2022 Day 22  Simplify edge transitions:
+             Instead of calculating which edge is applicable to a certain
+             position (complicated testing in EnterEdge(), WrapAroundEdge()),
+             set up a "teleport-from-edge-to-edge" array mapping
+	       (exitx, exity, exitfacing) -> (enterx, entery, enterfacing)
+	     by looping through edges once like in DrawMap() .
+	     This array can be set up for both in-line/in-column wrap-around
+	     and cube-like wrap-around, so the same movement functions
+	     could be used afterwards.

@@ -4,9 +4,19 @@ Start position (8, 0), facing 0, path length: 15 characters
 End position after 13 actions: (7, 5), facing: 0
 * Password: 6032 *
 
+With cube wrap-around
+Start position (8, 0), facing 0, path length: 15 characters
+End position after 13 actions: (6, 4), facing: 3
+* Password: 5031 *
+
 --- Puzzle 1: Find end position ---
 Read 202 lines, 25820 characters
 Last two line lengths: 0, 5618
 Start position (50, 0), facing 0, path length: 5618 characters
 End position after 4001 actions: (62, 74), facing: 2
 *** Password: 75254 ***
+
+--- Puzzle 2: Find end position with cube-like wrap-around ---
+Start position (50, 0), facing 0, path length: 5618 characters
+End position after 4001 actions: (76, 107), facing: 3
+*** Password: 108311 ***
