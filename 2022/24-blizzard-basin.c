@@ -140,6 +140,12 @@ unsigned char **SetUpBlizzardMap (size_t numblizzards, const Blizzard *blizzards
 
 
 /// \brief Create blizzard maps for a number of time steps
+///
+/// Note:  Function currently not used.
+/// It was meant to prepare all possible blizzard arrangements before the
+/// simulation to avoid duplicate work.
+/// Not necessary because the simulation just calculates them
+/// one after the other exactly once.
 //
 unsigned char ***SetUpBlizzardMaps (size_t numsteps,
     size_t numblizzards, const Blizzard *blizzards,
@@ -202,13 +208,12 @@ void DrawMapBlizzards (size_t numblizzards, const Blizzard *blizzards,
 ///
 /// Each step collects all locations reachable from the locations of the
 /// previous step (= all previous tiles and their neighbour tiles, provided
-/// there is no blizzard in the current step)
+/// there is no blizzard in the current step).
+/// Note: The blizzards will be updated during the path-finding process with
+///   their current positions
 //
-unsigned int Travel (size_t maxsteps, size_t numblizzards, const Blizzard *blizzards,
+unsigned int Travel (size_t maxsteps, size_t numblizzards, Blizzard *blizzards,
     Coord2D dimensions, Coord2D entry, Coord2D exit) {
-  // Copy blizzards to a temporary modifiable array
-  Blizzard *blizz = (Blizzard*) malloc (numblizzards * sizeof (Blizzard));
-  for (size_t b = 0; b < numblizzards; b++)  blizz[b] = blizzards[b];
   // Set up starting blizzard map
   unsigned char **currmap = SetUpBlizzardMap (numblizzards, blizzards,
     dimensions, entry, exit);
@@ -225,8 +230,8 @@ unsigned int Travel (size_t maxsteps, size_t numblizzards, const Blizzard *blizz
       break;
     }
     // Move blizzards to set up new map
-    MoveBlizzards (numblizzards, blizz, dimensions);
-    unsigned char **newmap = SetUpBlizzardMap (numblizzards, blizz,
+    MoveBlizzards (numblizzards, blizzards, dimensions);
+    unsigned char **newmap = SetUpBlizzardMap (numblizzards, blizzards,
       dimensions, entry, exit);
     // Mark reachable locations in the map
     for (int y = 0; y <= dimensions.y; y++) {
@@ -260,7 +265,6 @@ unsigned int Travel (size_t maxsteps, size_t numblizzards, const Blizzard *blizz
   // Cleanup
   for (int i = 0; i <= dimensions.y; i++)  free (currmap[i]);
   free (currmap);
-  free (blizz);
   // Return number of steps taken
   return timestep;
 }
@@ -268,7 +272,7 @@ unsigned int Travel (size_t maxsteps, size_t numblizzards, const Blizzard *blizz
 
 /// \brief Find the way to the exit for the blizzard basin given in the lines
 //
-unsigned int FindAWay (size_t numlines, const char **lines) {
+unsigned int FindAWay (size_t numlines, const char **lines, size_t backforth) {
   size_t maxblizzards = BLIZZARD_ALLOC_START, numblizzards = 0;
   Blizzard *blizzards = (Blizzard*) malloc (maxblizzards * sizeof (Blizzard));
   ReadBlizzards (&numblizzards, &maxblizzards, &blizzards, numlines, lines);
@@ -299,13 +303,27 @@ unsigned int FindAWay (size_t numlines, const char **lines) {
       exitpt.x, exitpt.y, lines[numlines-1]);
   printf ("- Start position (%d, %d), end position (%d, %d)\n",
     entrypt.x, entrypt.y, exitpt.x, exitpt.y);
-  // Find the way
   printf ("- Dimensions: (%d, %d)\n", mapdim.x, mapdim.y);
-  unsigned int needsteps =
-    Travel (MaxTimeSteps, numblizzards, blizzards, mapdim, entrypt, exitpt);
+  // Find the way
+  unsigned int totalsteps = 0;
+  for (size_t trip = 0; trip <= backforth; trip++) {
+    unsigned int tripsteps =
+      Travel (MaxTimeSteps, numblizzards, blizzards, mapdim, entrypt, exitpt);
+    totalsteps += tripsteps;
+    printf ("- Number of steps for this trip %zu: %u, running total: %u\n",
+      trip, tripsteps, totalsteps);
+    if (trip < backforth) {
+      printf ("- Go back to start and to exit once again\n");
+      tripsteps =
+        Travel (MaxTimeSteps, numblizzards, blizzards, mapdim, exitpt, entrypt);
+      totalsteps += tripsteps;
+      printf ("- Number of steps going back in trip %zu: %u, running total: %u\n",
+        trip, tripsteps, totalsteps);
+    }
+  }
   // Cleanup
   free (blizzards);
-  return needsteps;
+  return totalsteps;
 }
 
 
@@ -344,12 +362,16 @@ int main () {
   //   printf ("Time step %zu\n", i);
   //   DrawMap ((const unsigned char**)maps[i], mapdim);
   // }
-  unsigned int needtimesteps = FindAWay (numlinessmallex, smallexample);
+  unsigned int needtimesteps = FindAWay (numlinessmallex, smallexample, 0);
   printf ("* Needed time steps to reach the exit: %u *\n", needtimesteps);
   printf ("\n");
 
   printf ("--- Complex Example ---\n");
-  needtimesteps = FindAWay (numlinescomplexex, complexexample);
+  needtimesteps = FindAWay (numlinescomplexex, complexexample, 0);
+  printf ("* Needed time steps to reach the exit: %u *\n", needtimesteps);
+  printf ("\n");
+  printf ("Going back and forth once\n");
+  needtimesteps = FindAWay (numlinescomplexex, complexexample, 1);
   printf ("* Needed time steps to reach the exit: %u *\n", needtimesteps);
   printf ("\n");
 
@@ -360,8 +382,14 @@ int main () {
     &maxlines, &numlines, &inputlines);
   TrimLineEndings (numlines, inputlines);
   printf ("Read %zu lines, %zd characters\n", numlines, numchars);
-  needtimesteps = FindAWay (numlines, (const char**)inputlines);
+  needtimesteps = FindAWay (numlines, (const char**)inputlines, 0);
   printf ("*** Needed time steps to reach the exit: %u ***\n", needtimesteps);
+  printf ("\n");
+
+  printf ("--- Puzzle 2: Time needed to reach the exit, back and forth again ---\n");
+  needtimesteps = FindAWay (numlines, (const char**)inputlines, 1);
+  printf ("*** Needed time steps to reach the exit the second time: %u ***\n",
+    needtimesteps);
   for (size_t i = 0; i < numlines; i++)  free (inputlines[i]);
   free (inputlines);
   return 0;
