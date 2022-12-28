@@ -1,3 +1,5 @@
+2022 General  Test for malloc-free or new-delete memory leaks
+
 2022 Day 15  More efficient implementation (currently 1min runtime)
 2022 Day 16  Cleanup of recursive function, make path reporting work
 2022 Day 22  Simplify edge transitions:
@@ -9,3 +11,4 @@
 	     This array can be set up for both in-line/in-column wrap-around
 	     and cube-like wrap-around, so the same movement functions
 	     could be used afterwards.
+2022 Day 24  Backtrack to draw a possible path

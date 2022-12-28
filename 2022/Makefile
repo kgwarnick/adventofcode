@@ -16,7 +16,7 @@ PUZZLE_OBJ = 01-calorie-counting.o 02-rock-paper-scissors.o \
   17-pyroclastic-flow$(OBJEXT) 18-boiling-boulders$(OBJEXT) \
   19-not-enough-minerals$(OBJEXT) 20-grove-positioning-system$(OBJEXT) \
   21-monkey-math$(OBJEXT) 22-monkey-map$(OBJEXT) \
-  23-unstable-diffusion$(OBJEXT)
+  23-unstable-diffusion$(OBJEXT) 24-blizzard-basin$(OBJEXT)
 
 PUZZLE_BIN = $(PUZZLE_OBJ:$(OBJEXT)=$(BINEXT))
 
@@ -87,3 +87,5 @@ LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
 23-unstable-diffusion$(BINEXT) : %$(BINEXT) : %$(OBJEXT) fileread$(OBJEXT)
 	$(LINK_CXX)
+
+24-blizzard-basin$(BINEXT) : %$(BINEXT) : %$(OBJEXT) freadlns$(OBJEXT) trimendl$(OBJEXT)
