@@ -506,5 +506,7 @@ int main () {
   password = TracePath (mapheight, (const char**)inputlines, mappath,
     sizeof (inputedges) / sizeof (inputedges[0]), inputedges);
   printf ("*** Password: %ld ***\n", password);
+  for (size_t i = 0; i < numlines; i++)   free (inputlines[i]);
+  free (inputlines);
   return 0;
 }

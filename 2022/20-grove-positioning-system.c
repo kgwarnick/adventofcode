@@ -110,5 +110,7 @@ int main () {
   printf ("--- Puzzle 2: Mix ten times and use decryption key ---\n");
   result = RunMixer (numlines, (const char**)inputlines, 10, decryptkey);
   printf ("*** Result: %ld ***\n", result);
+  for (size_t i = 0; i < numlines; i++)   free (inputlines[i]);
+  free (inputlines);
   return 0;
 }

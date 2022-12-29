@@ -283,4 +283,6 @@ int main () {
   printf ("--- Puzzle 2: Best pressure release with help by an elephant ---\n");
   maxrel =  FindMaximumPressureRelease (numlines, (const char**)lines, "AA", 26, "AA", 26);
   printf ("*** Pressure released: %d ***\n", maxrel);
+  for (size_t i = 0; i < numlines; i++)   free (lines[i]);
+  free (lines);
 }
