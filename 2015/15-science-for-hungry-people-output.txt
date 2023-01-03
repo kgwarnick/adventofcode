@@ -1,0 +1,20 @@
+--- Beispiel ---
+Ingredient  1:             Butterscotch, capacity:   -1, durability:   -2, flavour:    6, texture:    3, calories:    8
+Ingredient  2:                 Cinnamon, capacity:    2, durability:    3, flavour:   -2, texture:   -1, calories:    3
+Tested recipes:      101
+-  44 Butterscotch
+-  56 Cinnamon
+Best cookie has score:     62842880
+
+--- Aufgabe 1: Bestes Rezept, ohne Rücksicht auf Kalorien ---
+Read ingredients:  4
+Ingredient  1: Frosting        , capacity:    4, durability:   -2, flavour:    0, texture:    0, calories:    5
+Ingredient  2: Candy           , capacity:    0, durability:    5, flavour:   -1, texture:    0, calories:    8
+Ingredient  3: Butterscotch    , capacity:   -1, durability:    0, flavour:    5, texture:    0, calories:    6
+Ingredient  4: Sugar           , capacity:    0, durability:    0, flavour:   -2, texture:    2, calories:    1
+Tested recipes:   176851
+-  24 Frosting
+-  29 Candy
+-  31 Butterscotch
+-  16 Sugar
+Best cookie has score:     18965440
