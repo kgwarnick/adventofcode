@@ -21,11 +21,11 @@ Implicit None
 Character(Len=256), Dimension(2) :: ExampleIngredients
 Type (Ingredient), Dimension(48) :: ingredients
 Character(Len=256), Dimension(64) :: inputlines
-Integer :: i, numingr, bestcookie
+Integer :: i, numingr, bestcookie, calories
 Integer, Dimension (48) :: mix
 Integer :: CookieScore, FindBestRecipe
 
-Write (*,'(A)') "--- Beispiel ---"
+Write (*,'(A)') "--- Beispiel ohne Kalorienrechnung ---"
 ExampleIngredients (1) = &
   & "Butterscotch: capacity -1, durability -2, flavor 6, texture 3, calories 8"
 ExampleIngredients (2) = &
@@ -41,10 +41,16 @@ Do i = 1, numingr
     & "texture", ingredients(i)%textur, &
     & "calories", ingredients(i)%calories
 End Do
-bestcookie = FindBestRecipe (numingr, ingredients, 100, mix)
+bestcookie = FindBestRecipe (numingr, ingredients, 100, mix, 0)
 Call PrintRecipe (numingr, mix, ingredients)
 Write (*,'(A,I12)') "Best cookie has score: ", bestcookie
 Write (*,'(A)') ""
+
+Write (*,'(A)') "--- Beispiel mit Randbedingung 500 Kalorien ---"
+bestcookie = FindBestRecipe (numingr, ingredients, 100, mix, 500)
+Call PrintRecipe (numingr, mix, ingredients)
+Write (*,'(A,I12)') "Best cookie has score: ", bestcookie
+Write (*,'()')
 
 Write (*,'(A)') "--- Aufgabe 1: Bestes Rezept, ohne Rücksicht auf Kalorien ---"
 Call ReadInputFile ("15-science-for-hungry-people-input.txt", numingr, inputlines)
@@ -59,7 +65,13 @@ Do i = 1, numingr
     & "texture", ingredients(i)%textur, &
     & "calories", ingredients(i)%calories
 End Do
-bestcookie = FindBestRecipe (numingr, ingredients, 100, mix)
+bestcookie = FindBestRecipe (numingr, ingredients, 100, mix, 0)
+Call PrintRecipe (numingr, mix, ingredients)
+Write (*,'(A,I12)') "Best cookie has score: ", bestcookie
+Write (*,'()')
+
+Write (*,'(A)') "--- Aufgabe 2: Bestes Rezept mit 500 Kalorien ---"
+bestcookie = FindBestRecipe (numingr, ingredients, 100, mix, 500)
 Call PrintRecipe (numingr, mix, ingredients)
 Write (*,'(A,I12)') "Best cookie has score: ", bestcookie
 End Program ScienceForHungryPeople
@@ -146,18 +158,37 @@ Subroutine PrintRecipe (ningr, recipe, ingredients)
   Integer, Dimension(ningr), Intent(InOut) :: recipe
   Type(Ingredient), Dimension(ningr), Intent(In) :: ingredients
   Integer :: i
+  Integer :: CookieCalories
   Do i = 1, ningr
     Write (*,'(A,I3,A,A)') "- ", recipe(i), " ", Trim (ingredients(i)%ingrname)
   End Do
+  Write (*,'(A,I4)') "-> Calories: ", CookieCalories (ningr, recipe, ingredients)
 End Subroutine PrintRecipe
 
-!> Calculate a cookie score for the recipe
+!> Calculate calories of a particular recipe
 !
-Integer Function CookieScore (ningr, recipe, ingred)
+Integer Function CookieCalories (ningr, recipe, ingred)
   Use Types
   Implicit None
   Integer, Intent(In) :: ningr
   Integer, Dimension(ningr), Intent(In) :: recipe
+  Type(Ingredient), Dimension(ningr), Intent(In) :: ingred
+  Integer :: i, cal
+  cal = 0
+  Do i = 1, ningr
+    cal = cal + recipe (i) * ingred (i) % calories
+  End Do
+  CookieCalories = cal
+End Function CookieCalories
+
+!> Calculate a cookie score for the recipe
+!
+Integer Function CookieScore (ningr, recipe, ingred, calories)
+  Use Types
+  Implicit None
+  Integer, Intent(In) :: ningr
+  Integer, Dimension(ningr), Intent(In) :: recipe
+  Integer, Intent(Out) :: calories
   Type(Ingredient), Dimension(ningr), Intent(In) :: ingred
   Integer :: i, cap, dur, flv, tex, cal, score
   cap = 0
@@ -178,6 +209,7 @@ Integer Function CookieScore (ningr, recipe, ingred)
   Else
     CookieScore = 0
   End If
+  calories = cal
 End Function CookieScore
 
 !> Generate the next recipe from the current one by shifting ingredients
@@ -221,29 +253,40 @@ End Subroutine IncrementRecipe
 
 ! Try all possible recipes to find the one with the highest cookie score
 !
-Integer Function FindBestRecipe (ningr, ingredients, maxamount, bestrecipe)
+Integer Function FindBestRecipe (ningr, ingredients, maxamount, bestrecipe, &
+    & targetcalories)
   Use Types
   Implicit None
-  Integer, Intent(In) :: ningr   ! Number of ingredients
-  Integer, Intent(In) :: maxamount   ! Amount to add
+  Integer, Intent(In) :: ningr   !< Number of ingredients
+  Integer, Intent(In) :: maxamount   !< Total amount of ingredients to add
+  !> Select only recipes with this number of calories, 0 for all recipes
+  Integer, Intent(In) :: targetcalories
   Type(Ingredient), Dimension(ningr), Intent(In) :: ingredients
   Integer, Dimension(ningr), Intent(Out) :: bestrecipe
   Integer, Dimension(ningr) :: testrecipe
-  Integer :: i, n, numrecipes, bestscore, testscore
+  Integer :: i, n, numrecipes, bestscore, testscore, testcal
   Integer :: CookieScore
   ! Set to recipe with only the last ingredient
   Do i = 1, ningr - 1
     testrecipe (i) = 0
   End Do
   testrecipe (ningr) = maxamount
-  bestscore = CookieScore (ningr, testrecipe, ingredients)
+  bestscore = 0
+  testscore = CookieScore (ningr, testrecipe, ingredients, testcal)
+  If (testscore .gt. bestscore .And. &
+      & (targetcalories .eq. 0 .Or. targetcalories .eq. testcal)) Then
+    bestscore = testscore
+    bestrecipe(:) = testrecipe(:)
+  End If
   numrecipes = 1
   Call IncrementRecipe (ningr, testrecipe)
   ! Increment recipe until every combination was tried
+  ! (until the whole amount is in the last ingredient again)
   Do While (testrecipe (ningr) < maxamount)
     ! Better than the last?
-    testscore = CookieScore (ningr, testrecipe, ingredients)
-    If (testscore .gt. bestscore) Then
+    testscore = CookieScore (ningr, testrecipe, ingredients, testcal)
+    If (testscore .gt. bestscore .And. &
+        & (targetcalories .eq. 0 .Or. targetcalories .eq. testcal)) Then
       bestscore = testscore
       bestrecipe(:) = testrecipe(:)
     End If

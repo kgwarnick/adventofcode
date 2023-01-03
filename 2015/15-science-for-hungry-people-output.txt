@@ -1,10 +1,18 @@
---- Beispiel ---
+--- Beispiel ohne Kalorienrechnung ---
 Ingredient  1:             Butterscotch, capacity:   -1, durability:   -2, flavour:    6, texture:    3, calories:    8
 Ingredient  2:                 Cinnamon, capacity:    2, durability:    3, flavour:   -2, texture:   -1, calories:    3
 Tested recipes:      101
 -  44 Butterscotch
 -  56 Cinnamon
+-> Calories:  520
 Best cookie has score:     62842880
+
+--- Beispiel mit Randbedingung 500 Kalorien ---
+Tested recipes:      101
+-  40 Butterscotch
+-  60 Cinnamon
+-> Calories:  500
+Best cookie has score:     57600000
 
 --- Aufgabe 1: Bestes Rezept, ohne Rücksicht auf Kalorien ---
 Read ingredients:  4
@@ -17,4 +25,14 @@ Tested recipes:   176851
 -  29 Candy
 -  31 Butterscotch
 -  16 Sugar
+-> Calories:  554
 Best cookie has score:     18965440
+
+--- Aufgabe 2: Bestes Rezept mit 500 Kalorien ---
+Tested recipes:   176851
+-  21 Frosting
+-  23 Candy
+-  31 Butterscotch
+-  25 Sugar
+-> Calories:  500
+Best cookie has score:     15862900
