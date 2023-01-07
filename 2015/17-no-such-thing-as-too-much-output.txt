@@ -1,15 +1,26 @@
 -- Tests ---
 Amount 5 in containers (10 5 2)
-Combinations: 1
+Combinations: 1, ((5))
+- minimum number of containers: 1
+Combinations with minimum number of containers: 1
 Amount 10 in containers (10 5 2 5)
-Combinations: 2
+Combinations: 2, ((10) (5 5))
+- minimum number of containers: 1
+Combinations with minimum number of containers: 1
 
 --- Example ---
 Containers: (20 15 10 5 5)
-Combinations: 4
+Combinations: 4, ((20 5) (20 5) (15 10) (15 5 5))
 Result should be: 4
 
---- Puzzle 1 ---
-Amount 5 in 20 containers (43 3 4 10 21 44 4 6 47 41 34 17 17 44 36 31 46 9 27
-                           38)
+- minimum number of containers: 2
+Combinations with minimum number of containers: 3
+
+--- Puzzle 1: Number of combinations ---
+Amount 150 in 20 containers (43 3 4 10 21 44 4 6 47 41 34 17 17 44 36 31 46 9
+                             27 38)
 Combinations: 1638
+
+--- Puzzle 2: Combinations with minimum number of containers ---
+- minimum number of containers: 4
+Combinations with minimum number of containers: 17
