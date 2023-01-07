@@ -79,6 +79,24 @@ testmatchperson ((k, v):conds) pers =
   (testperscondition k v pers) && (testmatchperson conds pers)
 testmatchperson [] pers = True   -- empty condition always matches
 
+-- Test whether a person matches a certain condition, with ranges
+-- for cats and trees (greater than) and pomeranians and goldfish (less than)
+testpersconditionranged :: String -> Int -> (String, Int, Map.Map String Int) -> Bool
+testpersconditionranged key val pers
+  | found == Nothing = True   -- No information about the person, accept it as match
+  | otherwise = if (key == "cats" || key == "trees")
+      then val <  maybeOrDefault found (-1)
+      else if (key == "pomeranians" || key == "goldfish")
+        then val >  maybeOrDefault found (-1)
+        else val == maybeOrDefault found (-1)
+  where found = Map.lookup key (third pers)
+
+-- Test whether the person matches the list of conditions, with ranges
+testmatchpersonranged :: [(String, Int)] -> (String, Int, Map.Map String Int) -> Bool
+testmatchpersonranged ((k, v):conds) pers =
+  (testpersconditionranged k v pers) && (testmatchpersonranged conds pers)
+testmatchpersonranged [] pers = True   -- empty condition always matches
+
 -- Find persons with matching conditions in a list of people
 findmatchingpersons :: ((a, b, c) -> Bool) -> [(a, b, c)] -> [b]
 findmatchingpersons f (p:lp) = if (f p)
@@ -104,7 +122,8 @@ conditionalist = propalist [
 -- Test set of 2 aunts
 testLines = [
   "Unnamed 1: children: 2, trees 3, trailing-nonsense",
-  "Noname 5: cats: 7, children: 3"
+  "Noname 5: cats: 7, children: 3",
+  "Nobody 4: cats: 8, children: 3"
   ]
 testPersons = personlist testLines
 
@@ -114,9 +133,11 @@ main = do
   putStrLn ("Test persons:  " ++ (show testPersons))
   putStrLn ("Matching persons:  " ++
     (show (findmatchingpersons (testmatchperson conditionalist) testPersons)) )
+  putStrLn ("Matching with less than/greater than:  " ++
+    (show (findmatchingpersons (testmatchpersonranged conditionalist) testPersons)) )
   putStrLn ""
 
-  putStrLn "--- Aufgabe 1 ---"
+  putStrLn "--- Puzzle 1: Exact values ---"
   fileHandle <- openFile "16-aunt-sue-input.txt" ReadMode
   inputText <- hGetContents fileHandle
   putStrLn ("Read lines: " ++ show (length (lines inputText)))
@@ -124,5 +145,11 @@ main = do
   putStrLn ("Last person:  " ++ show (last (personlist (lines inputText))))
   putStrLn ("Matching persons:  " ++
     show (findmatchingpersons (testmatchperson conditionalist)
+            (personlist (lines inputText))))
+  putStrLn ""
+
+  putStrLn "--- Puzzle 2: Ranges for some values ---"
+  putStrLn ("Matching persons:  " ++
+    show (findmatchingpersons (testmatchpersonranged conditionalist)
             (personlist (lines inputText))))
   hClose fileHandle

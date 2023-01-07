@@ -1,10 +1,14 @@
 --- Tests ---
 Condition assoclist:  [("children",3),("cats",7),("samoyeds",2),("pomeranians",3),("akitas",0),("vizslas",0),("goldfish",5),("trees",3),("cars",2),("perfumes",1)]
-Test persons:  [("Unnamed",1,fromList [("children",2),("trees",3)]),("Noname",5,fromList [("cats",7),("children",3)])]
+Test persons:  [("Unnamed",1,fromList [("children",2),("trees",3)]),("Noname",5,fromList [("cats",7),("children",3)]),("Nobody",4,fromList [("cats",8),("children",3)])]
 Matching persons:  [5]
+Matching with less than/greater than:  [4]
 
---- Aufgabe 1 ---
+--- Puzzle 1: Exact values ---
 Read lines: 500
 First person: ("Sue",1,fromList [("akitas",3),("cars",9),("goldfish",0)])
 Last person:  ("Sue",500,fromList [("cats",3),("pomeranians",10),("vizslas",5)])
 Matching persons:  [373]
+
+--- Puzzle 2: Ranges for some values ---
+Matching persons:  [260]
