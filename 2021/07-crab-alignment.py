@@ -3,10 +3,15 @@
 import matplotlib.pyplot
 from matplotlib.markers import MarkerStyle
 from matplotlib.textpath import TextPath
+from matplotlib.font_manager import FontProperties
 from matplotlib.transforms import Affine2D
 
 
 examplepositions = "16,1,2,0,4,2,7,1,2,14"
+
+crab_character = "\U0001F980"   # Unicode crab, needs an appropriate font!
+# crab_character = "X"
+
 
 def fuelconsumptionconstant (dist: int) -> int:
     return abs (dist)
@@ -68,7 +73,10 @@ def drawpositions (positionlist: str, targetpos1: int, targetpos2: int):
     ax.broken_barh ([(targetpos1 - 0.75, 1.5)], (0, len (positions) + 1), color="#80C080")
     ax.broken_barh ([(targetpos2 - 0.75, 1.5)], (0, len (positions) + 1), color="#C08080")
     for i in range (len (positions)):
-        ax.plot (positions[i], i + 0.75, marker=MarkerStyle (TextPath ((-4, 0), "X", size=12), transform=Affine2D().scale(5)), color="#8080C0")
+        ax.plot (positions[i], i + 0.75,
+                 marker=MarkerStyle (TextPath ((-2, 0), crab_character, size=4, prop=FontProperties(family=["Segoe UI Symbol", "sans-serif"])),
+                 transform=Affine2D().scale(5)),
+                 color="#8080C0")
     ax.set_xlabel ("x position")
     ax.set_ylabel ("crab index")
     ax.grid (True)
