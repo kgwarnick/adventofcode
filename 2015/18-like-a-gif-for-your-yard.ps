@@ -1,0 +1,294 @@
+%!PS-Adobe-3.0
+%%BoundingBox: 0 0 596 842
+%%Creator: Texteditor
+%%For: Karl-Georg Warnick
+%%Title: Advent of Code 2015 Day 18: Like a GIF For Your Yard
+%%CreationDate: 2023-01-15 12:09:59 +01:00
+%%Pages: 1
+%%EndComments
+
+% Advent of Code 2015 Day 18: Like a GIF For Your Yard
+% https://adventofcode.com/2015/day/18
+
+%%BeginProlog
+% PostScript points per millimeter
+/einhmm 2.834646 def
+
+%%BeginResource: lesen
+% Datei lesen
+% filename width height  ReadInput  -
+/ReadInput {
+16 dict begin
+/height exch def
+/width exch def
+/infilename exch def
+/infile infilename (r) file def
+/inputline width 2 add string def
+/inputarray width height mul array def
+/tmpstr 16 string def   % für Umwandlungen int-zu-string
+0 1 height 1 sub {
+  /zeilenr exch def   % Zählvariable speichern
+  infile inputline readline   % Zeile gelesen -> Stack:  zeile moreinput
+  pop   % discard 'not-yet-eof' bool ... oder ausgeben:
+  % { ([more input] ) } { ([end of input] ) } ifelse print
+  dup length 0 exch 1 exch 1 sub {   % 0 1 zeilenlen-1 { ... } for
+    /zeichennr exch def
+    % Zeichenfolge der Länge 1 an Position 'zeichennr' vergleichen mit (#)
+    dup zeichennr 1 getinterval (#) eq { true } { false } ifelse
+    % und Wert 'true' oder 'false' im Array speichern,
+    % entspricht:     inputarray offset true/false put
+    inputarray exch  zeilenr width mul zeichennr add exch  put
+  } for
+  pop   % Zeile vom Stack entfernen
+} for
+infile closefile
+inputarray
+end
+} bind def
+%%EndResource
+
+%%BeginResource: array-ausgeben
+% array width height
+/ArrayAusgeben {
+16 dict begin
+/zeilen exch def
+/spalten exch def
+/feld exch def
+/tmpstr 64 string def
+0  1  zeilen 1 sub {
+  /y exch def
+  y tmpstr cvs   % Textdarstellung der Zeilennummer
+  % Leerzeichen ausgeben für rechtsbündige Ausrichtung
+  dup length 4 exch sub 1 exch 1 exch { ( ) print pop } for
+  % Zeilennummer ausgeben, gefolgt von senkrechtem Strich
+  print ( | ) print
+  0  1  spalten 1 sub {
+    /x exch def
+    feld y spalten mul x add get { (#) } { (.) } ifelse print
+  } for
+  ( |\n) print
+} for
+end
+} bind def
+%%EndResource
+
+%%BeginResource: bild-zeichnen
+% array width height  DrawArray  -
+/DrawArray {
+8 dict begin
+  /height exch def  /width exch def  /field exch def
+  /y 0 def
+  /s width string def
+  width height 8 [ width 0  0 0 height sub  0 height] {
+    y height lt {
+      0  1  width 1 sub {   % Schleife über x
+        /x exch def
+        y width mul x add field exch get   % Licht an Position (x + y * width) an?
+        { 224 } { 64 } ifelse   % Punkt hell oder dunkel zeichnen
+        s exch  x exch  put
+      } for
+      s   % Zusammengesetzte Bilddaten auf Stack legen
+    } { ( ) y 16 string cvs print ( ) print } ifelse   % Abbruch, wenn die letzte Zeile des Arrays erreicht war
+    /y y 1 add def   % y = y + 1
+  } image
+end
+} bind def
+%%EndResource
+
+%%BeginResource: feldwert
+% Wert an Position zurückgeben (true/false),
+%   false auch wenn Position außerhalb des Feldes
+% array width height x y  ValueAt  boolean
+/GetValueAt {
+  8 dict begin
+  /y exch def
+  /x exch def
+  /height exch def
+  /width exch def
+  /field exch def
+  % Für Positionen innerhalb des Feldes den entsprechenden Wert zurückgeben
+  y 0 ge  y height lt  and  x 0 ge  and  x width lt  and {
+    field y width mul x add get
+  }
+  % für Positionen außerhalb false zurückgeben
+  { false }
+  ifelse
+  end
+} bind def
+%%EndResource
+
+%%BeginResource: anzahl-nachbarn-an
+% Eingeschaltete Nachbar-Lichter zählen
+% array width height x y  NeighboursOnCount  numneighbours
+/NeighboursOnCount {
+  8 dict begin
+  /y exch def
+  /x exch def
+  /height exch def
+  /width exch def
+  /field exch def
+  0   % Zahl eingeschalteter Nachbarn auf Stack berechnen
+  field  width  height  x 1 sub  y 1 sub  GetValueAt  { 1 } { 0 } ifelse add   % oberhalb links
+  field  width  height  x        y 1 sub  GetValueAt  { 1 } { 0 } ifelse add   % oberhalb
+  field  width  height  x 1 add  y 1 sub  GetValueAt  { 1 } { 0 } ifelse add   % oberhalb rechts
+  field  width  height  x 1 sub  y        GetValueAt  { 1 } { 0 } ifelse add   % links
+  field  width  height  x 1 add  y        GetValueAt  { 1 } { 0 } ifelse add   % rechs
+  field  width  height  x 1 sub  y 1 add  GetValueAt  { 1 } { 0 } ifelse add   % unterhalb links
+  field  width  height  x        y 1 add  GetValueAt  { 1 } { 0 } ifelse add   % unterhalb
+  field  width  height  x 1 add  y 1 add  GetValueAt  { 1 } { 0 } ifelse add   % unterhalb rechts
+  end
+} bind def
+%%EndResource
+
+%%BeginResource: transition
+% Nächsten Zustand einer einzelnen Lampe berechnen
+% - Eingeschaltete Lampe:  bleibt an, wenn 2 oder 3 Nachbarn an sind
+% - Ausgeschaltete Lampe:  geht an, wenn 3 Nachbarn an sind
+% currstate numneigh  Transition  newstate
+/Transition {
+  exch   % Stack:  numneigh currstate
+  { dup 2 eq exch 3 eq or }
+  { 3 eq }
+  ifelse
+} bind def
+%%EndResource
+
+%%BeginResource: nextarray
+% Aus aktuellem Array den nächsten Zustand berechnen
+% array width height  NextFrame  nextarray
+/NextArray {
+  16 dict begin
+    /height exch def
+    /width exch def
+    /oldfield exch def
+    /newfield width height mul array def
+    0 1 height 1 sub {
+      /y exch def
+      0 1 width 1 sub {
+        /x exch def
+        newfield  y width mul x add   % Argumente für put:  array index
+        oldfield width height x y GetValueAt   % boolean
+        oldfield width height x y NeighboursOnCount   % num
+        Transition   % boolean num -> boolean
+        put
+      } for
+    } for
+    newfield
+  end
+} bind def
+%%EndResource
+
+%%BeginResource: countlights
+% Anzahl eingeschalteter Lampen zählen
+% array width height  CountLightsOn  numlights
+/CountLightsOn {
+  16 dict begin
+    /height exch def
+    /width exch def
+    /field exch def
+    0   % Anzahl auf Stack ablegen
+    0 1 height 1 sub {
+      /y exch def
+      0 1 width 1 sub {
+        /x exch def
+        field width height x y GetValueAt { 1 } { 0 } ifelse add
+      } for
+    } for
+    % Fertige Anzahl bleibt auf Stack
+  end
+} bind def
+%%EndResource
+
+%%BeginResource: animrun
+% Ein Animationsdurchlauf mit Eingabe aus Datei
+% filename width height steps  AnimLauf  -
+/AnimRun {
+/steps exch def
+/height exch def
+/width exch def
+/infilename exch def
+infilename width height ReadInput
+LogLevel 1 gt { dup width height ArrayAusgeben } if
+gsave
+/Helvetica findfont 10 scalefont setfont 0.2 setgray
+0 10 einhmm mul moveto (Anzahl Schritte:) show
+/Helvetica findfont 12 scalefont setfont 0.0 setgray
+steps tmpstr cvs
+50 einhmm mul 10 einhmm mul moveto show   % Anzahl Schritte ausgeben
+grestore
+(Anzahl Schritte: ) print  steps tmpstr cvs print  (\n) print
+1 1 steps {
+  (After ) print  tmpstr cvs print ( step\(s\):\n) print
+  width height NextArray
+  LogLevel 1 gt { dup width height ArrayAusgeben } if
+  dup width height CountLightsOn tmpstr cvs (- Eingeschaltete Lichter: ) print print (\n) print
+} for
+(Endzustand\n) print
+dup width height ArrayAusgeben
+dup width height CountLightsOn
+  tmpstr cvs (Eingeschaltete Lichter: ) print dup print (\n) print
+% Stack:  array anzahl
+%
+% Ergebnis als Text auf PostScript-Seite ausgeben
+gsave
+/Helvetica findfont 10 scalefont setfont 0.2 setgray
+0 0 moveto (Eingeschaltete Lichter:) show
+/Helvetica findfont 12 scalefont setfont 0.0 setgray
+50 einhmm mul 0 moveto show
+% Stack:  array
+grestore
+%
+% Letzten Zustand auf PostScript-Seite zeichnen
+gsave
+0 einhmm mul 25 einhmm mul translate width einhmm mul height einhmm mul scale
+  dup width height DrawArray
+grestore
+pop   % letztes Array vom Stack entfernen
+} bind def
+%%EndResource
+%%EndProlog
+
+%%BeginSetup
+%/Helvetica findfont dup length dict begin
+%  { 1 index /FID ne { def } { pop pop } ifelse } forall
+%  /Encoding ISOLatin1Encoding def
+%  currentdict
+%end
+%/Helvetica-ISOLatin1 exch definefont pop
+%%EndSetup
+
+
+%%Page: (Aufgabe 1) 1
+gsave
+/Helvetica findfont 6 scalefont setfont 0.8 setgray
+25 einhmm mul 13 einhmm mul moveto
+  (Advent of Code 2015 -- Day 18: Like a GIF For Your Yard) show
+grestore
+/tmpstr 64 string def
+
+% Beispiel 6x6
+(\n----- Beispiel: 6x6, 4 Schritte -----\n) print
+/LogLevel 2 def
+gsave
+20 einhmm mul 200 einhmm mul translate
+/Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
+0 40 einhmm mul moveto (Beispiel) show
+(./18-like-a-gif-for-your-yard-example.txt) 6 6 4 AnimRun
+% Tests
+% dup width height 0 0 NeighboursOnCount tmpstr cvs print ( Nachbarn an\n) print
+% dup width height 0 6 GetValueAt tmpstr cvs print ( = Wert\n) print
+grestore
+
+% Eingabe 100x100
+(\n----- Aufgabe 1: 100x100, 100 Schritte -----\n) print
+/LogLevel 1 def
+gsave
+20 einhmm mul 50 einhmm mul translate
+/Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
+0 130 einhmm mul moveto (Aufgabe 1) show
+(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 AnimRun
+grestore
+
+showpage
+%%Trailer
+%%EOF
