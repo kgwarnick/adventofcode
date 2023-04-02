@@ -3,8 +3,8 @@
 %%Creator: Texteditor
 %%For: Karl-Georg Warnick
 %%Title: Advent of Code 2015 Day 18: Like a GIF For Your Yard
-%%CreationDate: 2023-01-15 12:09:59 +01:00
-%%Pages: 1
+%%CreationDate: 2023-04-02 20:52:20 +02:00
+%%Pages: 2
 %%EndComments
 
 % Advent of Code 2015 Day 18: Like a GIF For Your Yard
@@ -78,19 +78,35 @@ end
 8 dict begin
   /height exch def  /width exch def  /field exch def
   /y 0 def
-  /s width string def
+  % - Graues Bild
+  % /s width string def
+  % - Farbiges Bild
+  /s width 3 mul string def
+  % Bild zeichnen
   width height 8 [ width 0  0 0 height sub  0 height] {
+    % Eine Zeile von Bilddaten erzeugen
     y height lt {
       0  1  width 1 sub {   % Schleife über x
         /x exch def
         y width mul x add field exch get   % Licht an Position (x + y * width) an?
-        { 224 } { 64 } ifelse   % Punkt hell oder dunkel zeichnen
-        s exch  x exch  put
+        % - Graues Bild
+        % { 224 } { 64 } ifelse   % Punkt hell oder dunkel zeichnen
+        % s exch  x exch  put
+        % - Farbiges Bild: rgb-Kanäle
+        dup { 255 } {  32 } ifelse  s exch  x 3 mul       exch  put
+        dup { 192 } { 128 } ifelse  s exch  x 3 mul 1 add exch  put
+            {  32 } {  32 } ifelse  s exch  x 3 mul 2 add exch  put
       } for
       s   % Zusammengesetzte Bilddaten auf Stack legen
-    } { ( ) y 16 string cvs print ( ) print } ifelse   % Abbruch, wenn die letzte Zeile des Arrays erreicht war
+    } { () } ifelse   % Abbruch, wenn die letzte Zeile des Arrays erreicht war
     /y y 1 add def   % y = y + 1
-  } image
+  }
+  % - Für graues Bild:  keine weiteren Argumente
+  % image
+  % - Für farbiges Bild
+  false   % nur eine gemeinsame Datenquelle
+  3   % 3 Farbkanäle pro Bildpunkt
+  colorimage
 end
 } bind def
 %%EndResource
@@ -155,9 +171,10 @@ end
 
 %%BeginResource: nextarray
 % Aus aktuellem Array den nächsten Zustand berechnen
-% array width height  NextFrame  nextarray
+% array width height forcecorners  NextFrame  nextarray
 /NextArray {
   16 dict begin
+    /forcecorners exch def
     /height exch def
     /width exch def
     /oldfield exch def
@@ -167,9 +184,18 @@ end
       0 1 width 1 sub {
         /x exch def
         newfield  y width mul x add   % Argumente für put:  array index
-        oldfield width height x y GetValueAt   % boolean
-        oldfield width height x y NeighboursOnCount   % num
-        Transition   % boolean num -> boolean
+        % Spezielle Behandlung der vier Ecken?
+        x 0 eq  y 0 eq y height 1 sub eq or  and
+        x width 1 sub eq  y 0 eq y height 1 sub eq or  and  or
+        forcecorners and
+        % Immer true zurückgeben
+        { true}
+        % Neuen Zustand berechnen
+        {
+          oldfield width height x y GetValueAt   % boolean
+          oldfield width height x y NeighboursOnCount   % num
+          Transition   % boolean num -> boolean
+        } ifelse
         put
       } for
     } for
@@ -201,13 +227,22 @@ end
 
 %%BeginResource: animrun
 % Ein Animationsdurchlauf mit Eingabe aus Datei
-% filename width height steps  AnimLauf  -
+% filename width height steps forcecorners  AnimLauf  -
 /AnimRun {
+/forcecorners exch def
 /steps exch def
 /height exch def
 /width exch def
 /infilename exch def
 infilename width height ReadInput
+% Ecken zwangsweise einschalten?
+forcecorners {
+  dup 0 true put   % 0 = links oben
+  dup width 1 sub true put   % width-1 = rechts oben
+  dup height 1 sub width mul true put   % (height-1) * width = links unten
+  dup height width mul 1 sub true put   % height * width - 1 = rechts unten
+} if
+% Startfeld ausgeben
 LogLevel 1 gt { dup width height ArrayAusgeben } if
 gsave
 /Helvetica findfont 10 scalefont setfont 0.2 setgray
@@ -219,7 +254,7 @@ grestore
 (Anzahl Schritte: ) print  steps tmpstr cvs print  (\n) print
 1 1 steps {
   (After ) print  tmpstr cvs print ( step\(s\):\n) print
-  width height NextArray
+  width height forcecorners NextArray
   LogLevel 1 gt { dup width height ArrayAusgeben } if
   dup width height CountLightsOn tmpstr cvs (- Eingeschaltete Lichter: ) print print (\n) print
 } for
@@ -273,7 +308,7 @@ gsave
 20 einhmm mul 200 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 40 einhmm mul moveto (Beispiel) show
-(./18-like-a-gif-for-your-yard-example.txt) 6 6 4 AnimRun
+(./18-like-a-gif-for-your-yard-example.txt) 6 6 4 false AnimRun
 % Tests
 % dup width height 0 0 NeighboursOnCount tmpstr cvs print ( Nachbarn an\n) print
 % dup width height 0 6 GetValueAt tmpstr cvs print ( = Wert\n) print
@@ -286,9 +321,40 @@ gsave
 20 einhmm mul 50 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 130 einhmm mul moveto (Aufgabe 1) show
-(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 AnimRun
+(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 false AnimRun
 grestore
 
 showpage
+
+%%Page: (Aufgabe 2) 2
+gsave
+/Helvetica findfont 6 scalefont setfont 0.8 setgray
+25 einhmm mul 13 einhmm mul moveto
+  (Advent of Code 2015 -- Day 18: Like a GIF For Your Yard) show
+grestore
+/tmpstr 64 string def
+
+% Beispiel 6x6
+(\n----- Beispiel: 6x6, 5 Schritte, Ecken immer an -----\n) print
+/LogLevel 2 def
+gsave
+20 einhmm mul 200 einhmm mul translate
+/Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
+0 40 einhmm mul moveto (Beispiel) show
+(./18-like-a-gif-for-your-yard-example.txt) 6 6 5 true AnimRun
+grestore
+
+% Eingabe 100x100
+(\n----- Aufgabe 2: 100x100, 100 Schritte, Ecken immer an -----\n) print
+/LogLevel 1 def
+gsave
+20 einhmm mul 50 einhmm mul translate
+/Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
+0 130 einhmm mul moveto (Aufgabe 2) show
+(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 true AnimRun
+grestore
+
+showpage
+
 %%Trailer
 %%EOF
