@@ -15,8 +15,8 @@
 /einhmm 2.834646 def
 
 %%BeginResource: lesen
-% Datei lesen
-% filename width height  ReadInput  -
+% Datei lesen und als eindimensionales Array auf Stack zurückgeben
+% filename width height  ReadInput  array
 /ReadInput {
 16 dict begin
 /height exch def
@@ -42,7 +42,7 @@
   pop   % Zeile vom Stack entfernen
 } for
 infile closefile
-inputarray
+inputarray   % erzeugtes Array auf Stack ablegen
 end
 } bind def
 %%EndResource
@@ -225,16 +225,14 @@ end
 } bind def
 %%EndResource
 
-%%BeginResource: animrun
-% Ein Animationsdurchlauf mit Eingabe aus Datei
-% filename width height steps forcecorners  AnimLauf  -
-/AnimRun {
+%%BeginResource: animrunfromarray
+% Ein Animationsdurchlauf mit einem Start-Array
+% array width height steps forcecorners  AnimRunFromArray  -
+/AnimRunFromArray {
 /forcecorners exch def
 /steps exch def
 /height exch def
 /width exch def
-/infilename exch def
-infilename width height ReadInput
 % Ecken zwangsweise einschalten?
 forcecorners {
   dup 0 true put   % 0 = links oben
@@ -281,6 +279,18 @@ grestore
 pop   % letztes Array vom Stack entfernen
 } bind def
 %%EndResource
+
+%%BeginResource: animrunfromfile
+% Ein Animationsdurchlauf mit Eingabe aus Datei
+% filename width height steps forcecorners  AnimRunFromFile  -
+/AnimRunFromFile {
+5 -1 roll   % Dateiname nach oben auf Stack holen:   w h st fc filename
+4 index 4 index   % width und height duplizieren:    w h st fc filename w h
+ReadInput   % Jetzt liegt das gelesene Array oben:   w h st fc array
+5 1 roll         % Array wieder nach unten schieben: array w h st fc
+AnimRunFromArray
+} bind def
+%%EndResource
 %%EndProlog
 
 %%BeginSetup
@@ -303,12 +313,19 @@ grestore
 
 % Beispiel 6x6
 (\n----- Beispiel: 6x6, 4 Schritte -----\n) print
+/BeispielArray [
+  false true  false true  false true
+  false false false true  true  false
+  true  false false false false true
+  false false true  false false false
+  true  false true  false false true
+  true  true  true  true  false false ] def
 /LogLevel 2 def
 gsave
 20 einhmm mul 200 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 40 einhmm mul moveto (Beispiel) show
-(./18-like-a-gif-for-your-yard-example.txt) 6 6 4 false AnimRun
+BeispielArray 6 6 4 false AnimRunFromArray
 % Tests
 % dup width height 0 0 NeighboursOnCount tmpstr cvs print ( Nachbarn an\n) print
 % dup width height 0 6 GetValueAt tmpstr cvs print ( = Wert\n) print
@@ -321,7 +338,7 @@ gsave
 20 einhmm mul 50 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 130 einhmm mul moveto (Aufgabe 1) show
-(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 false AnimRun
+(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 false AnimRunFromFile
 grestore
 
 showpage
@@ -341,7 +358,7 @@ gsave
 20 einhmm mul 200 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 40 einhmm mul moveto (Beispiel) show
-(./18-like-a-gif-for-your-yard-example.txt) 6 6 5 true AnimRun
+BeispielArray 6 6 5 true AnimRunFromArray
 grestore
 
 % Eingabe 100x100
@@ -351,7 +368,7 @@ gsave
 20 einhmm mul 50 einhmm mul translate
 /Helvetica-Bold findfont 16 scalefont setfont 0.0 setgray
 0 130 einhmm mul moveto (Aufgabe 2) show
-(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 true AnimRun
+(./18-like-a-gif-for-your-yard-input.txt) 100 100 100 true AnimRunFromFile
 grestore
 
 showpage
