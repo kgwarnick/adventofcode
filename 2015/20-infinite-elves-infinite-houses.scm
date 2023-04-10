@@ -46,20 +46,23 @@
 
 
 ;; How many presents are delivered to houses in the range 1 to n
+;; factor:  How many presents each elf will deliver per house.
+;; limit:   How many houses an elf will deliver presents to at most,
+;;          <= 0 for unlimited.
 ;; Returns:  a hash-table of (house-number . number-of-presents)
 ;
 (define delivery-map
-  (lambda (n)
+  (lambda (n factor limit)
     (let ((housemap (make-hash-table n)))
       ; All elves
       (do ((elf 1 (+ elf 1)))
           ((> elf n) housemap)
         ; Deliver to all multiples in the house list
         (do ((house elf (+ house elf)))
-          ((> house n))
+            ((or (> house n) (and (> limit 0) (> house (* elf limit)))))
           (hashq-set! housemap
                       house
-                      (+ (* 10 elf)
+                      (+ (* factor elf)
                          (hashq-ref housemap house 0)))
           )
         ))))
@@ -80,12 +83,23 @@
 
 
 ;; Find the first house to receive at least the required number of presents.
-;; Implementation simulating every elf and using a hash map to track all houses.
+;; Simulate elf by elf and use a hash table to track all houses.
+;; Optional arguments:
+;; factor:  How many presents each elf will deliver per house, default 10.
+;; limit:   How many houses an elf will deliver presents to at most,
+;;          <= 0 for unlimited
 ;; Returns:  A pair (house-number . number-of-presents)
 ;
 (define at-least-presents-elf-wise
-  (lambda (n)
-    (find-at-least-presents n (delivery-map (/ n 10))) ))
+  (lambda (n . factor-and-limit)
+    (let ((factor (if (> (length factor-and-limit) 0)
+                    (list-ref factor-and-limit 0)
+                    10))
+          (limit (if (> (length factor-and-limit) 1)
+                    (list-ref factor-and-limit 1)
+                    -1)))
+      (find-at-least-presents n (delivery-map
+                                  (floor (/ n factor)) factor limit)) )))
 
 
 ;; Read a single item from the specified file
@@ -113,6 +127,20 @@
   (display (at-least-presents-elf-wise 100000))  (newline)
 (newline)
 
+(display "----- Examples with factor 11 and limit 3 houses per elf -----")
+  (newline)
+; Use a sorted assoc-list because hash-for-each would be in arbitrary order
+(for-each
+  (lambda (pair)
+    (begin
+      (display "Presents for house ")  (display (car pair))  (display ": ")
+      (display (cdr pair))  (newline)
+      ))
+  (sort (hash-map->list cons
+          (delivery-map 10 11 3)) (lambda (a b) (< (car a) (car b))))
+  )
+(newline)
+
 (display
   "----- Part 1: First house to receive enough presents -----")
   (newline)
@@ -125,3 +153,11 @@
 (display "First house with at least ")  (display minpresents)
   (display " presents (elf-wise):                          ")
   (display (at-least-presents-elf-wise minpresents))  (newline)
+(newline)
+
+(display
+  "----- Part 2: Limited to 50 houses per elf, delivery of 11 presents each -----")
+  (newline)
+(display "First house with at least ")  (display minpresents)
+  (display " presents (elf-wise):                          ")
+  (display (at-least-presents-elf-wise minpresents 11 50))  (newline)

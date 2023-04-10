@@ -13,6 +13,21 @@ At least 60 presents for house: (4 . 70)
 At least 120 presents for house: (6 . 120)
 At least 100000 presents for house: (3120 . 104160)
 
+----- Examples with factor 11 and limit 3 houses per elf -----
+Presents for house 1: 11
+Presents for house 2: 33
+Presents for house 3: 44
+Presents for house 4: 66
+Presents for house 5: 55
+Presents for house 6: 121
+Presents for house 7: 77
+Presents for house 8: 132
+Presents for house 9: 132
+Presents for house 10: 165
+
 ----- Part 1: First house to receive enough presents -----
 First house with at least 29000000 presents (brute-force/house-wise with trick): (665280 . 29260800)
 First house with at least 29000000 presents (elf-wise):                          (665280 . 29260800)
+
+----- Part 2: Limited to 50 houses per elf, delivery of 11 presents each -----
+First house with at least 29000000 presents (elf-wise):                          (705600 . 29002446)
