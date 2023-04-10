@@ -1,0 +1,18 @@
+----- Examples -----
+Presents for house 1: 10
+Presents for house 2: 30
+Presents for house 3: 40
+Presents for house 4: 70
+Presents for house 5: 60
+Presents for house 6: 120
+Presents for house 7: 80
+Presents for house 8: 150
+Presents for house 9: 130
+Presents for house 4: 70
+At least 60 presents for house: (4 . 70)
+At least 120 presents for house: (6 . 120)
+At least 100000 presents for house: (3120 . 104160)
+
+----- Part 1: First house to receive enough presents -----
+First house with at least 29000000 presents (brute-force/house-wise with trick): (665280 . 29260800)
+First house with at least 29000000 presents (elf-wise):                          (665280 . 29260800)
