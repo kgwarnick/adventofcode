@@ -1,6 +1,6 @@
 --- Shop offers ---
 Weapons: 5
-Dagger      cost   8   dam  3  arm  0
+Dagger      cost   8   dam  4  arm  0
 Shortsword  cost  10   dam  5  arm  0
 Warhammer   cost  25   dam  6  arm  0
 Longsword   cost  40   dam  7  arm  0
@@ -27,21 +27,28 @@ Defense +3  cost  80   dam  0  arm  3
 - Boss (12 HP, 2 ARM) can resist 5 DAM for 3 rounds.
 -> Player - Boss: 0
 
---- Aufgabe 1 ---
+--- Part 1: Cheapest win ---
 Player Stats: 100 HP, armor: 0, damage: 0
 Boss Stats: 104 HP, armor: 1, damage: 8
-+ Winning equipment: Dagger, Leather, Damage +2 , Damage +3  -> costs 171,  player 14 rounds, enemy 14 rounds
-+ Winning equipment: Dagger, Chainmail, Damage +2 , Defense +3 -> costs 169,  player 33 rounds, enemy 25 rounds
-+ Winning equipment: Dagger, Chainmail, Defense +2, Defense +3 -> costs 159,  player 99 rounds, enemy 51 rounds
-+ Winning equipment: Dagger, Splintmail, Damage +2 , Defense +2 -> costs 151,  player 33 rounds, enemy 25 rounds
-+ Winning equipment: Dagger, Bandedmail, Damage +1 , Defense +2 -> costs 148,  player 49 rounds, enemy 34 rounds
-+ Winning equipment: Dagger, Bandedmail, Defense +1, Defense +2 -> costs 143,  player 99 rounds, enemy 51 rounds
-+ Winning equipment: Shortsword, No Armor, Damage +1 , Damage +3  -> costs 135,  player 12 rounds, enemy 12 rounds
-+ Winning equipment: Shortsword, No Armor, Damage +3 , Defense +1 -> costs 130,  player 14 rounds, enemy 14 rounds
-+ Winning equipment: Shortsword, Leather, No Ring 1, Damage +3  -> costs 123,  player 14 rounds, enemy 14 rounds
++ Winning equipment: Dagger, No Armor, Damage +2 , Damage +3  -> costs 158,  player 12 rounds, enemy 12 rounds
++ Winning equipment: Dagger, Leather, Damage +1 , Damage +3  -> costs 146,  player 14 rounds, enemy 14 rounds
++ Winning equipment: Dagger, Leather, Defense +2, Defense +3 -> costs 141,  player 49 rounds, enemy 34 rounds
++ Winning equipment: Dagger, Chainmail, Damage +2 , Defense +2 -> costs 129,  player 24 rounds, enemy 20 rounds
++ Winning equipment: Dagger, Splintmail, Damage +1 , Defense +2 -> costs 126,  player 33 rounds, enemy 25 rounds
++ Winning equipment: Dagger, Splintmail, Defense +1, Defense +2 -> costs 121,  player 49 rounds, enemy 34 rounds
 + Winning equipment: Shortsword, Leather, Damage +1 , Damage +2  -> costs 98,  player 14 rounds, enemy 14 rounds
 + Winning equipment: Warhammer, No Armor, Damage +2 , Defense +1 -> costs 95,  player 14 rounds, enemy 14 rounds
 + Winning equipment: Warhammer, Leather, No Ring 1, Damage +2  -> costs 88,  player 14 rounds, enemy 14 rounds
 + Winning equipment: Longsword, No Armor, Damage +1 , Defense +1 -> costs 85,  player 14 rounds, enemy 14 rounds
 + Winning equipment: Longsword, Leather, No Ring 1, Damage +1  -> costs 78,  player 14 rounds, enemy 14 rounds
-* Billigste Auswahl zum Sieg: 78
+* Cheapest amount of gold that still wins: 78
+
+--- Part 2: Most expensive loss ---
+- Losing equipment: Dagger, No Armor, No Ring 1, No Ring 2 -> costs 8,  player 12 rounds, enemy 34 rounds
+- Losing equipment: Dagger, No Armor, No Ring 1, Damage +1  -> costs 33,  player 12 rounds, enemy 25 rounds
+- Losing equipment: Dagger, No Armor, No Ring 1, Damage +2  -> costs 58,  player 12 rounds, enemy 20 rounds
+- Losing equipment: Dagger, No Armor, No Ring 1, Damage +3  -> costs 108,  player 12 rounds, enemy 17 rounds
+- Losing equipment: Dagger, No Armor, Damage +1 , Damage +3  -> costs 133,  player 12 rounds, enemy 14 rounds
+- Losing equipment: Dagger, No Armor, Damage +2 , Defense +3 -> costs 138,  player 19 rounds, enemy 20 rounds
+- Losing equipment: Dagger, No Armor, Damage +3 , Defense +2 -> costs 148,  player 16 rounds, enemy 17 rounds
+* Most amount of gold that still loses: 148

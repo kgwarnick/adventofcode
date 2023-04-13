@@ -14,7 +14,7 @@ public class RpgSimulator {
 
   public final static MagicItem[] Weapons = new MagicItem[] {
     // A weapon is obligatory, there is no "BareHands" weapon
-    new MagicItem ("Dagger",      8, 3, 0),
+    new MagicItem ("Dagger",      8, 4, 0),
     new MagicItem ("Shortsword", 10, 5, 0),
     new MagicItem ("Warhammer",  25, 6, 0),
     new MagicItem ("Longsword",  40, 7, 0),
@@ -97,11 +97,13 @@ public class RpgSimulator {
       - GetRoundsStanding (actor2.hitpoints, actor2.armor, actor1.damage);
   }
 
-  /** Find the cheapest buy that still lets actor 1 win the fight */
-  public static int GetBestBuy (ActorStats actor1, ActorStats actor2) {
-    // String weapon = "none", armor = "none", ring1 = "none", ring2 = "none";
-    // int playerrounds = 0, enemyrounds = 0;
-    int totalcost = 9999;
+  /** Find the cheapest/most expensive buy that still lets actor 1 win/lose
+   *  the fight.
+   *  @param shouldwin  Whether to calculate the least amount of gold
+   *                    to win (true) or the most amount to lose (false) */
+  public static int GetBestBuy (ActorStats actor1, ActorStats actor2,
+      boolean shouldwin) {
+    int totalcost = shouldwin ? 9999 : 0;
     // Choose all combinations of items (weapon, armor, left and right ring)
     ActorStats actor1try = new ActorStats ("Player (Try)", actor1.hitpoints,
       actor1.armor, actor1.damage);
@@ -116,10 +118,11 @@ public class RpgSimulator {
             int winner = GetFightWinner (actor1try, actor2);
             // Player wins if they can stand at least as many rounds
             // as the enemy
-            if (winner >= 0) {
+            if (((winner >= 0) && shouldwin) || ((winner < 0) && !shouldwin)) {
               int cost = Weapons[w].cost + Armors[a].cost +
                       Rings[l].cost + Rings[r].cost;
-              if (cost < totalcost) {
+              if (((cost < totalcost) && shouldwin) ||
+                  ((cost > totalcost) && !shouldwin)) {
                 String weapon = Weapons[w].title;
                 String armor = Armors[a].title;
                 String ring1 = Rings[l].title;
@@ -129,7 +132,9 @@ public class RpgSimulator {
                   actor1try.armor, actor2.damage);
                 int enemyrounds = GetRoundsStanding (actor2.hitpoints,
                   actor2.armor, actor1try.damage);
-                System.out.println ("+ Winning equipment: " + weapon + ", " +
+                System.out.println (
+                  (shouldwin ? "+ Winning" : "- Losing") + " equipment: " +
+                  weapon + ", " +
                   armor + ", " + ring1 + ", " + ring2 +
                   " -> costs " + totalcost + ",  player " + playerrounds +
                   " rounds, enemy " + enemyrounds + " rounds");
@@ -182,7 +187,7 @@ public class RpgSimulator {
       GetFightWinner (traineestats, enemystats));
     System.out.println ();
 
-    System.out.println ("--- Aufgabe 1 ---");
+    System.out.println ("--- Part 1: Cheapest win ---");
     ActorStats playerstats = new ActorStats ("Player", 100, 0, 0);
     ActorStats bossstats = new ActorStats ("Boss", 100, 1, 1);
     try {
@@ -197,7 +202,12 @@ public class RpgSimulator {
       playerstats.hitpoints, playerstats.armor, playerstats.damage);
     System.out.printf ("Boss Stats: %d HP, armor: %d, damage: %d\n",
       bossstats.hitpoints, bossstats.armor, bossstats.damage);
-    int best = GetBestBuy (playerstats, bossstats);
-    System.out.println ("* Billigste Auswahl zum Sieg: " + best);
+    int best = GetBestBuy (playerstats, bossstats, true);
+    System.out.println ("* Cheapest amount of gold that still wins: " + best);
+    System.out.println ();
+
+    System.out.println ("--- Part 2: Most expensive loss ---");
+    int worst = GetBestBuy (playerstats, bossstats, false);
+    System.out.println ("* Most amount of gold that still loses: " + worst);
   }
 }
