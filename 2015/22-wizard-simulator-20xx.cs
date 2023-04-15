@@ -138,6 +138,22 @@ public class WizardSimulator {
     return true;
   }
 
+  /// <summary>Play a boss turn, including effects and attack</summary>
+  public static void PlayBossTurn (ref WizardStats boss, ref WizardStats player) {
+    // Effects first
+    ApplyEffects (ref player, ref boss);
+    if (player.hitpoints <= 0) {
+      Console.WriteLine ("--! player lost (boss env)");
+      return;
+    }
+    if (boss.hitpoints <= 0) {
+      // Console.WriteLine ("--! Player win (environment killed boss before their turn)");
+      return;
+    }
+    // Attack
+    BossAttack (ref boss, ref player);
+  }
+
   /// <summary>Apply effects of currently active spells</summary>
   public static void ApplyEffects (ref WizardStats player,
       ref WizardStats boss) {
@@ -222,22 +238,9 @@ public class WizardSimulator {
       if (spell.func (ref newplayer, ref newboss)) {
         // Console.WriteLine ("[{0}] ~Player casts {1}", depth, spell.name);
         // Console.WriteLine ("[{0}] ~Player: {1},  Boss: {2}", depth, newplayer, newboss);
-        // Boss turn, effects first
-        if (newboss.hitpoints > 0) {
-          ApplyEffects (ref newplayer, ref newboss);
-          if (newplayer.hitpoints <= 0) {
-            Console.WriteLine ("[{0}] player lost (boss env)", depth);
-            continue;   // player loses, try a different choice
-          }
-          // if (newboss.hitpoints <= 0)  Console.WriteLine (
-          //   "--! Player win (environment killed boss before their turn)");
-        }
-        // Boss turn, attacks if still alive
-        if (newboss.hitpoints > 0) {
-          BossAttack (ref newboss, ref newplayer);
-          if (newplayer.hitpoints <= 0)  continue;   // player loses
-        }
-        else {   // if not, player wins
+        if (newboss.hitpoints > 0)  PlayBossTurn (ref newboss, ref newplayer);
+        if (newplayer.hitpoints <= 0) continue;   // player loses, try a different choice
+        if (newboss.hitpoints <= 0) {   // player wins
           // Console.WriteLine ("--! Player win, spells used: " + string.Join (", ",
           //     (spellsused ?? Array.Empty<Spell>()) .Append (spell) .Select (s => s.name)));
           if (spell.manacost < manabest)  manabest = spell.manacost;
