@@ -26,3 +26,8 @@
 Player:  50 HP,  500 Mana,  0 Armor,  0 Damage
 Boss:    71 HP,  250 Mana,  0 Armor,  10 Damage
 * Spent Mana: 1824
+
+--- Part 1: Least mana to win on difficulty hard ---
+Player:  50 HP,  500 Mana,  0 Armor,  0 Damage
+Boss:    71 HP,  250 Mana,  0 Armor,  10 Damage
+* Spent Mana: 1937

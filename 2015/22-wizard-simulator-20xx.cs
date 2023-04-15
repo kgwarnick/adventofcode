@@ -194,10 +194,19 @@ public class WizardSimulator {
   /// <returns>Mana spent for the strategy needing least mana,
   ///          negative: player cannot win along this path</returns>
   public static int TryDoubleTurn (WizardStats player, WizardStats boss,
-      int depth = 0, Spell[]? spellsused = null) {
+      bool harddifficulty = false, int depth = 0, Spell[]? spellsused = null) {
     // Try limiting depth if the search does not finish otherwise
     // if (depth > 20)  return -1;
     // Console.WriteLine ($"[{depth}] (entry) " + "Player: " + player + ",   Boss: " + boss);
+    // Additional environment effect from difficulty setting: lose 1 hit point
+    if (harddifficulty) {
+      if (--player.hitpoints <= 0) {
+        // Console.WriteLine (
+        //   "[{0}] player lost (environment/difficulty effects)", depth);
+        return -1;   // player loses
+      }
+    }
+    // Apply effects from spells
     ApplyEffects (ref player, ref boss);
     if (boss.hitpoints <= 0) {
       // Console.WriteLine ("-! Player win (environment killed boss before player turn)");
@@ -235,7 +244,7 @@ public class WizardSimulator {
           continue;   // no need to do recursive calls
         }
         // Both actors are still alive, recursively try the next spell
-        int mananeed = TryDoubleTurn (newplayer, newboss, depth + 1,
+        int mananeed = TryDoubleTurn (newplayer, newboss, harddifficulty, depth + 1,
           (spellsused ?? Array.Empty<Spell>()) .Append (spell) .ToArray() );
         if (mananeed >= 0) {
           // Successful strategy, mana need = recursive need plus current spell
@@ -293,14 +302,14 @@ public class WizardSimulator {
     Console.WriteLine ("--- Example 1 Search least mana to win ---");
     player = new WizardStats (ExamplePlayer);
     boss = new WizardStats (Example1Boss);
-    int manaspent = TryDoubleTurn (player, boss, 0);
+    int manaspent = TryDoubleTurn (player, boss);
     Console.WriteLine ("* Spent Mana: {0}", manaspent);
     Console.WriteLine ();
 
     Console.WriteLine ("--- Example 2 Search least mana to win ---");
     player = new WizardStats (ExamplePlayer);
     boss = new WizardStats (Example2Boss);
-    manaspent = TryDoubleTurn (player, boss, 0);
+    manaspent = TryDoubleTurn (player, boss);
     Console.WriteLine ("* Spent Mana: {0}", manaspent);
     Console.WriteLine ();
 
@@ -309,7 +318,14 @@ public class WizardSimulator {
     ReadWizardStatsFromFile ("22-wizard-simulator-20xx-input.txt", ref startboss);
     Console.WriteLine ("Player:  {0}", StartPlayer);
     Console.WriteLine ("Boss:    {0}", startboss);
-    manaspent = TryDoubleTurn (StartPlayer, startboss, 0);
+    manaspent = TryDoubleTurn (StartPlayer, startboss, false, 0);
+    Console.WriteLine ("* Spent Mana: {0}", manaspent);
+    Console.WriteLine ();
+
+    Console.WriteLine ("--- Part 1: Least mana to win on difficulty hard ---");
+    Console.WriteLine ("Player:  {0}", StartPlayer);
+    Console.WriteLine ("Boss:    {0}", startboss);
+    manaspent = TryDoubleTurn (StartPlayer, startboss, true, 0);
     Console.WriteLine ("* Spent Mana: {0}", manaspent);
   }
 }
