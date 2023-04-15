@@ -1,0 +1,28 @@
+--- Example 1 ---
++ Casting spell Poison
+  -> [FIGHT]   Player: 2 HP, 77 Mana,  Boss: 10 HP, 250 Mana
++ Casting spell Magic Missile
+  -> [WIN  ]   Player: 2 HP, 24 Mana,  Boss: 0 HP, 250 Mana
+
+--- Example 2 ---
++ Casting spell Recharge
+  -> [FIGHT]   Player: 2 HP, 122 Mana,  Boss: 14 HP, 250 Mana
++ Casting spell Shield
+  -> [FIGHT]   Player: 1 HP, 211 Mana,  Boss: 14 HP, 250 Mana
++ Casting spell Drain
+  -> [FIGHT]   Player: 2 HP, 340 Mana,  Boss: 12 HP, 250 Mana
++ Casting spell Poison
+  -> [FIGHT]   Player: 1 HP, 167 Mana,  Boss: 9 HP, 250 Mana
++ Casting spell Magic Missile
+  -> [WIN  ]   Player: 1 HP, 114 Mana,  Boss: -1 HP, 250 Mana
+
+--- Example 1 Search least mana to win ---
+* Spent Mana: 226
+
+--- Example 2 Search least mana to win ---
+* Spent Mana: 641
+
+--- Part 1: Least mana to win ---
+Player:  50 HP,  500 Mana,  0 Armor,  0 Damage
+Boss:    71 HP,  250 Mana,  0 Armor,  10 Damage
+* Spent Mana: 1824
