@@ -161,7 +161,7 @@ int main (int argc, char *argv[]) {
     examplestate.ip, examplestate.a, examplestate.b);
   printf ("\n");
 
-  printf ("--- Part 1 ---\n");
+  printf ("--- Part 1: Starting from a = 0 ---\n");
   const unsigned int maxcodesize = 1024;
   Instruction programme[maxcodesize];
   const char *inputfilename = "23-opening-the-turing-lock-input.txt";
@@ -173,4 +173,11 @@ int main (int argc, char *argv[]) {
   RunProgramme (&cpustate, false);
   printf ("End state:  ip = %4u,  a = %5u,  b = %5u\n",
     cpustate.ip, cpustate.a, cpustate.b);
+  printf ("\n");
+
+  printf ("--- Part 2: Starting from a = 1 ---\n");
+  CpuState cpustate2 = { 1, 0, 0, programmesize, programme };
+  RunProgramme (&cpustate2, false);
+  printf ("End state:  ip = %4u,  a = %5u,  b = %5u\n",
+    cpustate2.ip, cpustate2.a, cpustate2.b);
 }
