@@ -53,6 +53,24 @@ def runpuzzle (positionlist: str, consumpfunc, verbose: bool = False) -> tuple[i
             bestfuel = f
     return bestpos, bestfuel, poslist, fuellist
 
+# Alternative implementation
+def runpuzzle_v1 (positionlist: str, consumpfunc, verbose: bool = False) -> tuple[int, int|None, list[int], list[int]]:
+    positions = [ int(s) for s in positionlist.split(",") ]
+    print ("Number of crab positions:", len (positions))
+    minpos = min (positions)
+    maxpos = max (positions)
+    print ("Need to take positions into account from {0} to {1}".format (minpos, maxpos))
+    poslist = list (range (minpos, maxpos + 1))
+    fuellist = list (map (lambda p: sum (fuelneeded (p, positions, consumpfunc)), poslist))
+    # Create pairs of (position, totalfuelneeded), sort them ascending by
+    # totalfuelneeded (= least fuel first), take the first element
+    pairlist = list (zip (poslist, fuellist))
+    pairlist.sort (key = lambda pair: pair[1])
+    bestpair = pairlist[0]
+    if verbose: print ("Positions:  ", poslist)
+    if verbose: print ("Fuel needed:", fuellist)
+    return bestpair[0], bestpair[1], poslist, fuellist
+
 def plotfuelrequirements (pos1: list, req1: list, bestpos1: int, pos2: list, req2: list, bestpos2: int):
     """Plot two pairs of position to fuel mappings, and mark the best position for both cases."""
     fig, ax = matplotlib.pyplot.subplots ()
