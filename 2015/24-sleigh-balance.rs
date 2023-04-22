@@ -2,6 +2,18 @@
 // https://adventofcode.com/2015/day/24
 
 
+// Hinweis:
+//   Die Funktionen sind mit dem Ziel geschrieben, auch für mehrfach
+//   auftretende Zahlen ("Gewichte") in der Eingabe zu funktionieren.
+//   Da das in der tatsächlichen Eingabe nicht der Fall ist, ist diese
+//   Eigenschaft ungetestet.
+//
+//   Außerdem sollte dadurch das wiederholte Mapping von Indizes zu Gewichten
+//   unnötig sein und es könnte direkt mit den Gewichten gearbeitet werden.
+//   - Zum Beispiel mit std::collections::HashSet und der zugehörigen Methode
+//     difference statt der eigenen Funktion vek_ohne_index?
+
+
 use std::fs;
 
 
@@ -126,7 +138,17 @@ fn rest_aufteilbar (zusammen: &Vec<u32>, auswahl: &Vec<usize>, zielsumme: u32) -
     let neuewahl = nächste_auswahl (&verbleibend, &Vec::new(), zielsumme);
     // println!("  - Rest: {verbleibend:?} -> Mögliche Aufteilung: {neuewahl:?} -> {:?}",
     //     neuewahl.iter().map(|i| verbleibend[*i]).collect::<Vec<u32>>());
-    !neuewahl.is_empty()
+    // Rekursiv überprüfen, ob der neue Rest immer noch aufteilbar ist
+    if !neuewahl.is_empty() {
+        let restsumme : u32 = vek_ohne_index (&verbleibend, &neuewahl)
+            .iter() .sum();
+        if restsumme > zielsumme {
+            // println!("- Rekursiver Test auf Aufteilung für Summe: {}", restsumme);
+            rest_aufteilbar (&verbleibend, &neuewahl, zielsumme)
+        }
+        else { true }
+    }
+    else { false }
 }
 
 
@@ -217,12 +239,12 @@ fn tests () {
 
 /// Ideale Konfiguration bestimmen
 //
-fn ideale_konfiguration (gewichtsliste: &Vec<u32>) -> Vec<u32> {
+fn ideale_konfiguration (gewichtsliste: &Vec<u32>, abteile: u32) -> Vec<u32> {
     let mut gewichte = gewichtsliste.to_vec();
     gewichte.sort_by(|a, b| b.cmp(a));
     let gewichtsumme: u32 = gewichtsliste.iter().sum();
     println! ("Summe der Gewichte: {gewichtsumme}");
-    kombinationen_testen (&gewichte, gewichtsumme/3)
+    kombinationen_testen (&gewichte, gewichtsumme/abteile)
 }
 
 
@@ -234,18 +256,28 @@ fn main () {
     println! ("--- Beispiel ---");
     let mut gewichte = vec![1, 2, 3, 4, 5,  7, 8, 9, 10, 11];
     gewichte.sort_by (|a, b| b.cmp(a));
-    let anordnung = ideale_konfiguration (&gewichte);
+    let anordnung = ideale_konfiguration (&gewichte, 3);
     let quantentangle : u32 = anordnung.iter().product();
-    println!("Beste Anordnung: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
+    println!("Beste Anordnung für 3 Abteile: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
+    let anordnung = ideale_konfiguration (&gewichte, 4);
+    let quantentangle : u32 = anordnung.iter().product();
+    println!("Beste Anordnung für 4 Abteile: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
     println! ();
 
-    println!("--- Aufgabe 1: Ideale Anordnung ---");
+    println!("--- Aufgabe 1: Ideale Anordnung für 3 Abteile ---");
     let dateiinhalt = fs::read_to_string ("24-sleigh-balance-input.txt")
         .expect ("Unable to read file");
     let gewichte : Vec<u32> = dateiinhalt .trim() .split('\n')
         .map(|x| x.trim() .parse() .expect("Fehler bei Zahl-Umwandlung"))
         .collect();
-    let anordnung = ideale_konfiguration (&gewichte);
+    println!("Eingelesene Gewichte:  {gewichte:?}");
+    let anordnung = ideale_konfiguration (&gewichte, 3);
     let quantentangle = anordnung.iter().map(|n| u64::from(*n)).product::<u64>();
-    println!("Beste Anordnung: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
+    println!("Beste Anordnung für 3 Abteile: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
+    println! ();
+
+    println!("--- Aufgabe 2: Ideale Anordnung für 4 Abteile ---");
+    let anordnung = ideale_konfiguration (&gewichte, 4);
+    let quantentangle = anordnung.iter().map(|n| u64::from(*n)).product::<u64>();
+    println!("Beste Anordnung für 4 Abteile: {anordnung:?} -> Quantum Entanglement: {quantentangle}");
 }
