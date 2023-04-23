@@ -124,7 +124,7 @@ End;
 (** Zeichenfolge in Array aufnehmen, sofern noch nicht vorhanden.
     Rückgabewert gibt an, ob die Zeichenfolge neu war und aufgenomen wurde.
     Das PChar-Objekt wird beim Aufnehmen ins Array kopiert, ist also
-    unabhängiig von der Variable `neu` *)
+    unabhängig von der Variable `neu` *)
 Function MerkenWennNeu (var anz: Integer; var ziele: Array Of PChar;
   neu: PChar): Boolean;
 Var i: Integer;
@@ -499,7 +499,7 @@ Begin
       WriteLn ('e -?-> ', molek^[m], ': Weg mit ', i, ' Schritten gefunden')
     Else
       WriteLn ('e -?-> ', molek^[m],
-        ': Kein Weg mit maximal 10 Schritten gefunden');
+        ': Kein Weg mit maximal 10000 Schritten gefunden');
   End;
 
   For i := 0 To (n - 1) Do  strdispose (zl^[i]);
