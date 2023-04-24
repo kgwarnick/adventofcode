@@ -32,7 +32,7 @@ class MathMonkey {
   string str () const {
     return name + ": " + (isresultavail ? "*" : "-") + "  " +
       (isoperation ? ainput + " " + operation + " " + binput +
-                       (isresultavail ? " = " + n : "") :
+                       (isresultavail ? string (" = ") + to_string (n) : "") :
                      to_string (n));
   }
 };

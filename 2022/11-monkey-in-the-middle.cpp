@@ -116,7 +116,6 @@ class Monkey {
 size_t Monkey::Parse (size_t currline, const vector<string> lines) {
   stringstream ss (lines[currline]);
   string word1, word2, word3;
-  int number1, number2;
   // Read items
   if (lines[currline].substr (0, 18) != "  Starting items: ") {
     cerr << "Error: Did not find item list in line " << currline << endl;
@@ -239,7 +238,7 @@ bool Monkey::ThrowNextItem (vector<Monkey>& monkeys, bool divideworries, int log
   }
   // Decide to which monkey to throw this item
   int destmonkey = ApplyTest (w, TestOperator, TestOperand) ? DestTrue : DestFalse;
-  if (destmonkey < 0 || destmonkey >= monkeys.size()) {
+  if (destmonkey < 0 || destmonkey >= (int)monkeys.size()) {
     cerr << "Error: Cannot throw to unknown monkey " << destmonkey << endl;
     return false;
   }
@@ -259,7 +258,7 @@ bool Monkey::ThrowNextItem (vector<Monkey>& monkeys, bool divideworries, int log
 /// \return  Number of thrown items
 //
 int Monkey::ThrowItems (vector<Monkey>& monkeys, bool divideworries, int loglevel) {
-  int n;
+  int n = 0;
   while (!this->Items.empty()) {
     if (ThrowNextItem (monkeys, divideworries, loglevel))  n++;
   }
@@ -338,7 +337,7 @@ vector<Monkey> ParseMonkeys (size_t& currline, const vector<string>& lines) {
 /// \brief Output list of items each monkey holds
 //
 void PrintMonkeyItems (vector<Monkey> monkeys) {
-  for (int i = 0; i < monkeys.size(); i++) {
+  for (size_t i = 0; i < monkeys.size(); i++) {
     cout << "Monkey " << i << ": ";
     for (Item item : monkeys[i].Items) {
       cout << item.str() << " ";
@@ -350,7 +349,7 @@ void PrintMonkeyItems (vector<Monkey> monkeys) {
 /// \brief Play one round: every monkey throws all their items
 //
 void PlayOneRound (vector<Monkey>& monkeys, bool divideworries, int loglevel) {
-  for (int i = 0; i < monkeys.size(); i++) {
+  for (size_t i = 0; i < monkeys.size(); i++) {
     if (loglevel >= 3)  cout << "Monkey " << i << "'s turn" << endl;
     monkeys[i].ThrowItems (monkeys, divideworries, loglevel);
   }
@@ -394,7 +393,7 @@ unsigned long int PlayInput (const vector<string> lines, int rounds,
     << monkeys.size() << endl;
   // Output monkeys at the beginning
   if (loglevel >= 1) {
-    for (int i = 0; i < monkeys.size(); i++) {
+    for (size_t i = 0; i < monkeys.size(); i++) {
       cout << "Monkey " << i << ": ";
       monkeys[i].Print ();
     }
@@ -409,7 +408,7 @@ unsigned long int PlayInput (const vector<string> lines, int rounds,
       [] (int p, const Monkey& m) { return p * m.TestOperand; });
     if (loglevel >= 1)  cout << "Worry level modulo: " << prod << endl;
     // And set every monkey to use it
-    for (int i = 0; i < monkeys.size(); i++) {
+    for (size_t i = 0; i < monkeys.size(); i++) {
       monkeys[i].WorryModulo = prod;
     }
   }

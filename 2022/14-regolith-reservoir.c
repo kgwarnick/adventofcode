@@ -10,6 +10,10 @@
 
 #include "freadlns.h"
 
+#ifdef __GNUC__
+#define UNUSED __attribute__((__unused__))
+#endif
+
 typedef struct Position_struct {
   int x;
   int y;
@@ -111,7 +115,7 @@ void PrintRocks (size_t numrocks, const Rock *rocks) {
 /// \brief Create a cave map from the list of rock structures
 //
 void CreateCaveMap (size_t numrocks, const Rock *rock,
-    int *left, int *right, int *top, int *bottom, char ***cave, int sandx, int sandy) {
+    int *left, int *right, int *top, int *bottom, char ***cave, int sandx, int sandy UNUSED) {
   // Determine dimensions
   *left = INT_MAX;  *right = INT_MIN;  *top = INT_MAX;  *bottom = INT_MIN;
   for (size_t i = 0; i < numrocks; i++) {
@@ -227,7 +231,7 @@ bool IsFreePos (int left, int right, int top, int bottom, const char **map,
 unsigned long int PourSand (int left, int right, int top, int bottom, char **cave,
     int sandx, int sandy, unsigned long *numtofill) {
   unsigned long int numsand = 0, numrest = 0;
-  unsigned long int numtimesteps = 0;
+  // unsigned long int numtimesteps = 0;
   bool trickle = true;
   while (trickle) {
     // Draw "current frame"
@@ -261,12 +265,12 @@ unsigned long int PourSand (int left, int right, int top, int bottom, char **cav
       }
       // Free position directly below? ...
       if (sy < top - 1 || cave[sy - top + 1][sx - left] == '.') {
-        sy++;  numtimesteps++;  continue;
+        sy++;  /* numtimesteps++; */  continue;
       }
       // ... or below left?
       if (sx > left) {
         if (sy < top - 1 || cave[sy - top + 1][sx - left - 1] == '.') {
-          sy++;  sx--;  numtimesteps++;  continue;
+          sy++;  sx--;  /* numtimesteps++; */  continue;
         } else if (sy >= top - 1 && cave[sy - top + 1][sx - left - 1] == '~') {
           trickle = false;  break;
         }
@@ -276,7 +280,7 @@ unsigned long int PourSand (int left, int right, int top, int bottom, char **cav
       // ... or below right?
       if (sx < right) {
         if (sy < top - 1 || cave[sy - top + 1][sx -left + 1] == '.') {
-          sy++;  sx++;  numtimesteps++;  continue;
+          sy++;  sx++;  /* numtimesteps++; */  continue;
         } else if (sy >= top - 1 && cave[sy - top + 1][sx - left + 1] == '~') {
           trickle = false;  break;
         }
@@ -319,7 +323,7 @@ unsigned long LetItSand (size_t numlines, const char **lines, unsigned long *num
   unsigned long int numsand = PourSand (cavel, caver, cavet, caveb, cavemap, 500, 0, numtofill);
   PrintCave (cavel, caver, cavet, caveb, (const char**)cavemap);
   // Cleanup and return
-  for (int i = 0; i < numrocks; i++)  free (rocks[i].pos);
+  for (size_t i = 0; i < numrocks; i++)  free (rocks[i].pos);
   free (rocks);
   for (int y = 0; y < caveb - cavet; y++)  free (cavemap[y]);
   free (cavemap);
@@ -346,12 +350,12 @@ int main () {
   char **lines = (char**) malloc (maxlines * sizeof (char*));
   readlines ("14-regolith-reservoir-input.txt", &maxlines, &numlines, &lines);
   printf ("%zd lines read\n", numlines);
-  numsand = LetItSand (numlines, lines, &numtillfull);
+  numsand = LetItSand (numlines, (const char**)lines, &numtillfull);
   printf ("*** Number of sand units resting in the cave: %lu ***\n", numsand);
   printf ("\n");
 
   printf ("--- Puzzle 2: Total number of sand units in the cave ---\n");
   printf ("*** Number of sand units in the cave at the end: %lu ***\n", numtillfull);
-  for (int i = 0; i < numlines; i++)  free (lines[i]);
+  for (size_t i = 0; i < numlines; i++)  free (lines[i]);
   free (lines);
 }

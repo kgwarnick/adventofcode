@@ -25,21 +25,20 @@ struct MoveInstruction {
 /// \brief Parse stack arrangement from lines
 // list front = stack bottom
 //
-vector<list<char>> parsestacks (int& currline, const vector<string>& lines) {
-  int numstacks = 9;
+vector<list<char>> parsestacks (size_t& currline, const vector<string>& lines) {
+  size_t numstacks = 9;
   vector<list<char>> stacks (numstacks);
   // Read lines containing crates
   while (currline < lines.size() && lines[currline].find ('[') != string::npos) {
     // cout << "Vector size: " << stacks.size() << endl;
     const string& s = lines[currline];
-    size_t p = 0;
     if ((s.size() + 3) / 4 > numstacks) {
       cout << "- Need resize from " << numstacks
            << " to " << ((s.size() + 3) / 4) << endl;
       numstacks = (s.size() + 3) / 4;
       stacks.resize (numstacks);
     }
-    for (int p = 0; p < s.length(); p += 4) {
+    for (size_t p = 0; p < s.length(); p += 4) {
       if (p / 4 >= numstacks) cout << "  - need resize" << endl;
       if (s[p] == '[' && s[p+2] == ']') {
         // Put the crate at the bottom of stack n = p / 4
@@ -65,7 +64,7 @@ vector<list<char>> parsestacks (int& currline, const vector<string>& lines) {
 /// \brief Output stacks, one stack per line
 //
 void PrintStacks (vector<list<char> > stacks) {
-  for (int n = 0; n < stacks.size(); n++) {
+  for (size_t n = 0; n < stacks.size(); n++) {
     cout << " " << (n + 1) << "  ";
     for (char c : stacks[n])  cout << " [" << c << "]";
     cout << endl;
@@ -75,7 +74,7 @@ void PrintStacks (vector<list<char> > stacks) {
 
 /// \brief Parse instructions from lines
 //
-list<MoveInstruction> parseinstructions (int& currline, const vector<string>& lines) {
+list<MoveInstruction> parseinstructions (size_t& currline, const vector<string>& lines) {
   list<MoveInstruction> instrlist;
   while (currline < lines.size() && lines[currline].substr (0, 5) == "move ") {
     stringstream ss (lines[currline]);
@@ -102,19 +101,19 @@ bool CarryOutMove (const MoveInstruction& moveinstr,
     vector<list<char>>& stacks, bool allinone = false) {
   // FIXME Could also check for invalid stack numbers <= 0
   // Check for invalid "from" stack
-  if (moveinstr.from > stacks.size()) {
+  if (moveinstr.from > (int)stacks.size()) {
     cerr << "Error: Source stack out of range: "
       << moveinstr.from << " > " << stacks.size() << endl;
     return false;
   }
   // Check for invalid "to" stack
-  if (moveinstr.to > stacks.size()) {
+  if (moveinstr.to > (int)stacks.size()) {
     cerr << "Error: Destination stack out of range: "
       << moveinstr.to << " > " << stacks.size() << endl;
     return false;
   }
   // Check for enough "from" crates
-  if (moveinstr.count > stacks[moveinstr.from-1].size()) {
+  if (moveinstr.count > (int)stacks[moveinstr.from-1].size()) {
     cerr << "Error: Not enough crates remaining in stack " << moveinstr.from
       << ", need " << moveinstr.count << ", have "
       << stacks[moveinstr.from-1].size() << endl;
@@ -183,7 +182,7 @@ string GetTopMostCrates (vector<list<char>> stacks) {
 //
 int ParseStacksAndInstructions (const vector<string> lines,
     vector<list<char> >& stacks, list<MoveInstruction>& instructions) {
-  int l = 0;   // line counter
+  size_t l = 0;   // line counter
   // Parse starting stack arrangement
   stacks = parsestacks (l, lines);
   // Verify there is an empty line between stacks and instructions

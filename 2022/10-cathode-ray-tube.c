@@ -34,7 +34,7 @@ long int RunProgram (size_t numlines, const char **lines,
   long int cycle = 0;   // cycle counter
   long int regx = 1;    // register x value
   long int sigstrength = 0;   // sum of signal strengths
-  for (int i = 0; i < numlines; i++) {
+  for (size_t i = 0; i < numlines; i++) {
     int waittime = 1;   // how many cycles to wait before setting x
     long int pendingx = regx;   // value for x at the end of the cycle
     // Read instruction
@@ -89,7 +89,7 @@ long int RunFile (const char *filename, char screen[6][40], int loglevel) {
     printf ("Lines read: %zd, characters: %zu\n", numlines, numchars);
   long int sigstrsum = RunProgram (numlines, (const char**)inputlines,
     screen, loglevel);
-  for (int i = 0; i < numlines; i++)  free (inputlines[i]);
+  for (size_t i = 0; i < numlines; i++)  free (inputlines[i]);
   free (inputlines);
   return sigstrsum;
 }

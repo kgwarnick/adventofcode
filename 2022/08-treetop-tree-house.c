@@ -19,9 +19,14 @@ const char* ExampleLines[] = {
 };
 
 
+#ifdef __GNUC__
+#define UNUSED __attribute__((__unused__))
+#endif
+
+
 /// \brief Is the tree at position x, y visible from the left edge?
 //
-bool VisibleFromLeft (int x, int y, int numx, int numy, const char **trees) {
+bool VisibleFromLeft (int x, int y, int numx UNUSED, int numy UNUSED, const char **trees) {
   for (int i = 0; i < x; i++)
     if (trees[y][x] <= trees[y][i])  return false;
   return true;
@@ -29,7 +34,7 @@ bool VisibleFromLeft (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief Is the tree at position x, y visible from the right edge?
 //
-bool VisibleFromRight (int x, int y, int numx, int numy, const char **trees) {
+bool VisibleFromRight (int x, int y, int numx, int numy UNUSED, const char **trees) {
   for (int i = x + 1; i < numx; i++)
     if (trees[y][x] <= trees[y][i])  return false;
   return true;
@@ -37,7 +42,7 @@ bool VisibleFromRight (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief Is the tree at position x, y visible from the upper edge?
 //
-bool VisibleFromTop (int x, int y, int numx, int numy, const char **trees) {
+bool VisibleFromTop (int x, int y, int numx UNUSED, int numy UNUSED, const char **trees) {
   for (int j = 0; j < y; j++)
     if (trees[y][x] <= trees[j][x])  return false;
   return true;
@@ -45,7 +50,7 @@ bool VisibleFromTop (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief Is the tree at position x, y visible from the lower edge?
 //
-bool VisibleFromBottom (int x, int y, int numx, int numy, const char **trees) {
+bool VisibleFromBottom (int x, int y, int numx UNUSED, int numy, const char **trees) {
   for (int j = y + 1; j < numy; j++)
     if (trees[y][x] <= trees[j][x])  return false;
   return true;
@@ -62,7 +67,7 @@ bool VisibleFromAny (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief How far can one look to the left from a secific position
 //
-unsigned int ViewLeft (int x, int y, int numx, int numy, const char **trees) {
+unsigned int ViewLeft (int x, int y, int numx UNUSED, int numy UNUSED, const char **trees) {
   for (int i = x - 1; i >= 0; i--)
     if (trees[y][x] <= trees[y][i])  return x - i;
   // for (int i = 1; i <= x; i++)
@@ -73,7 +78,7 @@ unsigned int ViewLeft (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief How far can one look to the right from a secific position
 //
-unsigned int ViewRight (int x, int y, int numx, int numy, const char **trees) {
+unsigned int ViewRight (int x, int y, int numx, int numy UNUSED, const char **trees) {
   for (int i = x + 1; i < numx; i++)
     if (trees[y][x] <= trees[y][i])  return i - x;
   // for (int i = 1; i < numx - x; i++)
@@ -84,7 +89,7 @@ unsigned int ViewRight (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief How far can one look up from a secific position
 //
-unsigned int ViewUp (int x, int y, int numx, int numy, const char **trees) {
+unsigned int ViewUp (int x, int y, int numx UNUSED, int numy UNUSED, const char **trees) {
   for (int j = y - 1; j >= 0; j--)
     if (trees[y][x] <= trees[j][x])  return y - j;
   // No blocking tree, all tree between the position and the edge are visible
@@ -93,7 +98,7 @@ unsigned int ViewUp (int x, int y, int numx, int numy, const char **trees) {
 
 /// \brief How far can one look down from a secific position
 //
-unsigned int ViewDown (int x, int y, int numx, int numy, const char **trees) {
+unsigned int ViewDown (int x, int y, int numx UNUSED, int numy, const char **trees) {
   for (int j = y + 1; j < numy; j++)
     if (trees[y][x] <= trees[j][x])  return j - y;
   // No blocking tree, all tree between the position and the edge are visible
@@ -141,7 +146,7 @@ unsigned int GetBestScenicScore (int *posx, int *posy,
 //
 void TrimLineEndings (int numlines, char **lines) {
   for (int i = 0; i < numlines; i++) {
-    size_t vorher = strlen (lines[i]);
+    // size_t vorher = strlen (lines[i]);
     char *c = strchr(lines[i], '\0');
     while (c > lines[i] && isspace (*(c-1))) { *(c-1) = '\0'; c--; }
     // printf ("line len = %zd -> %zd\n", vorher, strlen (lines[i]));
@@ -185,6 +190,6 @@ int main () {
   printf ("*** Best scenic score for tree (%d, %d): %u ***\n",
     bestx, besty, bestscenicscore);
 
-  for (int i = 0; i < numlines; i++)  free (inputlines[i]);
+  for (size_t i = 0; i < numlines; i++)  free (inputlines[i]);
   free (inputlines);
 }

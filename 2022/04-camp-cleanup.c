@@ -110,7 +110,7 @@ int main () {
   printf ("--- Puzzle 2: Overlapping ranges ---\n");
   numoverlap = NumberOfOverlappingRanges (numlines, lines, 0);
   printf ("Number of assignment pairs with overlap: %d\n", numoverlap);
-  for (int i = 0; i < numlines; i++)  free (lines[i]);
+  for (size_t i = 0; i < numlines; i++)  free (lines[i]);
   free (lines);
 
   return 0;

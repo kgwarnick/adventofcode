@@ -47,7 +47,7 @@ size_t DetectSequenceOfUniqueCharacters (size_t seqlen, const char *datastream) 
 /// \return The index of the last character of the four-byte start-of-packet sequence (1-based), 0 if not found
 //
 size_t DetectStartOfPacket (const char *datastream) {
-  for (int i = 3; i < strlen (datastream); i++) {
+  for (size_t i = 3; i < strlen (datastream); i++) {
     if (datastream[i-3] != datastream[i-2] &&
         datastream[i-3] != datastream[i-1] &&
         datastream[i-3] != datastream[i]   &&
@@ -80,7 +80,7 @@ char* examples[] = {
 int main () {
 
   printf ("--- Examples ---\n");
-  for (int i = 0; i < sizeof (examples) / sizeof (examples[0]); i++) {
+  for (size_t i = 0; i < sizeof (examples) / sizeof (examples[0]); i++) {
     size_t sop = DetectStartOfPacket (examples[i]);
     size_t som = DetectStartOfMessage (examples[i]);
     printf ("* %s -> Start-of-packet at position: %zu\n", examples[i], sop);

@@ -5,3 +5,6 @@
 # Python
 __pycache__/
 *.pyc
+
+# C/C++ (and compiled objects of other languages)
+*.o

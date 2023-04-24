@@ -24,7 +24,7 @@ char FindItemPresentInBothHalfs (const string& itemstring) {
 /// \brief Calculate item priority value
 int GetItemPriority (const char item) {
   const string priorities = " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  int n = priorities.find (item);
+  long unsigned int n = priorities.find (item);
   return n != string::npos ? n : 0;
 }
 
@@ -32,10 +32,10 @@ int GetItemPriority (const char item) {
 /// \brief Find the character present in both halfs of each line
 //
 string FindMisplacedItemInEachRucksack (list<string> rucksacklines) {
-  int n = 0;
+  // int n = 0;
   string items = "";
   for (string s : rucksacklines) {
-    n++;
+    // n++;
     items += FindItemPresentInBothHalfs (s);
     // cout << n << "  " << s << "  " << FindItemPresentInBothHalfs (s) << endl;
   }
@@ -73,11 +73,11 @@ char GetCommonCharacter (const string& s1, const string& s2, const string& s3) {
 /// \brief Find the common character in every group of three lines
 //
 string FindCommonCharacterInGroupsOfThree (list<string> rucksacklines) {
-  int n = 0;
+  // int n = 0;
   string items = "";
   list<string>::const_iterator siter = rucksacklines.cbegin ();
   while (siter != rucksacklines.cend ()) {
-    n++;
+    // n++;
     char badge = GetCommonCharacter (*siter++, *siter++, *siter++);
     items += badge;
     // cout << "Group " << n << " badge: " << badge << endl;

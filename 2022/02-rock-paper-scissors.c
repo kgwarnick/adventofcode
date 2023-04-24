@@ -73,9 +73,9 @@ unsigned long int scorewithforcedmatchoutcome (const char *filename) {
   size_t linelen = 64;
   char *s = (char*) malloc (linelen);
   unsigned long int totalscore = 0;
-  int roundno = 0;
+  // int roundno = 0;
   while (feof (inputfile) == 0) {
-    roundno++;
+    // roundno++;
     int n = getline (&s, &linelen, inputfile);
     if (n == 0 || feof (inputfile))  break;
     // Choose appropriate shape to end the round as desired
