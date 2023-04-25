@@ -325,7 +325,7 @@ unsigned long LetItSand (size_t numlines, const char **lines, unsigned long *num
   // Cleanup and return
   for (size_t i = 0; i < numrocks; i++)  free (rocks[i].pos);
   free (rocks);
-  for (int y = 0; y < caveb - cavet; y++)  free (cavemap[y]);
+  for (int y = 0; y < caveb - cavet + 1; y++)  free (cavemap[y]);
   free (cavemap);
   return numsand;
 }

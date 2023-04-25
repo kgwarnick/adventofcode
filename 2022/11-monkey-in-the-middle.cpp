@@ -324,7 +324,7 @@ vector<Monkey> ParseMonkeys (size_t& currline, const vector<string>& lines) {
     n = m.Parse (n, lines);
     ms.push_back (m);
     // Expect one empty line but accept any number
-    while (lines[n].empty())  n++;
+    while (n < lines.size() && lines[n].empty())  n++;
   }
   // Convert to a vector and return
   vector<Monkey> mv (ms.size());

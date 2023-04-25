@@ -81,6 +81,7 @@ unsigned long ParseDroplet (Droplet *droplet,
     // printf ("Cube %4zu:  (%d, %d, %d)\n",
     //   i, coords[3*i], coords[3*i+1], coords[3*i+2]);
   }
+  free (coords);
   return droplet->nx * droplet->ny * droplet->nz;
 }
 

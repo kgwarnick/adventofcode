@@ -31,6 +31,15 @@ CFLAGS   = -g -Wall -Wextra
 CXXFLAGS = -g -Wall -Wextra
 LINK_CXX = $(CXX) $(CXXFLAGS) $(LDFLAGS) $^ -o $@
 
+VALGRIND = valgrind
+VALGRIND_FLAGS = --error-exitcode=16 --leak-check=full --track-origins=yes
+LEAKCHECKS = $(addprefix leakcheck-,$(PUZZLE_OBJ:$(OBJEXT)=))
+
+leakcheck-% : %$(BINEXT)
+	$(VALGRIND) $(VALGRIND_FLAGS) ./$< > /dev/null
+
+leakcheck : $(LEAKCHECKS)
+
 01-calorie-counting$(BINEXT) : %$(BINEXT) : %.o strsplit.o fileread.o
 	$(LINK_CXX)
 

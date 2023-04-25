@@ -115,7 +115,8 @@ long GetYMovedUp (int x, int y, int n, size_t mapheight, const char **map) {
     }
     // Outside the map, wrap to the lower edge
     int tempy = y;
-    while (tempy < (int) mapheight - 1 && (map[tempy+1][x] == '.' || map[tempy+1][x] == '#'))  tempy++;
+    while (tempy < (int) mapheight - 1 && x < (int) strlen (map[tempy+1]) &&
+      (map[tempy+1][x] == '.' || map[tempy+1][x] == '#'))  tempy++;
     if (map[tempy][x] == '.') {
       y = tempy;
       // printf ("- Wrapped to lower edge: (%d, %d)\n", x, y);
@@ -135,7 +136,7 @@ long GetYMovedUp (int x, int y, int n, size_t mapheight, const char **map) {
 long GetYMovedDown (int x, int y, int n, size_t mapheight, const char **map) {
   for (int i = 0; i < n; i++) {
     // printf ("down from (%d, %d) ?\n", x, y);
-    if (y < (int) mapheight - 1) {
+    if (y < (int) mapheight - 1 && x < (int) strlen (map[y+1])) {
       if (map[y+1][x] == '.')  { y++; continue; }  // Path clear, move there
       else if (map[y+1][x] == '#')  break;   // Path blocked, stop moving
     }

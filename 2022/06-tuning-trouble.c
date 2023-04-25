@@ -90,6 +90,7 @@ int main () {
 
   printf ("--- Puzzle 1: Find start of packet ---\n");
   char *characters = (char*) malloc (sizeof (char) * 65536);
+  memset (characters, 0, 65536);
   size_t numchars = ReadCharacters (
     65536, characters, "06-tuning-trouble-input.txt");
   printf ("Characters read: %zu\n", numchars);

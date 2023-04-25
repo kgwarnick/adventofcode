@@ -15,7 +15,7 @@ ssize_t readlines (const char *filename, size_t *maxlines, size_t *numlines, cha
     char *s = NULL;
     ssize_t nread = getline (&s, &linelen, inputfile);
     // End of file or error? Then stop reading
-    if (nread <= 0 || feof (inputfile))  break;
+    if (nread <= 0 || feof (inputfile)) { if (s != NULL) free (s); break; }
     // Increase the array size if necessary
     if (*numlines >= *maxlines) {
       char **newarr = reallocarray (*lines, *maxlines + 100, sizeof (char*));

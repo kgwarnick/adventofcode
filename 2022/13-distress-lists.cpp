@@ -171,7 +171,7 @@ int SumIndicesCorrectlyOrderedPairs (const vector<string>& lines) {
     if (comp < 0)  sumcorrect += numpairs;
     i += 2;
     // Skip an empty line
-    if (lines[i].empty())  i++;
+    if (i < lines.size() && lines[i].empty())  i++;
   }
   cout << "Compared " << numpairs << " pairs" << endl;
   return sumcorrect;
