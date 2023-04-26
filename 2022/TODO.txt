@@ -1,5 +1,3 @@
-2022 General * Test for malloc-free or new-delete memory leaks
-
 2022 Day 15  More efficient implementation (currently 1min runtime)
 2022 Day 16  Cleanup of recursive function, make path reporting work
 2022 Day 22  Simplify edge transitions:

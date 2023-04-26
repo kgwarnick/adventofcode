@@ -1,0 +1,16 @@
+name: C/C++ Build
+
+on:
+  push:
+    branches: [ "rednitz" ]
+    paths: [ "2022/**" ]
+  pull_request:
+    branches: [ "rednitz" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: make
+      run: make -C 2022
