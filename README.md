@@ -32,4 +32,9 @@ in verschiedenen Programmiersprachen
 
 ## 2022
 
+[![C/C++ Build](https://github.com/kgwarnick/adventofcode/actions/workflows/c-cpp.yml/badge.svg?branch=rednitz)](https://github.com/kgwarnick/adventofcode/actions/workflows/c-cpp.yml)
+
 13× C++ (ungerade Tage) und 12× C (gerade Tage)
+
+![AoC2015](aoc2015.png)
+![AoC2022](aoc2022.png)
