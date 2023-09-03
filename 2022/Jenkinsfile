@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    options {
+        skipStagesAfterUnstable()
+    }
+    stages {
+        stage ('Build') {
+            steps {
+                checkout scm
+                // sh 'test -d adventofcode || git clone https://github.com/kgwarnick/adventofcode'
+                // sh 'cd adventofcode;  git pull;  git describe --always --dirty;  cd'
+                sh 'make -C adventofcode/2022 clean;  make -C adventofcode/2022 all'
+            }
+        }
+    }
+}
