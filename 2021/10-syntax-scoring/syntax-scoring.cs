@@ -10,11 +10,14 @@ public class SyntaxScoring {
     public class CheckResultInfo {
         public int length = 0;
         public SyntaxCheckResult result = SyntaxCheckResult.UNKNOWN;
-        public CheckResultInfo (int len, SyntaxCheckResult res) {
-            length = len;  result = res;
+        public string? missing;
+        public CheckResultInfo (int len, SyntaxCheckResult res, string? miss = null) {
+            length = len;  result = res;  missing = miss;
         }
         public override string ToString () =>
-            string.Format ("({0}, {1})", length, result);
+            missing != null ?
+                string.Format ("({0}, {1}, \"{2}\")", length, result, missing) :
+                string.Format ("({0}, {1})", length, result);
     }
 
     public static readonly string ExampleLinesLegal =
@@ -46,6 +49,7 @@ public class SyntaxScoring {
         "<{([{{}}[<[[[<>{}]]]>[]]";
     public static readonly string InputFileName = "10-syntax-scoring-input.txt";
 
+    // Abkürzungen
     public const SyntaxCheckResult UNKNOWN = SyntaxCheckResult.UNKNOWN;
     public const SyntaxCheckResult INVALID = SyntaxCheckResult.INVALID;
     public const SyntaxCheckResult INCOMPLETE = SyntaxCheckResult.INCOMPLETE;
@@ -62,7 +66,8 @@ public class SyntaxScoring {
             else if (line[pos] == '<')  waitchar = '>';
             else return new CheckResultInfo (pos, UNKNOWN);
             pos++;
-            if (line.Length <= pos)  return new CheckResultInfo (pos, INCOMPLETE);
+            if (line.Length <= pos)
+                return new CheckResultInfo (pos, INCOMPLETE, waitchar.ToString());
             // Ende suchen
             while (line.Length > pos) {
                 if (line[pos] == waitchar) { pos++; waitchar = ' '; break; }
@@ -73,13 +78,16 @@ public class SyntaxScoring {
                 if (testresult.result == UNKNOWN && line[pos + testresult.length] == waitchar) {
                     pos += testresult.length + 1; waitchar = ' '; break; }
                 else if (testresult.result == UNKNOWN) {
-                    return new CheckResultInfo (pos + testresult.length, INVALID);
+                    return new CheckResultInfo (pos + testresult.length, INVALID,
+                        testresult.missing + waitchar);
                 }
                 else
-                    return new CheckResultInfo (pos + testresult.length, testresult.result);
+                    return new CheckResultInfo (pos + testresult.length,
+                        testresult.result,
+                        (testresult.missing ?? "") + waitchar.ToString());
             }
         }
-        return new CheckResultInfo (pos, waitchar == ' ' ? FINISHED : INCOMPLETE);
+        return new CheckResultInfo (pos, waitchar == ' ' ? FINISHED : INCOMPLETE, waitchar.ToString());
     }
 
 
@@ -103,8 +111,9 @@ public class SyntaxScoring {
         }
     }
 
-    public static int CalculateCorruptionScore (string inputlines) {
+    public static Tuple<int, long> CalculateScores (string inputlines) {
         int errorscore = 0;
+        List<long> complscores = new List<long> ();
         var linelen = inputlines.Split (Environment.NewLine,
             StringSplitOptions.RemoveEmptyEntries)
             .Select (s => s.Length) .Max ();
@@ -116,18 +125,34 @@ public class SyntaxScoring {
                 int linescore = CorruptionScore (line[result.length]);
                 errorscore += linescore;
             }
+            if (result.result == INCOMPLETE) {
+                long complscore = 0;
+                foreach (char c in (result.missing ?? "")) {
+                    complscore = complscore * 5 +
+                        (c == ')' ? 1 : c == ']' ? 2 : c == '}' ? 3 : c == '>' ? 4 : 0);
+                }
+                complscores.Add (complscore);
+            }
         }
-        return errorscore;
+        complscores.Sort();
+        long middlecompl = complscores[complscores.Count / 2];
+        return new Tuple<int, long> (errorscore, middlecompl);
     }
 
     public static void Main() {
         TestOutput ();
         Console.WriteLine (Environment.NewLine + "--- Example lines ---");
-        int examplescore = CalculateCorruptionScore (ExampleInput);
-        Console.WriteLine ("Error score: " + examplescore);
+        Tuple<int,long> examplescore = CalculateScores (ExampleInput);
+        Console.WriteLine ("Error score, completion score: " + examplescore);
+
+        Console.WriteLine (Environment.NewLine + "--- Puzzle Lines ---");
+        Tuple<int,long> puzzlescore = CalculateScores (
+            File.ReadAllText (InputFileName));
 
         Console.WriteLine (Environment.NewLine + "--- Aufgabe 1: Corruption Score ---");
-        int puzzlescore = CalculateCorruptionScore (File.ReadAllText (InputFileName));
-        Console.WriteLine ("Error score: " + puzzlescore);
+        Console.WriteLine ("Error score: " + puzzlescore.Item1);
+
+        Console.WriteLine (Environment.NewLine + "--- Aufgabe 2: Completion Score ---");
+        Console.WriteLine ("Completion score: " + puzzlescore.Item2);
     }
 }

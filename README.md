@@ -25,9 +25,9 @@ in verschiedenen Programmiersprachen
 * 1× Rust
 
 
-## 2021 (bis Tag 9)
+## 2021 (bis Tag 10)
 
-5× Python (ungerade Tage) und 4× C# (gerade Tage)
+5× Python (ungerade Tage) und 5× C# (gerade Tage)
 
 
 ## 2022
